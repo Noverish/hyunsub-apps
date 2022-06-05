@@ -1,1 +1,3 @@
 rootProject.name = 'hyunsub-apps'
+include 'hyunsub-auth'
+
