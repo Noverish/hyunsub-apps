@@ -8,6 +8,7 @@ import io.mockk.mockk
 import kim.hyunsub.auth.exception.ErrorCodeException
 import kim.hyunsub.auth.model.ErrorCode
 import kim.hyunsub.auth.model.LoginParams
+import kim.hyunsub.auth.model.LoginResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 
@@ -37,7 +38,7 @@ class LoginServiceTest : FreeSpec({
 
 	"Success" {
 		val result = service.login(params)
-		result shouldBe jwt
+		result shouldBe LoginResult(idNo, jwt)
 	}
 
 	"Not exist user" {

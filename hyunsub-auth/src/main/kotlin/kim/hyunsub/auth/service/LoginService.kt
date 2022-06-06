@@ -5,6 +5,7 @@ import kim.hyunsub.auth.exception.ErrorCodeException
 import kim.hyunsub.auth.model.ErrorCode
 import kim.hyunsub.auth.model.JwtPayload
 import kim.hyunsub.auth.model.LoginParams
+import kim.hyunsub.auth.model.LoginResult
 import kim.hyunsub.auth.repository.UserRepository
 import org.springframework.stereotype.Service
 
@@ -16,7 +17,7 @@ class LoginService(
 	/**
 	 * @return JWT
 	 */
-	fun login(params: LoginParams): String {
+	fun login(params: LoginParams): LoginResult {
 		val user = userRepository.findByUsername(params.username)
 			?: throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
 
@@ -27,6 +28,7 @@ class LoginService(
 		}
 
 		val payload = JwtPayload(user.idNo)
-		return jwtService.issue(payload)
+		val jwt = jwtService.issue(payload)
+		return LoginResult(user.idNo, jwt)
 	}
 }

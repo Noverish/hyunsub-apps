@@ -3,6 +3,7 @@ package kim.hyunsub.auth.service
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -30,7 +31,8 @@ class RegisterServiceTest: FreeSpec({
 	}
 
 	"Success" {
-		service.register(params)
+		val result = service.register(params)
+		result.idNo shouldNotBe null
 	}
 
 	"Already exist username" {
