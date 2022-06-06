@@ -4,11 +4,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties("kms.datasource")
-data class KmsDataSourceProperties(
+@ConfigurationProperties("kms")
+data class KmsProperties(
 	val profile: String,
 	val keyId: String,
-	val url: String,
-	val username: String,
-	val password: String,
+	val properties: Map<String, String> = mutableMapOf(),
 )

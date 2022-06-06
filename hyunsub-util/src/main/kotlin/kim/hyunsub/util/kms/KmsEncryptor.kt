@@ -5,7 +5,6 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.kms.AWSKMSClientBuilder
 import com.amazonaws.services.kms.model.DecryptRequest
 import com.amazonaws.services.kms.model.EncryptRequest
-import org.apache.commons.codec.binary.Base64
 import org.springframework.util.Base64Utils
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
