@@ -12,7 +12,7 @@ import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletResponse
 
 @RestController
-@RequestMapping("/api/login")
+@RequestMapping("/api/v1/login")
 class LoginApiController(
 	private val loginService: LoginService,
 ) {

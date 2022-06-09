@@ -9,5 +9,5 @@ enum class ErrorCode(
 	val status: HttpStatus = HttpStatus.BAD_REQUEST,
 ) {
 	ALREADY_EXIST_USERNAME(1001, "Already exist username"),
-	NOT_EXIST_USER(1002, "Invalid username or password"),
+	NOT_EXIST_USER(1002, "Invalid ID or password"),
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletRequest
 
 @RestController
-@RequestMapping("/admin/kms")
+@RequestMapping("/api/v1/admin/kms")
 class KmsController(private val kmsProperties: KmsProperties) {
 	companion object : Log
 
