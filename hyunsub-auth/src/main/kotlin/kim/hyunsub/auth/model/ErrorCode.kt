@@ -2,7 +2,6 @@ package kim.hyunsub.auth.model
 
 import org.springframework.http.HttpStatus
 
-
 enum class ErrorCode(
 	val code: Int,
 	val msg: String,
@@ -10,4 +9,6 @@ enum class ErrorCode(
 ) {
 	ALREADY_EXIST_USERNAME(1001, "Already exist username"),
 	NOT_EXIST_USER(1002, "Invalid ID or password"),
+	SHORT_USERNAME(1003, "ID should be longer than 3 characters"),
+	SHORT_PASSWORD(1004, "Password must be longer than 7 characters"),
 }

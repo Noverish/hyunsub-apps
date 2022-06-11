@@ -1,6 +1,7 @@
 package kim.hyunsub.auth.controller
 
 import kim.hyunsub.auth.config.AppConstants
+import kim.hyunsub.auth.config.JwtProperties
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
 import kim.hyunsub.auth.service.LoginService
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/v1/login")
 class LoginApiController(
 	private val loginService: LoginService,
+	private val jwtProperties: JwtProperties,
 ) {
 	@PostMapping("")
 	fun login(
@@ -22,8 +24,11 @@ class LoginApiController(
 		@RequestBody params: LoginParams,
 	): LoginResult {
 		return loginService.login(params).also {
-			val cookie = Cookie(AppConstants.JWT_COOKIE_NAME, it.jwt)
-			cookie.domain = AppConstants.JWT_COOKIE_DOMAIN
+			val cookie = Cookie(AppConstants.JWT_COOKIE_NAME, it.jwt).apply {
+				domain = AppConstants.JWT_COOKIE_DOMAIN
+				maxAge = jwtProperties.duration.toSeconds().toInt()
+				path = "/"
+			}
 			response.addCookie(cookie)
 		}
 	}
