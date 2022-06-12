@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/v1/login")
-class LoginApiController(
+class LoginController(
 	private val loginService: LoginService,
 	private val jwtProperties: JwtProperties,
 	private val rsaKeyService: RsaKeyService,

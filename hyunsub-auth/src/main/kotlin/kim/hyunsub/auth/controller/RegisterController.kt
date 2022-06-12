@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/register")
-class RegisterApiController(
+class RegisterController(
 	private val registerService: RegisterService,
 	private val rsaKeyService: RsaKeyService,
 ) {
