@@ -12,8 +12,8 @@ enum class ErrorCode(
 	SHORT_USERNAME(1003, "ID should be longer than 3 characters"),
 	SHORT_PASSWORD(1004, "Password must be longer than 7 characters"),
 
-	NOT_LOGIN(2001, "Login required"),
-	INVALID_JWT(2002, "Invalid login information"),
-	EXPIRED_JWT(2003, "Expired login information"),
-	NO_SUCH_USER(2004, "No such user"),
+	NOT_LOGIN(2001, "Login required", HttpStatus.UNAUTHORIZED),
+	INVALID_JWT(2002, "Invalid login information", HttpStatus.UNAUTHORIZED),
+	EXPIRED_JWT(2003, "Expired login information", HttpStatus.UNAUTHORIZED),
+	NO_SUCH_USER(2004, "No such user", HttpStatus.UNAUTHORIZED),
 }
