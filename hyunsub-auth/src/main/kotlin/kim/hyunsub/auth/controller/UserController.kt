@@ -4,10 +4,12 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import kim.hyunsub.auth.config.AppConstants
 import kim.hyunsub.auth.model.ModifyUserInfoParams
 import kim.hyunsub.auth.model.ModifyUserInfoResult
+import kim.hyunsub.auth.model.MyPageUserInfo
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.util.log.Log
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -42,14 +44,25 @@ class UserController(
 			newUser = newUser.copy(password = hashed)
 		}
 
-		if (newUser != user) {
-			log.debug("updateUserInfo: newUser={}", newUser)
-			userRepository.saveAndFlush(newUser)
-		}
-
-		return ModifyUserInfoResult(
+		val result = ModifyUserInfoResult(
 			username = user.username != newUser.username,
 			password = user.password != newUser.password,
+		)
+
+		if (newUser != user) {
+			log.debug("updateUserInfo: newUser={}", newUser)
+			userRepository.save(newUser)
+		}
+
+		return result
+	}
+
+	@GetMapping("/my-page")
+	fun getMyPageUserInfo(user: User): MyPageUserInfo {
+		return MyPageUserInfo(
+			username = user.username,
+			historyNum = 0,
+			deviceNum = 0,
 		)
 	}
 }
