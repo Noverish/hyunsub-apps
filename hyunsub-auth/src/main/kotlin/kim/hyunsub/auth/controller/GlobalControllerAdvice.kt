@@ -14,6 +14,7 @@ class GlobalControllerAdvice {
 				mapOf(
 					"code" to ex.errorCode.code,
 					"msg" to ex.errorCode.msg,
+					"payload" to ex.payload,
 				)
 			)
 }

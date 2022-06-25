@@ -2,4 +2,7 @@ package kim.hyunsub.auth.exception
 
 import kim.hyunsub.auth.model.ErrorCode
 
-class ErrorCodeException(val errorCode: ErrorCode): RuntimeException()
+open class ErrorCodeException(
+	val errorCode: ErrorCode,
+	val payload: Any = emptyMap<String, String>(),
+): RuntimeException()
