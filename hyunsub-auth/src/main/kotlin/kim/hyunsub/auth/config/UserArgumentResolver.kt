@@ -13,6 +13,7 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
+import org.springframework.web.util.WebUtils
 import javax.servlet.http.HttpServletRequest
 
 class UserArgumentResolver(
@@ -28,12 +29,12 @@ class UserArgumentResolver(
 		webRequest: NativeWebRequest,
 		binderFactory: WebDataBinderFactory?
 	): User {
-		val req = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
-		val jwt = req.cookies.firstOrNull { it.name == AppConstants.JWT_COOKIE_NAME }?.value
+		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
+		val cookie = WebUtils.getCookie(request, AppConstants.JWT_COOKIE_NAME)
 			?: throw ErrorCodeException(ErrorCode.NOT_LOGIN)
 
 		val payload = try {
-			jwtService.verify(jwt)
+			jwtService.verify(cookie.value)
 		} catch (e: SignatureException) {
 			throw ErrorCodeException(ErrorCode.INVALID_JWT)
 		} catch (e: ExpiredJwtException) {

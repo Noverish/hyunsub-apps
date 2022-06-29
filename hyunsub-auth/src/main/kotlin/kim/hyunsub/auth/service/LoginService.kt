@@ -13,6 +13,7 @@ class LoginService(
 	private val jwtService: JwtService,
 	private val sessionService: LoginFailureSessionService,
 	private val captchaService: CaptchaService,
+	private val authorityService: AuthorityService,
 ) {
 	companion object : Log
 
@@ -48,7 +49,9 @@ class LoginService(
 			throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
 		}
 
-		val payload = JwtPayload(user.idNo)
+		val allowedPaths = authorityService.getAllowedPaths(user.idNo)
+
+		val payload = JwtPayload(user.idNo, allowedPaths)
 		val jwt = jwtService.issue(payload)
 		return LoginResult(
 			idNo = user.idNo,

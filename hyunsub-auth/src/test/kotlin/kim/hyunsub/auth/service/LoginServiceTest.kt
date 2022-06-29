@@ -16,7 +16,8 @@ class LoginServiceTest : FreeSpec({
 	val jwtService = mockk<JwtService>()
 	val loginFailureSessionService = mockk<LoginFailureSessionService>()
 	val captchaService = mockk<CaptchaService>()
-	val service = LoginService(userRepository, jwtService, loginFailureSessionService, captchaService)
+	val authorityService = mockk<AuthorityService>()
+	val service = LoginService(userRepository, jwtService, loginFailureSessionService, captchaService, authorityService)
 
 	val user = mockk<User>(relaxed = true)
 	val params = mockk<LoginParams>(relaxed = true)
@@ -28,6 +29,7 @@ class LoginServiceTest : FreeSpec({
 	val hashed = "\$2a\$12\$umWkbsinybLfpuEknH3IqufPEtv8hbUYJts6GN/fBAZZA.fIpp1aK"
 	val jwt = "kotest_jwt"
 	val remoteAddr = "kotest_remote_addr"
+	val allowedPaths = listOf("/a", "/b")
 
 	beforeTest {
 		every { user.idNo } returns idNo
@@ -41,6 +43,7 @@ class LoginServiceTest : FreeSpec({
 		every { loginFailureSession.failCnt } returns 0
 		every { loginFailureSessionService.getSession(remoteAddr) } returns loginFailureSession
 		every { loginFailureSessionService.putSession(eq(remoteAddr), any()) } returns Unit
+		every { authorityService.getAllowedPaths(idNo) } returns allowedPaths
 	}
 
 	"Success" {
