@@ -3,14 +3,14 @@ name: Auth
 on:
   push:
     branches:
-      - auth
+      - 'auth'
 
 jobs:
   deploy:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
-      NAME: auth
+      NGINX_CONF: auth2.conf
       MODULE_NAME: hyunsub-auth
       WORKING_DIR: ~/docker/hyunsub-auth2
 
@@ -60,7 +60,7 @@ jobs:
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
           port: ${{ secrets.PORT }}
-          source: "${{ env.MODULE_NAME }}/etc/${{ env.NAME }}.conf"
+          source: "${{ env.MODULE_NAME }}/etc/${{ env.NGINX_CONF }}"
           target: "/etc/nginx/conf.d"
           strip_components: 2
       - uses: appleboy/ssh-action@master
