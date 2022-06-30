@@ -26,8 +26,15 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - run: ./gradlew test
+      - run: ./gradlew clean test jacocoTestReport
       - uses: EnricoMi/publish-unit-test-result-action@v1
         if: always()
         with:
           files: "*/build/test-results/**/*.xml"
+      - uses: madrapps/jacoco-report@v1.2
+        if: always()
+        with:
+          paths: ${{ github.workspace }}/hyunsub-util/build/reports/jacoco/test/jacocoTestReport.xml,${{ github.workspace }}/hyunsub-auth/build/reports/jacoco/test/jacocoTestReport.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-changed-files: 50
+          update-comment: true
