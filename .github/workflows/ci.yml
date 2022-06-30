@@ -27,3 +27,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - run: ./gradlew test
+      - uses: EnricoMi/publish-unit-test-result-action@v1
+        if: always()
+        with:
+          files: "*/build/test-results/**/*.xml"
