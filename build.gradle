@@ -54,3 +54,7 @@ allprojects {
         useJUnitPlatform()
     }
 }
+
+bootJar {
+    enabled = false
+}
