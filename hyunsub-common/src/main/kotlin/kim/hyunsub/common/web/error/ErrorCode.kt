@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.model
+package kim.hyunsub.common.web.error
 
 import org.springframework.http.HttpStatus
 

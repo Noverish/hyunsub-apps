@@ -1,7 +1,6 @@
-package kim.hyunsub.auth.model
+package kim.hyunsub.common.web.model
 
-@Deprecated("Should replace with UserAuth")
-data class JwtPayload(
+data class UserAuth(
 	/** 사용자 ID NO */
 	val idNo: String,
 

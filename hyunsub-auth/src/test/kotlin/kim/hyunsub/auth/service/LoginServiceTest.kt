@@ -6,10 +6,14 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import kim.hyunsub.auth.config.AppConstants
-import kim.hyunsub.auth.exception.ErrorCodeException
-import kim.hyunsub.auth.model.*
+import kim.hyunsub.auth.model.LoginApiError
+import kim.hyunsub.auth.model.LoginFailureSession
+import kim.hyunsub.auth.model.LoginParams
+import kim.hyunsub.auth.model.LoginResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 
 class LoginServiceTest : FreeSpec({
 	val userRepository = mockk<UserRepository>()

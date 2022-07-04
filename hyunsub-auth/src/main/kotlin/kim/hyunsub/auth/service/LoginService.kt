@@ -1,10 +1,11 @@
 package kim.hyunsub.auth.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.exception.ErrorCodeException
 import kim.hyunsub.auth.model.*
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.stereotype.Service
 
 @Service
