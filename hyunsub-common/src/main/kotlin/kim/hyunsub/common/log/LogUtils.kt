@@ -1,4 +1,4 @@
-package kim.hyunsub.util.log
+package kim.hyunsub.common.log
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory

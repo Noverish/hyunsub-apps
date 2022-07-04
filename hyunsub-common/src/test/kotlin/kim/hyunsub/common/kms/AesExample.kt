@@ -1,4 +1,4 @@
-package kim.hyunsub.util.kms
+package kim.hyunsub.common.kms
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe

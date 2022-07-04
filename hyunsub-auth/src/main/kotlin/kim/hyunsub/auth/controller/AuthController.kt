@@ -8,7 +8,7 @@ import kim.hyunsub.auth.exception.ErrorCodeException
 import kim.hyunsub.auth.model.ErrorCode
 import kim.hyunsub.auth.model.JwtPayload
 import kim.hyunsub.auth.service.JwtService
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader

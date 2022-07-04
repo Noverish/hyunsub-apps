@@ -1,4 +1,4 @@
-package kim.hyunsub.util.kms
+package kim.hyunsub.common.kms
 
 import com.amazonaws.auth.profile.ProfileCredentialsProvider
 import com.amazonaws.regions.Regions

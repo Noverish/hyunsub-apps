@@ -1,4 +1,4 @@
-package kim.hyunsub.util.kms
+package kim.hyunsub.common.kms
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding

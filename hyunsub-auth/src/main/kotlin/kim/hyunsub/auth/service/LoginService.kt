@@ -4,7 +4,7 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import kim.hyunsub.auth.exception.ErrorCodeException
 import kim.hyunsub.auth.model.*
 import kim.hyunsub.auth.repository.UserRepository
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
 import org.springframework.stereotype.Service
 
 @Service

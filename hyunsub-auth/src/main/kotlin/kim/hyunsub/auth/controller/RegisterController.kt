@@ -4,7 +4,7 @@ import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.service.RegisterService
 import kim.hyunsub.auth.service.RsaKeyService
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping

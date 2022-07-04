@@ -1,6 +1,6 @@
-package kim.hyunsub.util.kms
+package kim.hyunsub.common.kms
 
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component

@@ -8,7 +8,7 @@ import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
 import org.springframework.stereotype.Service
 
 @Service

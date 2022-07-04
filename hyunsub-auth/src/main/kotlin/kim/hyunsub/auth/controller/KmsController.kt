@@ -1,9 +1,9 @@
 package kim.hyunsub.auth.controller
 
-import kim.hyunsub.util.kms.KmsEncryptor
-import kim.hyunsub.util.kms.KmsProperties
-import kim.hyunsub.util.log.Log
-import kim.hyunsub.util.web.isLocalhost
+import kim.hyunsub.common.kms.KmsEncryptor
+import kim.hyunsub.common.kms.KmsProperties
+import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.isLocalhost
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam

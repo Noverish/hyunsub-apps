@@ -1,4 +1,4 @@
-package kim.hyunsub.util.web
+package kim.hyunsub.common.web
 
 import javax.servlet.http.HttpServletRequest
 

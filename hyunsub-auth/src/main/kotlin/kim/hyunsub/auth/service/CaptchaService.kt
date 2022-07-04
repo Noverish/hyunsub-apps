@@ -5,14 +5,16 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import kim.hyunsub.auth.config.CaptchaProperties
 import kim.hyunsub.auth.model.captcha.CaptchaVerifyParams
 import kim.hyunsub.auth.model.captcha.CaptchaVerifyResult
-import kim.hyunsub.util.log.Log
-import org.springframework.http.*
+import kim.hyunsub.common.log.Log
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod
+import org.springframework.http.MediaType
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
 import org.springframework.stereotype.Service
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
-
 
 @Service
 class CaptchaService(private val captchaProperties: CaptchaProperties) {

@@ -1,4 +1,4 @@
-package kim.hyunsub.util.kms
+package kim.hyunsub.common.kms
 
 import org.springframework.beans.factory.BeanFactoryUtils
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
