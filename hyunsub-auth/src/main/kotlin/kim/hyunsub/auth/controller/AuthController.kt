@@ -3,13 +3,13 @@ package kim.hyunsub.auth.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
-import kim.hyunsub.auth.config.AppConstants
-import kim.hyunsub.auth.model.JwtPayload
+import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.service.JwtService
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.config.CommonWebConstants
+import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -41,10 +41,10 @@ class AuthController(private val jwtService: JwtService) {
 			val payload = parseJwt(request)
 			log.info("[Auth Success] payload={}, ip={}, url={}", payload, originalIp, decodedUrl)
 			response.status = HttpStatus.OK.value()
-			response.setHeader(CommonWebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
+			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
 		} catch (e: ErrorCodeException) {
 			log.info("[Auth Failed] {}: ip={}, url={}", e.message, originalIp, decodedUrl)
-			val redirectUrl = "https://${AppConstants.AUTH_DOMAIN}/login?url=$originalUrl"
+			val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$originalUrl"
 			response.setHeader("X-Redirect-URL", redirectUrl)
 			response.status = HttpStatus.UNAUTHORIZED.value()
 		}
@@ -68,19 +68,19 @@ class AuthController(private val jwtService: JwtService) {
 		}
 
 		val path = URL(decodedUrl).path
-		val allowed = payload.paths.any { path.startsWith(it) }
+		val allowed = payload.authorityPaths.any { path.startsWith(it) }
 		if (allowed) {
 			log.info("[AuthFile Success] payload={}, ip={}, url={}", payload, originalIp, decodedUrl)
 			response.status = HttpStatus.OK.value()
-			response.setHeader(CommonWebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
+			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
 		} else {
 			log.info("[AuthFile Failed] Forbidden: payload={}, ip={}, url={}", payload, originalIp, decodedUrl)
 			response.status = HttpStatus.FORBIDDEN.value()
 		}
 	}
 
-	private fun parseJwt(request: HttpServletRequest): JwtPayload {
-		val cookie = WebUtils.getCookie(request, AppConstants.JWT_COOKIE_NAME)
+	private fun parseJwt(request: HttpServletRequest): UserAuth {
+		val cookie = WebUtils.getCookie(request, WebConstants.TOKEN_COOKIE_NAME)
 			?: throw ErrorCodeException(ErrorCode.NOT_LOGIN)
 
 		try {

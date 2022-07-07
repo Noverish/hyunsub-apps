@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.config.AppConstants
+import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.repository.UserRepository
@@ -32,7 +32,7 @@ class RegisterService(
 		}
 
 		val idNo = generateIdNo()
-		val hashed = BCrypt.withDefaults().hashToString(AppConstants.BCRYPT_COST, params.password.toCharArray())
+		val hashed = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, params.password.toCharArray())
 		val newUser = User(idNo = idNo, username = params.username, password = hashed)
 		log.debug("newUser: {}", newUser)
 		userRepository.saveAndFlush(newUser)

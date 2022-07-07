@@ -25,7 +25,7 @@ class UserAuthArgumentResolver : HandlerMethodArgumentResolver {
 		binderFactory: WebDataBinderFactory?
 	): Any {
 		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
-		val header = request.getHeader(CommonWebConstants.USER_AUTH_HEADER)
+		val header = request.getHeader(WebConstants.USER_AUTH_HEADER)
 			?: throw ErrorCodeException(ErrorCode.NOT_LOGIN)
 		return mapper.readValue<UserAuth>(header)
 	}

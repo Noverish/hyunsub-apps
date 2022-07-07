@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.controller
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.config.AppConstants
+import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.ModifyUserInfoParams
 import kim.hyunsub.auth.model.ModifyUserInfoResult
 import kim.hyunsub.auth.model.MyPageUserInfo
@@ -36,7 +36,7 @@ class UserController(
 		params.password?.let { password ->
 			val decrypted = rsaKeyService.decrypt(password)
 			log.debug("updateUserInfo: password={}", decrypted)
-			val hashed = BCrypt.withDefaults().hashToString(AppConstants.BCRYPT_COST, decrypted.toCharArray())
+			val hashed = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, decrypted.toCharArray())
 			newUser = newUser.copy(password = hashed)
 		}
 

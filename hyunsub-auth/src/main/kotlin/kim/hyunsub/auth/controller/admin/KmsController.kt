@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.controller
+package kim.hyunsub.auth.controller.admin
 
 import kim.hyunsub.common.kms.KmsEncryptor
 import kim.hyunsub.common.kms.KmsProperties

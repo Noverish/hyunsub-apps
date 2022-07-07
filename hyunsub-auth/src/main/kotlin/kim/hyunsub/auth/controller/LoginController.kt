@@ -1,10 +1,9 @@
 package kim.hyunsub.auth.controller
 
-import kim.hyunsub.auth.config.AppConstants
-import kim.hyunsub.auth.config.JwtProperties
 import kim.hyunsub.auth.model.LoginApiParams
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
+import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.auth.service.LoginService
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.Cookie
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/v1/login")
 class LoginController(
 	private val loginService: LoginService,
-	private val jwtProperties: JwtProperties,
+	private val cookieGenerator: CookieGenerator,
 	private val rsaKeyService: RsaKeyService,
 ) {
 	companion object : Log
@@ -44,11 +42,7 @@ class LoginController(
 
 		val result = loginService.login(decryptedParams)
 
-		val cookie = Cookie(AppConstants.JWT_COOKIE_NAME, result.jwt).apply {
-			domain = AppConstants.JWT_COOKIE_DOMAIN
-			maxAge = jwtProperties.duration.toSeconds().toInt()
-			path = "/"
-		}
+		val cookie = cookieGenerator.generateLoginCookie(result.jwt)
 		response.addCookie(cookie)
 
 		return result
