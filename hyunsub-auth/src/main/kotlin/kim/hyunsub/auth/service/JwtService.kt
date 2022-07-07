@@ -5,13 +5,12 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import kim.hyunsub.auth.config.JwtProperties
-import kim.hyunsub.auth.model.JwtPayload
+import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.stereotype.Service
 import org.springframework.util.Base64Utils
 import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.crypto.Cipher
-import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
@@ -27,7 +26,7 @@ class JwtService(private val jwtProperties: JwtProperties) {
 	private val aesKey = SecretKeySpec(Base64Utils.decodeFromString(jwtProperties.key), "AES")
 	private val iv = IvParameterSpec(Base64Utils.decodeFromString(jwtProperties.iv))
 
-	fun issue(payload: JwtPayload): String {
+	fun issue(payload: UserAuth): String {
 		val expire = Date(System.currentTimeMillis() + jwtProperties.duration.toMillis())
 
 		return Jwts.builder()
@@ -38,7 +37,7 @@ class JwtService(private val jwtProperties: JwtProperties) {
 			.compact()
 	}
 
-	fun verify(jwt: String): JwtPayload {
+	fun verify(jwt: String): UserAuth {
 		return Jwts.parserBuilder()
 			.setSigningKey(jwtKey)
 			.build()
@@ -50,7 +49,7 @@ class JwtService(private val jwtProperties: JwtProperties) {
 
 	// https://www.baeldung.com/java-aes-encryption-decryption
 	// https://howtodoinjava.com/java/java-security/aes-256-encryption-decryption/
-	fun encryptPayload(payload: JwtPayload): String {
+	fun encryptPayload(payload: UserAuth): String {
 		val json = mapper.writeValueAsString(payload)
 
 		return Cipher.getInstance(ALGORITHM)
@@ -59,7 +58,7 @@ class JwtService(private val jwtProperties: JwtProperties) {
 			.run { Base64Utils.encodeToString(this) }
 	}
 
-	fun decryptPayload(encrypted: String): JwtPayload {
+	fun decryptPayload(encrypted: String): UserAuth {
 		val json = Cipher.getInstance(ALGORITHM)
 			.also { it.init(Cipher.DECRYPT_MODE, aesKey, iv) }
 			.run { doFinal(Base64Utils.decodeFromString(encrypted)) }

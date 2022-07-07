@@ -1,0 +1,79 @@
+name: Video
+
+on:
+  push:
+    branches:
+      - video
+
+jobs:
+  deploy:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    env:
+      NGINX_CONF: video2.conf
+      MODULE_NAME: hyunsub-video
+      WORKING_DIR: ~/docker/hyunsub-video2
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: szenius/set-timezone@v1.0
+        with:
+          timezoneLinux: "Asia/Seoul"
+      - uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - run: ./gradlew :${{ env.MODULE_NAME }}:bootJar
+      - run: >
+          rm -f ~/.gradle/caches/modules-2/modules-2.lock;
+          rm -f ~/.gradle/caches/modules-2/gc.properties;
+      - run: echo "JAR_FILE_NAME=$(ls ${{ env.MODULE_NAME }}/build/libs)" >> $GITHUB_ENV
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "${{ env.MODULE_NAME }}/build/libs/${{ env.JAR_FILE_NAME }}"
+          target: ${{ env.WORKING_DIR }}
+          strip_components: 3
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "${{ env.MODULE_NAME }}/etc/run.sh"
+          target: ${{ env.WORKING_DIR }}
+          strip_components: 2
+      - uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          source: "${{ env.MODULE_NAME }}/etc/${{ env.NGINX_CONF }}"
+          target: "/etc/nginx/conf.d"
+          strip_components: 2
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: >
+            sudo nginx -s reload;
+            cd ${{ env.WORKING_DIR }};
+            rm -f ${{ env.MODULE_NAME }}.jar;
+            ln -s ${{ env.JAR_FILE_NAME }} ${{ env.MODULE_NAME }}.jar;
+            ls -1tr *.jar | head -n -6 | xargs -d '\n' rm -f --;
+            chmod +x run.sh;
+            ./run.sh;

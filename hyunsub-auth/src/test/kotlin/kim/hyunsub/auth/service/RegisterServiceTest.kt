@@ -7,11 +7,11 @@ import io.kotest.matchers.shouldNotBe
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
-import kim.hyunsub.auth.exception.ErrorCodeException
-import kim.hyunsub.auth.model.ErrorCode
 import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 
 class RegisterServiceTest: FreeSpec({
 	val userRepository = mockk<UserRepository>()

@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import kim.hyunsub.auth.config.AppConstants
+import kim.hyunsub.auth.config.AuthConstants
 
 data class LoginFailureSession(
 	val remoteAddr: String,
@@ -9,5 +9,5 @@ data class LoginFailureSession(
 ) {
 	@get:JsonIgnore
 	val needCaptcha: Boolean
-		get() = failCnt >= AppConstants.FAIL_NUM_TO_CAPTCHA
+		get() = failCnt >= AuthConstants.FAIL_NUM_TO_CAPTCHA
 }
