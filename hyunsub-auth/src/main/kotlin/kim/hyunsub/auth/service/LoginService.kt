@@ -1,19 +1,19 @@
 package kim.hyunsub.auth.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.exception.ErrorCodeException
 import kim.hyunsub.auth.model.*
 import kim.hyunsub.auth.repository.UserRepository
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.stereotype.Service
 
 @Service
 class LoginService(
 	private val userRepository: UserRepository,
-	private val jwtService: JwtService,
 	private val sessionService: LoginFailureSessionService,
 	private val captchaService: CaptchaService,
-	private val authorityService: AuthorityService,
+	private val tokenGenerator: TokenGenerator,
 ) {
 	companion object : Log
 
@@ -49,10 +49,7 @@ class LoginService(
 			throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
 		}
 
-		val allowedPaths = authorityService.getAllowedPaths(user.idNo)
-
-		val payload = JwtPayload(user.idNo, allowedPaths)
-		val jwt = jwtService.issue(payload)
+		val jwt = tokenGenerator.generateToken(user.idNo)
 		return LoginResult(
 			idNo = user.idNo,
 			jwt = jwt,

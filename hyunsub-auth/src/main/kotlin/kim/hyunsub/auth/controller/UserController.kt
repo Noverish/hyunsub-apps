@@ -1,19 +1,15 @@
 package kim.hyunsub.auth.controller
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.config.AppConstants
+import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.ModifyUserInfoParams
 import kim.hyunsub.auth.model.ModifyUserInfoResult
 import kim.hyunsub.auth.model.MyPageUserInfo
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.service.RsaKeyService
-import kim.hyunsub.util.log.Log
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import kim.hyunsub.common.log.Log
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -40,7 +36,7 @@ class UserController(
 		params.password?.let { password ->
 			val decrypted = rsaKeyService.decrypt(password)
 			log.debug("updateUserInfo: password={}", decrypted)
-			val hashed = BCrypt.withDefaults().hashToString(AppConstants.BCRYPT_COST, decrypted.toCharArray())
+			val hashed = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, decrypted.toCharArray())
 			newUser = newUser.copy(password = hashed)
 		}
 

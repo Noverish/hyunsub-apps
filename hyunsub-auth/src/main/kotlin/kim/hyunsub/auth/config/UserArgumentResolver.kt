@@ -2,11 +2,12 @@ package kim.hyunsub.auth.config
 
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
-import kim.hyunsub.auth.exception.ErrorCodeException
-import kim.hyunsub.auth.model.ErrorCode
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.service.JwtService
+import kim.hyunsub.common.web.config.WebConstants
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.core.MethodParameter
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -30,7 +31,7 @@ class UserArgumentResolver(
 		binderFactory: WebDataBinderFactory?
 	): User {
 		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
-		val cookie = WebUtils.getCookie(request, AppConstants.JWT_COOKIE_NAME)
+		val cookie = WebUtils.getCookie(request, WebConstants.TOKEN_COOKIE_NAME)
 			?: throw ErrorCodeException(ErrorCode.NOT_LOGIN)
 
 		val payload = try {

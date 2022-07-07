@@ -1,4 +1,4 @@
 rootProject.name = 'hyunsub-apps'
 include 'hyunsub-auth'
-include 'hyunsub-util'
-
+include 'hyunsub-common'
+include 'hyunsub-video'

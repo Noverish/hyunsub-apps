@@ -3,7 +3,7 @@ package kim.hyunsub.auth.service
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import kim.hyunsub.auth.config.JwtProperties
-import kim.hyunsub.auth.model.JwtPayload
+import kim.hyunsub.common.web.model.UserAuth
 import java.time.Duration
 
 class JwtServiceTest : FreeSpec({
@@ -17,7 +17,7 @@ class JwtServiceTest : FreeSpec({
 	val service = JwtService(jwtProperties)
 
 	"encryptPayload, decryptPayload" {
-		val payload = JwtPayload(idNo)
+		val payload = UserAuth(idNo)
 
 		val encrypted = service.encryptPayload(payload)
 		println("encrypted: $encrypted")
@@ -27,7 +27,7 @@ class JwtServiceTest : FreeSpec({
 	}
 
 	"issue, verify" {
-		val payload = JwtPayload(idNo)
+		val payload = UserAuth(idNo)
 
 		val jwt = service.issue(payload)
 		println("jwt: $jwt")

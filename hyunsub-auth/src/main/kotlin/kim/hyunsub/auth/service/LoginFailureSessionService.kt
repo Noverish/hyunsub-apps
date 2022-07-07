@@ -2,8 +2,8 @@ package kim.hyunsub.auth.service
 
 import kim.hyunsub.auth.config.SessionTimeProperties
 import kim.hyunsub.auth.model.LoginFailureSession
-import kim.hyunsub.util.log.Log
-import kim.hyunsub.util.random.generateRandomString
+import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.random.generateRandomString
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
 import org.springframework.stereotype.Service

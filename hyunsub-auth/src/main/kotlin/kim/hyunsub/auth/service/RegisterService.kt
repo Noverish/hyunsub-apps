@@ -1,14 +1,14 @@
 package kim.hyunsub.auth.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.config.AppConstants
-import kim.hyunsub.auth.exception.ErrorCodeException
-import kim.hyunsub.auth.model.ErrorCode
+import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
-import kim.hyunsub.util.log.Log
+import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.stereotype.Service
 
 @Service
@@ -32,7 +32,7 @@ class RegisterService(
 		}
 
 		val idNo = generateIdNo()
-		val hashed = BCrypt.withDefaults().hashToString(AppConstants.BCRYPT_COST, params.password.toCharArray())
+		val hashed = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, params.password.toCharArray())
 		val newUser = User(idNo = idNo, username = params.username, password = hashed)
 		log.debug("newUser: {}", newUser)
 		userRepository.saveAndFlush(newUser)
