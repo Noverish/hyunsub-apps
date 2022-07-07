@@ -27,10 +27,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - run: ./gradlew clean test jacocoTestReport
-      - uses: EnricoMi/publish-unit-test-result-action@v1
+      - uses: dorny/test-reporter@v1
         if: always()
         with:
-          files: "*/build/test-results/**/*.xml"
+          name: Test Results
+          reporter: java-junit
+          path: "*/build/test-results/test/TEST-*.xml"
       - uses: madrapps/jacoco-report@v1.2
         if: always()
         with:
