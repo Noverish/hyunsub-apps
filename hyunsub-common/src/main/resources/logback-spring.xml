@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}/}spring.log}"/>
+
+    <springProperty name="logging.file.path" source="logging.file.path"/>
+    <springProperty name="logging.level.kim.hyunsub" source="logging.level.kim.hyunsub"/>
+    <springProperty name="logging.log.appender" source="logging.log.appender"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <file>${logging.file.path}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${logging.file.path}.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>365</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <logger name="kim.hyunsub" level="${logging.level.kim.hyunsub}" additivity="false">
+        <appender-ref ref="${logging.log.appender}"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="${logging.log.appender}"/>
+    </root>
+</configuration>

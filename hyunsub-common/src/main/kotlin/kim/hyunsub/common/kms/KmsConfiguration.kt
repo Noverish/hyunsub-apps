@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils
 import javax.sql.DataSource
 
 @Configuration
-@ConditionalOnProperty(prefix = "api", name = ["profile", "key-id"])
+@ConditionalOnProperty(prefix = "kms", name = ["profile", "key-id"])
 @EnableConfigurationProperties(KmsProperties::class)
 class KmsConfiguration {
 	@Bean
