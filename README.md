@@ -17,8 +17,8 @@
   - [JaCoCo](https://www.jacoco.org/jacoco) - Check Code Coverage
 - [AWS KMS](https://aws.amazon.com/kms) - Encrypt Sensitive Information
 - Github Actions
-  - Deploy
-  - CI
+  - [Deploy](https://github.com/Noverish/hyunsub-apps/blob/master/.github/workflows/auth.yml)
+  - [CI](https://github.com/Noverish/hyunsub-apps/blob/master/.github/workflows/ci.yml)
 - Nginx
   - https
 

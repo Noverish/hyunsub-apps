@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/v1/auth")
 class AuthController(private val jwtService: JwtService) {
 	companion object : Log
+
 	private val mapper = jacksonObjectMapper()
 
 	@GetMapping("")
@@ -35,7 +36,11 @@ class AuthController(private val jwtService: JwtService) {
 		@RequestHeader("X-Original-URL") originalUrl: String,
 		@RequestHeader("X-Original-IP") originalIp: String,
 	) {
-		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString()) // 로깅용
+		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString())
+		val isValidUrl = URL(decodedUrl).host.endsWith(".hyunsub.kim")
+		if (!isValidUrl) {
+			throw ErrorCodeException(ErrorCode.INVALID_URL, mapOf("url" to decodedUrl))
+		}
 
 		try {
 			val payload = parseJwt(request)
@@ -44,9 +49,16 @@ class AuthController(private val jwtService: JwtService) {
 			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
 		} catch (e: ErrorCodeException) {
 			log.info("[Auth Failed] {}: ip={}, url={}", e.message, originalIp, decodedUrl)
-			val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$originalUrl"
-			response.setHeader("X-Redirect-URL", redirectUrl)
-			response.status = HttpStatus.UNAUTHORIZED.value()
+			val isFromApi = URL(decodedUrl).path.startsWith("/api")
+			if (isFromApi) {
+				val res = mapOf("code" to e.errorCode.code, "msg" to e.errorCode.msg)
+				response.setHeader("X-Auth-Failed", mapper.writeValueAsString(res))
+				response.status = e.errorCode.status.value()
+			} else {
+				val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$originalUrl"
+				response.setHeader("X-Redirect-URL", redirectUrl)
+				response.status = HttpStatus.I_AM_A_TEAPOT.value()
+			}
 		}
 	}
 
@@ -60,7 +72,7 @@ class AuthController(private val jwtService: JwtService) {
 		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString()) // 로깅용
 
 		val payload = try {
-			 parseJwt(request)
+			parseJwt(request)
 		} catch (e: ErrorCodeException) {
 			log.info("[AuthFile Failed] {}: ip={}, url={}", e.message, originalIp, decodedUrl)
 			response.status = HttpStatus.UNAUTHORIZED.value()
