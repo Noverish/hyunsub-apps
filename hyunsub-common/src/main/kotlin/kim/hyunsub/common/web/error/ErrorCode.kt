@@ -16,6 +16,7 @@ enum class ErrorCode(
 	INVALID_JWT(2002, "Invalid login information", HttpStatus.UNAUTHORIZED),
 	EXPIRED_JWT(2003, "Expired login information", HttpStatus.UNAUTHORIZED),
 	NO_SUCH_USER(2004, "No such user", HttpStatus.UNAUTHORIZED),
+	INVALID_URL(2005, "Invalid URL", HttpStatus.UNAUTHORIZED),
 	CAPTCHA_REQUIRED(2011, "Captcha Required"),
 	CAPTCHA_FAILURE(2012, "Captcha Failure"),
 }
