@@ -14,4 +14,9 @@ class ApiConfiguration {
 	fun apiClient(apiProperties: ApiProperties): ApiClient {
 		return ApiClient(RestTemplate(), apiProperties)
 	}
+
+	@Bean
+	fun apiCaller(apiClient: ApiClient): ApiCaller {
+		return ApiCaller(apiClient)
+	}
 }
