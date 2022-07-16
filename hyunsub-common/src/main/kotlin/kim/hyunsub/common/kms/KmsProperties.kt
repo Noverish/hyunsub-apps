@@ -1,12 +1,8 @@
 package kim.hyunsub.common.kms
 
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
-
-@ConstructorBinding
-@ConfigurationProperties("kms")
+// TODO make properties to `val`
 data class KmsProperties(
-	val profile: String,
-	val keyId: String,
-	val properties: Map<String, String> = mutableMapOf(),
+	var profile: String = "",
+	var keyId: String = "",
+	var properties: Map<String, String> = mutableMapOf(),
 )
