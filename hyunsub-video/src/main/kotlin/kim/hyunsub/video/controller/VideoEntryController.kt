@@ -29,6 +29,7 @@ class VideoEntryController(
 	fun list(
 		userAuth: UserAuth,
 		@RequestParam category: String,
+		@RequestParam seed: Int?,
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
 		@RequestParam(required = false, defaultValue = "random") sort: VideoSort,
@@ -38,8 +39,10 @@ class VideoEntryController(
 			return emptyList()
 		}
 
+		val randomSeed = seed ?: System.currentTimeMillis().toInt()
+
 		val sorted = when(sort) {
-			VideoSort.random -> videoEntryRepository.findByCategoryOrderByRand(category, PageRequest.of(p, ps))
+			VideoSort.random -> videoEntryRepository.findByCategoryOrderByRand(category, randomSeed, PageRequest.of(p, ps))
 			VideoSort.abc -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
 			VideoSort.zyx -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
 			VideoSort.old -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "regDt"))

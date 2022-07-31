@@ -9,8 +9,8 @@ import org.springframework.data.jpa.repository.Query
 interface VideoEntryRepository: JpaRepository<VideoEntry, String> {
 	fun findByCategory(category: String, page: Pageable = Pageable.unpaged()): List<VideoEntry>
 
-	@Query("SELECT v FROM VideoEntry v WHERE v.category = :category ORDER BY function('RAND')")
-	fun findByCategoryOrderByRand(category: String, page: Pageable = Pageable.unpaged()): List<VideoEntry>
+	@Query(value = "SELECT * FROM video_entry WHERE category = :category ORDER BY RAND(:seed)", nativeQuery = true)
+	fun findByCategoryOrderByRand(category: String, seed: Int, page: Pageable = Pageable.unpaged()): List<VideoEntry>
 
 	@Modifying
 	@Query("DELETE FROM VideoEntry v WHERE v.category = :category")
