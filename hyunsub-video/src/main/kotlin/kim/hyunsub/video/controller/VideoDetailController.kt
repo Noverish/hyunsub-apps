@@ -7,6 +7,7 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.RestVideoDetail
 import kim.hyunsub.video.repository.VideoEntryRepository
+import kim.hyunsub.video.repository.VideoMetadataRepository
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.service.RestModelConverter
@@ -22,9 +23,10 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/entry/{entryId}")
 class VideoDetailController(
 	private val videoEntryRepository: VideoEntryRepository,
-	private val videoCategoryService: VideoCategoryService,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
 	private val videoRepository: VideoRepository,
+	private val videoMetadataRepository: VideoMetadataRepository,
+	private val videoCategoryService: VideoCategoryService,
 	private val restModelConverter: RestModelConverter,
 ) {
 	companion object : Log
@@ -47,6 +49,8 @@ class VideoDetailController(
 
 		val subtitles = videoSubtitleRepository.findByVideoIdIn(listOf(video.id))
 
-		return restModelConverter.convertVideoDetail(entry, video, subtitles)
+		val metadata = videoMetadataRepository.findByIdOrNull(video.path)
+
+		return restModelConverter.convertVideoDetail(entry, video, subtitles, metadata)
 	}
 }

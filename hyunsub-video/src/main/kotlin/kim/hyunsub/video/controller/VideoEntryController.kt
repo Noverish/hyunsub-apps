@@ -4,10 +4,12 @@ import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.RestVideoEntry
+import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.service.RestModelConverter
 import kim.hyunsub.video.service.VideoCategoryService
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -27,16 +29,23 @@ class VideoEntryController(
 	fun list(
 		userAuth: UserAuth,
 		@RequestParam category: String,
-		@RequestParam p: Int = 0,
-		@RequestParam(required = false) ps: Int = 48,
+		@RequestParam(required = false, defaultValue = "0") p: Int,
+		@RequestParam(required = false, defaultValue = "48") ps: Int,
+		@RequestParam(required = false, defaultValue = "random") sort: VideoSort,
 	): List<RestVideoEntry> {
 		val availableCategories = videoCategoryService.getAvailableCategories(userAuth.authorityNames)
 		if (availableCategories.none { it.name == category }) {
 			return emptyList()
 		}
 
-		val pageable = PageRequest.of(p, ps)
-		return videoEntryRepository.findByCategory(category, pageable)
-			.map { restModelConverter.convertVideoEntry(it) }
+		val sorted = when(sort) {
+			VideoSort.random -> videoEntryRepository.findByCategoryOrderByRand(category, PageRequest.of(p, ps))
+			VideoSort.abc -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
+			VideoSort.zyx -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
+			VideoSort.old -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
+			VideoSort.new -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
+		}
+
+		return sorted.map { restModelConverter.convertVideoEntry(it) }
 	}
 }

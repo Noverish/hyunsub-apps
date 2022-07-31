@@ -3,9 +3,11 @@ package kim.hyunsub.video.service
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.video.model.RestVideoDetail
 import kim.hyunsub.video.model.RestVideoEntry
+import kim.hyunsub.video.model.RestVideoMetadata
 import kim.hyunsub.video.model.RestVideoSubtitle
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
+import kim.hyunsub.video.repository.entity.VideoMetadata
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 import org.springframework.stereotype.Service
 import kotlin.io.path.Path
@@ -30,7 +32,7 @@ class RestModelConverter(
 		)
 	}
 
-	fun convertVideoDetail(entry: VideoEntry, video: Video, subtitles: List<VideoSubtitle>): RestVideoDetail {
+	fun convertVideoDetail(entry: VideoEntry, video: Video, subtitles: List<VideoSubtitle>, metadata: VideoMetadata?): RestVideoDetail {
 		val thumbnail = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
 			?: "/img/placeholder.jpg"
 
@@ -38,7 +40,8 @@ class RestModelConverter(
 			videoUrl = fileUrlConverter.pathToUrl(video.path),
 			thumbnailUrl = thumbnail,
 			title = Path(video.path).nameWithoutExtension,
-			subtitles = subtitles.map { convertVideoSubtitle(video, it) }
+			subtitles = subtitles.map { convertVideoSubtitle(video, it) },
+			metadata = metadata?.let { convertVideoMetadata(it) },
 		)
 	}
 
@@ -64,6 +67,44 @@ class RestModelConverter(
 			url = url,
 			label = label,
 			srclang = srclang,
+		)
+	}
+
+	fun convertVideoMetadata(metadata: VideoMetadata): RestVideoMetadata {
+		val duration = metadata.duration
+		val sec = duration % 60
+		val min = (duration / 60) % 60
+		val hour = duration / 3600
+		val durationStr = if (hour > 0) "${hour}시간 ${min}분" else "${min}분 ${sec}초"
+
+		val size = metadata.size
+		val mb = 1000 * 1000
+		val gb = 1000 * 1000 * 1000
+		val sizeStr = if (size > gb) {
+			val tmp = String.format("%.2f", size.toDouble() / gb.toDouble())
+			"$tmp GB"
+		} else {
+			val tmp = String.format("%.2f", size.toDouble() / mb.toDouble())
+			"$tmp MB"
+		}
+
+		val resolution = "${metadata.width} x ${metadata.height}"
+
+		val bitrate = metadata.bitrate
+		val kb = 1000
+		val bitrateStr = if (bitrate > mb) {
+			val tmp = String.format("%.2f", bitrate.toDouble() / mb.toDouble())
+			"$tmp mbp/s"
+		} else {
+			val tmp = String.format("%.2f", bitrate.toDouble() / kb.toDouble())
+			"$tmp kbp/s"
+		}
+
+		return RestVideoMetadata(
+			duration = durationStr,
+			size = sizeStr,
+			resolution = resolution,
+			bitrate = bitrateStr,
 		)
 	}
 }

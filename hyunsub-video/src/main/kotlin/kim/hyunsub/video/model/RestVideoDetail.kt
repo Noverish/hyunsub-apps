@@ -5,4 +5,5 @@ data class RestVideoDetail(
 	val thumbnailUrl: String,
 	val title: String,
 	val subtitles: List<RestVideoSubtitle>,
+	val metadata: RestVideoMetadata?,
 )
