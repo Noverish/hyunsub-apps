@@ -19,4 +19,9 @@ class ApiConfiguration {
 	fun apiCaller(apiClient: ApiClient): ApiCaller {
 		return ApiCaller(apiClient)
 	}
+
+	@Bean
+	fun fileUrlConverter(apiProperties: ApiProperties): FileUrlConverter {
+		return FileUrlConverter(apiProperties)
+	}
 }
