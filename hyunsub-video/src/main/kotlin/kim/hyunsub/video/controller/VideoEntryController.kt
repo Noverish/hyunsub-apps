@@ -28,13 +28,14 @@ class VideoEntryController(
 		userAuth: UserAuth,
 		@RequestParam category: String,
 		@RequestParam p: Int = 0,
+		@RequestParam(required = false) ps: Int = 48,
 	): List<RestVideoEntry> {
 		val availableCategories = videoCategoryService.getAvailableCategories(userAuth.authorityNames)
 		if (availableCategories.none { it.name == category }) {
 			return emptyList()
 		}
 
-		val pageable = PageRequest.of(p, 50)
+		val pageable = PageRequest.of(p, ps)
 		return videoEntryRepository.findByCategory(category, pageable)
 			.map { restModelConverter.convertVideoEntry(it) }
 	}
