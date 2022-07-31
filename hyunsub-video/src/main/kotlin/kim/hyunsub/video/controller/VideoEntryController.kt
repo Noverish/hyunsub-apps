@@ -42,8 +42,8 @@ class VideoEntryController(
 			VideoSort.random -> videoEntryRepository.findByCategoryOrderByRand(category, PageRequest.of(p, ps))
 			VideoSort.abc -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
 			VideoSort.zyx -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
-			VideoSort.old -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
-			VideoSort.new -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
+			VideoSort.old -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "regDt"))
+			VideoSort.new -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "regDt"))
 		}
 
 		return sorted.map { restModelConverter.convertVideoEntry(it) }

@@ -66,6 +66,7 @@ class VideoType1Scanner(
 			thumbnail = thumbnailPath,
 			category = category,
 			videoGroupId = group?.id,
+			regDt = videoDate,
 		)
 		videoEntries.add(videoEntry)
 

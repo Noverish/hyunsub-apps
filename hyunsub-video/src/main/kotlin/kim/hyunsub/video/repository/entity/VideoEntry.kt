@@ -1,5 +1,6 @@
 package kim.hyunsub.video.repository.entity
 
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -20,6 +21,9 @@ data class VideoEntry(
 
 	@Column(nullable = false)
 	val category: String,
+
+	@Column(nullable = false)
+	val regDt: LocalDateTime,
 
 	@Column(columnDefinition = "CHAR(6)")
 	val videoGroupId: String? = null,
