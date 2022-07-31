@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @Authorized(authorities = ["service_video"])
 @RestController
-@RequestMapping("/api/v1/detail")
+@RequestMapping("/api/v1/entry/{entryId}")
 class VideoDetailController(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoCategoryService: VideoCategoryService,
@@ -29,7 +29,7 @@ class VideoDetailController(
 ) {
 	companion object : Log
 
-	@GetMapping("/{entryId}")
+	@GetMapping("/detail")
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable entryId: String,
