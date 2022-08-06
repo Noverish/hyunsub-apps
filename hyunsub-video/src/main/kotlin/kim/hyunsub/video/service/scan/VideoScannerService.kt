@@ -33,11 +33,16 @@ class VideoScannerService(
 
 		val scanner: VideoScanner = when (params.type) {
 			1 -> VideoType1Scanner(randomGenerator, params.category, files)
+			2 -> VideoType2Scanner(randomGenerator, params.category, files)
 			else -> throw IllegalArgumentException("No such VideoScanner type: ${params.type}")
 		}
 
 		val result = scanner.scan(params.path)
-		log.debug("Video Scan Result: {}", result)
+
+		result.videoGroups.forEach { log.debug("Video Scan Result: {}", it) }
+		result.videoEntries.forEach { log.debug("Video Scan Result: {}", it) }
+		result.videos.forEach { log.debug("Video Scan Result: {}", it) }
+		result.subtitles.forEach { log.debug("Video Scan Result: {}", it) }
 
 		deleteData(params.category)
 		insertData(result)
