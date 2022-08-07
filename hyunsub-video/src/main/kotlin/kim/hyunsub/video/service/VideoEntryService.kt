@@ -42,7 +42,7 @@ class VideoEntryService(
 		val group = entry.videoGroupId?.let { videoGroupService.loadVideoGroup(it) }
 
 		val episodes =
-			if (videos.isNotEmpty()) {
+			if (videos.size > 1) {
 				videos.groupBy { it.videoSeason ?: "" }
 					.mapValues { (_, v) -> v.map { restModelConverter.convertToEpisode(it) }.sortedBy { it.title } }
 			} else {
@@ -64,10 +64,10 @@ class VideoEntryService(
 
 		val season = videos.mapNotNull { it.videoSeason }.distinct().minOrNull()
 		return if (season == null) {
-			videos.minBy { it.regDt }
+			videos.minBy { it.path }
 		} else {
 			val episodes = videos.filter { it.videoSeason == season }
-			episodes.minBy { it.regDt }
+			episodes.minBy { it.path }
 		}
 	}
 }
