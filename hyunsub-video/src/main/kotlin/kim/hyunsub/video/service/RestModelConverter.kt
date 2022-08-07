@@ -1,17 +1,13 @@
 package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.video.model.RestVideoDetail
-import kim.hyunsub.video.model.RestVideoEntry
-import kim.hyunsub.video.model.RestVideoMetadata
-import kim.hyunsub.video.model.RestVideoSubtitle
+import kim.hyunsub.video.model.*
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
 import kim.hyunsub.video.repository.entity.VideoMetadata
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 import org.springframework.stereotype.Service
 import kotlin.io.path.Path
-import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
 @Service
@@ -32,16 +28,28 @@ class RestModelConverter(
 		)
 	}
 
-	fun convertVideoDetail(entry: VideoEntry, video: Video, subtitles: List<VideoSubtitle>, metadata: VideoMetadata?): RestVideoDetail {
-		val thumbnail = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
+	fun convertVideo(video: Video, subtitles: List<VideoSubtitle>, metadata: VideoMetadata?): RestVideo {
+		val thumbnailUrl = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
 			?: "/img/placeholder.jpg"
 
-		return RestVideoDetail(
+		return RestVideo(
+			videoId = video.id,
 			videoUrl = fileUrlConverter.pathToUrl(video.path),
-			thumbnailUrl = thumbnail,
+			thumbnailUrl = thumbnailUrl,
 			title = Path(video.path).nameWithoutExtension,
 			subtitles = subtitles.map { convertVideoSubtitle(video, it) },
 			metadata = metadata?.let { convertVideoMetadata(it) },
+		)
+	}
+
+	fun convertToEpisode(video: Video): RestVideoEpisode {
+		val thumbnailUrl = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
+			?: "/img/placeholder.jpg"
+
+		return RestVideoEpisode(
+			videoId = video.id,
+			thumbnailUrl = thumbnailUrl,
+			title = Path(video.path).nameWithoutExtension,
 		)
 	}
 

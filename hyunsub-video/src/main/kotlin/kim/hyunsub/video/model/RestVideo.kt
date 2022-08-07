@@ -1,6 +1,7 @@
 package kim.hyunsub.video.model
 
-data class RestVideoDetail(
+data class RestVideo (
+	val videoId: String,
 	val videoUrl: String,
 	val thumbnailUrl: String,
 	val title: String,

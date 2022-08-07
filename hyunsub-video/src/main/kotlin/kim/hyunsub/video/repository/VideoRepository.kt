@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query
 
 interface VideoRepository: JpaRepository<Video, String> {
 	fun findByVideoEntryIdIn(videoEntryIds: List<String>): List<Video>
+	fun findByVideoEntryId(videoEntryId: String): List<Video>
 
 	@Modifying
 	@Query("DELETE FROM Video v WHERE v.videoEntryId IN (:videoEntryIds)")

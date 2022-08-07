@@ -15,8 +15,8 @@ class VideoCategoryController(
 	private val videoCategoryService: VideoCategoryService,
 ) {
 	@GetMapping("")
-	fun categoryList(userAuth: UserAuth): List<RestVideoCategory> {
-		return videoCategoryService.getAvailableCategories(userAuth.authorityNames)
+	fun categoryList(user: UserAuth): List<RestVideoCategory> {
+		return videoCategoryService.getAvailableCategories(user)
 			.map { RestVideoCategory(it) }
 	}
 }
