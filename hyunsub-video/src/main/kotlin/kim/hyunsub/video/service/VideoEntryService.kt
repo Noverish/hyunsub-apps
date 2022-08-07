@@ -44,7 +44,7 @@ class VideoEntryService(
 		val episodes =
 			if (videos.isNotEmpty()) {
 				videos.groupBy { it.videoSeason ?: "" }
-					.mapValues { (_, v) -> v.map { restModelConverter.convertToEpisode(it) } }
+					.mapValues { (_, v) -> v.map { restModelConverter.convertToEpisode(it) }.sortedBy { it.title } }
 			} else {
 				null
 			}
