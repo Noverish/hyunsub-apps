@@ -16,6 +16,7 @@ class VideoGroupService(
 		val videoGroup = videoGroupRepository.findByIdOrNull(videoGroupId) ?: return null
 		val entries = videoEntryRepository.findByVideoGroupId(videoGroupId)
 			.map { restModelConverter.convertVideoEntry(it) }
+			.sortedBy { it.name }
 		return RestVideoGroup(
 			name = videoGroup.name,
 			entries = entries,
