@@ -17,6 +17,7 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
+import java.lang.reflect.Method
 
 /**
  * Check authority to access API
@@ -58,17 +59,30 @@ class AuthorityCheckAspect {
 			throw ErrorCodeException(ErrorCode.INVALID_USER_AUTH)
 		}
 
-		val annotation: Authorized? = method.getAnnotation(Authorized::class.java)
-			?: joinPoint.target.javaClass.getAnnotation(Authorized::class.java)
-		if (annotation != null) {
-			val hasAllAuthorities = userAuth.authorityNames.containsAll(annotation.authorities.toList())
-			if (!hasAllAuthorities) {
-				log.warn("[Check Authority] No Authority: method={}, userAuth={}, originalIP={}, originalUrl={}", method, userAuth, originalIP, originalUrl)
-				throw ErrorCodeException(ErrorCode.NO_AUTHORITY)
+		try {
+			// Check method authority
+			method.getAnnotation(Authorized::class.java)?.let {
+				checkAuthorityWithAnnotation(userAuth, it)
 			}
+
+			// Check class authority
+			joinPoint.target.javaClass.getAnnotation(Authorized::class.java).let {
+				checkAuthorityWithAnnotation(userAuth, it)
+			}
+
+			log.debug("[Check Authority] Success: method={}, userAuth={}", method, userAuth)
+		} catch (e: ErrorCodeException) {
+			log.warn("[Check Authority] No Authority: method={}, userAuth={}, originalIP={}, originalUrl={}", method, userAuth, originalIP, originalUrl)
+			throw e
 		}
 
-		log.debug("[Check Authority] Success: method={}, userAuth={}, annotation={}", method, userAuth, annotation)
 		return joinPoint.proceed()
+	}
+
+	private fun checkAuthorityWithAnnotation(userAuth: UserAuth, annotation: Authorized) {
+		val hasAllAuthorities = userAuth.authorityNames.containsAll(annotation.authorities.toList())
+		if (!hasAllAuthorities) {
+			throw ErrorCodeException(ErrorCode.NO_AUTHORITY)
+		}
 	}
 }

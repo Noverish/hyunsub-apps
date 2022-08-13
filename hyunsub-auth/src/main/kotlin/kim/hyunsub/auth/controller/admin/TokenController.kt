@@ -1,16 +1,17 @@
 package kim.hyunsub.auth.controller.admin
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import kim.hyunsub.auth.model.token.TokenIssueApiParams
+import kim.hyunsub.auth.model.token.TokenVerifyApiParams
 import kim.hyunsub.auth.service.JwtService
 import kim.hyunsub.auth.service.TokenGenerator
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.isLocalhost
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import kim.hyunsub.common.web.annotation.Authorized
+import kim.hyunsub.common.web.originalIp
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletRequest
 
+@Authorized(["admin"])
 @RestController
 @RequestMapping("/api/v1/admin/token")
 class TokenController(
@@ -21,22 +22,16 @@ class TokenController(
 	private val mapper = jacksonObjectMapper()
 
 	@PostMapping("/issue")
-	fun encrypt(request: HttpServletRequest, @RequestParam idNo: String): String {
-		log.info("JWT Issue: {} - {}", request.remoteAddr, idNo)
-		return if (request.isLocalhost()) {
-			return tokenGenerator.generateToken(idNo)
-		} else {
-			request.remoteAddr
-		}
+	fun encrypt(request: HttpServletRequest, @RequestBody params: TokenIssueApiParams): String {
+		val idNo = params.idNo
+		log.info("JWT Issue: {} - {}", request.originalIp, idNo)
+		return tokenGenerator.generateToken(idNo)
 	}
 
 	@PostMapping("/verify")
-	fun decrypt(request: HttpServletRequest, @RequestParam token: String): String {
-		log.info("JWT Verify: {} - {}", request.remoteAddr, token)
-		return if (request.isLocalhost()) {
-			mapper.writeValueAsString(jwtService.verify(token))
-		} else {
-			request.remoteAddr
-		}
+	fun decrypt(request: HttpServletRequest, @RequestBody params: TokenVerifyApiParams): String {
+		val token = params.token
+		log.info("JWT Verify: {} - {}", request.originalIp, token)
+		return mapper.writeValueAsString(jwtService.verify(token))
 	}
 }

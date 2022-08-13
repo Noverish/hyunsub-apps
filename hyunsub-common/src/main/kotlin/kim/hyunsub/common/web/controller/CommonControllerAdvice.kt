@@ -5,6 +5,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
@@ -19,7 +20,12 @@ class CommonControllerAdvice {
 
 	@ExceptionHandler(MethodArgumentTypeMismatchException::class)
 	fun exception(ex: MethodArgumentTypeMismatchException): ResponseEntity<Map<String, Any?>> =
-		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.METHOD_ARGUMENT_TYPE_MISMATCH.code, ex.message)
+		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER.code, ex.message)
+
+	// 필수적인 Request Param이 없는 경우
+	@ExceptionHandler(MissingServletRequestParameterException::class)
+	fun missingServletRequestParameterException(ex: MissingServletRequestParameterException): ResponseEntity<Map<String, Any?>> =
+		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER.code, ex.message)
 
 	@ExceptionHandler(Exception::class)
 	fun exception(ex: Exception): ResponseEntity<Map<String, Any?>> {
