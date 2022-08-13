@@ -6,14 +6,14 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.RestVideo
+import kim.hyunsub.video.model.VideoRegisterParams
+import kim.hyunsub.video.model.VideoRegisterResult
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.service.VideoEntryService
 import kim.hyunsub.video.service.VideoService
+import kim.hyunsub.video.service.scan.VideoScannerService
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @Authorized(authorities = ["service_video"])
 @RestController
@@ -22,6 +22,7 @@ class VideoController(
 	private val videoRepository: VideoRepository,
 	private val videoEntryService: VideoEntryService,
 	private val videoService: VideoService,
+	private val videoScannerService: VideoScannerService,
 ) {
 	companion object : Log
 
@@ -38,5 +39,14 @@ class VideoController(
 		}
 
 		return videoService.loadVideo(video)
+	}
+
+	@Authorized(authorities = ["admin"])
+	@PostMapping("")
+	fun register(
+		user: UserAuth,
+		@RequestBody params: VideoRegisterParams,
+	): VideoRegisterResult {
+		return videoScannerService.scanSingleVideo(params)
 	}
 }

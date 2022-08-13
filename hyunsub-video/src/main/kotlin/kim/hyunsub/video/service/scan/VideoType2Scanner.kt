@@ -71,7 +71,7 @@ class VideoType2Scanner(
 		val filePaths = searcher.readdir2(path)
 		val videoPaths = filePaths.filter { it.endsWith(".mp4") }
 
-		for(videoPath in videoPaths) {
+		for (videoPath in videoPaths) {
 			val videoDate = searcher.stat(videoPath)?.mDate ?: continue
 			val videoName = Path(videoPath).nameWithoutExtension
 			val thumbnailPath = filePaths.firstOrNull { Path(it).name == "$videoName.jpg" }

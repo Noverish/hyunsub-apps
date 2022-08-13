@@ -9,4 +9,7 @@ class ApiCaller(
 ) {
 	fun walk2(path: String): List<FileStat> =
 		apiClient.get("/api/walk2", mapOf("path" to path))
+
+	fun readdirDetail(path: String): List<FileStat> =
+		apiClient.get("/api/fs/readdir/detail", mapOf("path" to path))
 }

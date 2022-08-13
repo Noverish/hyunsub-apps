@@ -3,17 +3,24 @@ package kim.hyunsub.video.service.scan
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.common.web.annotation.Authorized
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.RestScanParams
 import kim.hyunsub.video.model.ScanResult
+import kim.hyunsub.video.model.VideoRegisterParams
+import kim.hyunsub.video.model.VideoRegisterResult
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoGroupRepository
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
-import kim.hyunsub.video.service.scan.VideoScanner
-import kim.hyunsub.video.service.scan.VideoType1Scanner
+import kim.hyunsub.video.repository.entity.Video
+import kim.hyunsub.video.repository.entity.VideoSubtitle
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
+import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 
 @Service
 class VideoScannerService(
@@ -74,5 +81,55 @@ class VideoScannerService(
 		videoEntryRepository.saveAll(result.videoEntries)
 		videoRepository.saveAll(result.videos)
 		videoSubtitleRepository.saveAll(result.subtitles)
+	}
+
+	fun scanSingleVideo(params: VideoRegisterParams): VideoRegisterResult {
+		log.debug("scanSingleVideo: params={}", params)
+
+		val videoEntry = videoEntryRepository.findByIdOrNull(params.videoEntryId)
+			?: throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+		log.debug("scanSingleVideo: videoEntry={}", videoEntry)
+
+		val videoPath = params.videoPath
+		val folderPath = Path(videoPath).parent.toString()
+		val files = apiCaller.readdirDetail(folderPath)
+
+		val videoFileStat = files.firstOrNull { it.path == videoPath }
+			?: throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+		val videoDate = videoFileStat.mDate
+		val videoName = Path(videoPath).nameWithoutExtension
+		val thumbnailPath = files.firstOrNull { Path(it.path).name == "$videoName.jpg" }?.path
+
+		val video = Video(
+			id = randomGenerator.generateRandomString(6),
+			path = videoPath,
+			thumbnail = thumbnailPath,
+			regDt = videoDate,
+			videoEntryId = videoEntry.id,
+			videoSeason = null,
+		)
+
+		val subtitles = files
+			.filter { Path(it.path).name.startsWith(videoName) }
+			.filter { it.path.endsWith(".srt") || it.path.endsWith(".smi") }
+			.map {
+				VideoSubtitle(
+					id = randomGenerator.generateRandomString(6),
+					path = it.path,
+					videoId = video.id,
+				)
+			}
+
+		log.debug("scanSingleVideo: video={}", video)
+		videoRepository.save(video)
+		subtitles.forEach {
+			log.debug("scanSingleVideo: subtitle={}", it)
+			videoSubtitleRepository.save(it)
+		}
+
+		return VideoRegisterResult(
+			video = video,
+			subtitles = subtitles,
+		)
 	}
 }
