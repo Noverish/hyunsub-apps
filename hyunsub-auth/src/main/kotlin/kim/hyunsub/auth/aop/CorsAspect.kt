@@ -8,7 +8,6 @@ import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import java.net.URL
 
 @Aspect
 @Component
@@ -21,22 +20,13 @@ class CorsAspect {
 		val request = requestAttributes.request
 		val response = requestAttributes.response
 
-		for (headerName in request.headerNames) {
-			val headerValue = request.getHeader(headerName)
-			log.info("[CORS AOP] {}={}", headerName, headerValue)
-		}
-
-		val urlHeader = request.getHeader("X-Original-URL")
+		val origin = request.getHeader(HttpHeaders.ORIGIN)
 			?: return joinPoint.proceed()
-		log.info("[CORS AOP] url: {}", urlHeader)
+		log.info("[CORS AOP] origin: {}", origin)
 
-		val host = URL(urlHeader).host
-		log.info("[CORS AOP] host: {}", host)
-		if (host.endsWith(".hyunsub.kim")) {
-			log.info("[CORS AOP] response: {}", response != null)
-			response?.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "https://$host")
+		if (origin.endsWith(".hyunsub.kim")) {
+			response?.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
 		}
-
 		return joinPoint.proceed()
 	}
 }
