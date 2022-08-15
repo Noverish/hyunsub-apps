@@ -26,6 +26,7 @@ class CorsAspect {
 
 		if (origin.endsWith(".hyunsub.kim")) {
 			response?.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+			response?.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true")
 		}
 		return joinPoint.proceed()
 	}
