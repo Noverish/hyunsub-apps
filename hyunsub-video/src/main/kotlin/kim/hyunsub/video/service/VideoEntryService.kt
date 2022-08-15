@@ -50,6 +50,7 @@ class VideoEntryService(
 			}
 
 		return RestVideoEntryDetail(
+			category = entry.category,
 			video = videoService.loadVideo(video),
 			episodes = episodes,
 			group = group,

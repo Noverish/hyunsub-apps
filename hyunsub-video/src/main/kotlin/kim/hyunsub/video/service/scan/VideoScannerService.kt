@@ -41,6 +41,7 @@ class VideoScannerService(
 		val scanner: VideoScanner = when (params.type) {
 			1 -> VideoType1Scanner(randomGenerator, params.category, files)
 			2 -> VideoType2Scanner(randomGenerator, params.category, files)
+			3 -> VideoType3Scanner(randomGenerator, params.category, files)
 			else -> throw IllegalArgumentException("No such VideoScanner type: ${params.type}")
 		}
 

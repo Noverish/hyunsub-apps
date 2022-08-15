@@ -18,7 +18,13 @@ data class VideoCategory(
 	val displayName: String,
 
 	@Column(nullable = false)
-	val htmlClass: String,
+	val iconHtmlClass: String,
+
+	@Column(nullable = false)
+	val listHtmlClass: String,
+
+	@Column(nullable = false)
+	val itemCss: String,
 
 	@Column(nullable = false)
 	val authority: String,
