@@ -115,4 +115,13 @@ class RestModelConverter(
 			bitrate = bitrateStr,
 		)
 	}
+
+	fun convertVideoSearchResult(result: VideoSearchResult): RestVideoSearchResult {
+		val entries = result.entries.groupBy { it.category }
+			.mapValues { entry -> entry.value.map { convertVideoEntry(it) } }
+
+		return RestVideoSearchResult(
+			entries = entries
+		)
+	}
 }

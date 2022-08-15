@@ -10,6 +10,7 @@ enum class ErrorCode(
 	INTERNAL_SERVER_ERROR(101, "INTERNAL_SERVER_ERROR"),
 	INVALID_PARAMETER(102, "INVALID_PARAMETER"),
 	NOT_FOUND(103, "NOT_FOUND", HttpStatus.NOT_FOUND),
+	SHORT_SEARCH_QUERY(104, "Too short search query"),
 
 	ALREADY_EXIST_USERNAME(1001, "Already exist username"),
 	NOT_EXIST_USER(1002, "Invalid ID or password"),
