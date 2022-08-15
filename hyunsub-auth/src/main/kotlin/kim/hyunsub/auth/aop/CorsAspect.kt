@@ -30,9 +30,9 @@ class CorsAspect {
 
 		val urlHeader = request.getHeader("X-Original-URL")
 			?: return joinPoint.proceed()
+		log.info("[CORS AOP] url: {}", urlHeader)
 
 		val host = URL(urlHeader).host
-		log.debug("[CORS AOP] host: {}", host)
 		if (host.endsWith(".hyunsub.kim")) {
 			response?.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "https://$host")
 		}
