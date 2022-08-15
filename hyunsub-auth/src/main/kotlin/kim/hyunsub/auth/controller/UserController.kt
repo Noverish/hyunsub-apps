@@ -1,6 +1,7 @@
 package kim.hyunsub.auth.controller
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import kim.hyunsub.auth.annotation.HyunsubCors
 import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.ModifyUserInfoParams
 import kim.hyunsub.auth.model.ModifyUserInfoResult
@@ -64,6 +65,7 @@ class UserController(
 		)
 	}
 
+	@HyunsubCors
 	@GetMapping("/authorities")
 	fun authorities(user: User): List<String> =
 		authorityService.searchAuthorities(user.idNo).names
