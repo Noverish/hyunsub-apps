@@ -28,6 +28,11 @@ class CorsAspect {
 		val request = requestAttributes.request
 		val response = requestAttributes.response
 
+		for (headerName in request.headerNames) {
+			val headerValue = request.getHeader(headerName)
+			log.info("[CORS AOP] {}={}", headerName, headerValue)
+		}
+
 		val urlHeader = request.getHeader("X-Original-URL")
 			?: return joinPoint.proceed()
 		log.info("[CORS AOP] url: {}", urlHeader)
