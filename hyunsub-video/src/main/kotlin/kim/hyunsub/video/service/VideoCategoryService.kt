@@ -3,7 +3,6 @@ package kim.hyunsub.video.service
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.repository.VideoCategoryRepository
 import kim.hyunsub.video.repository.entity.VideoCategory
-import kim.hyunsub.video.repository.entity.VideoEntry
 import org.springframework.stereotype.Service
 
 @Service

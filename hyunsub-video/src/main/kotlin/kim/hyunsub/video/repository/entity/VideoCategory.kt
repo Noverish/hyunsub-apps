@@ -9,6 +9,9 @@ import javax.persistence.Table
 @Table(name = "video_category")
 data class VideoCategory(
 	@Id
+	val id: Int,
+
+	@Column(nullable = false)
 	val name: String,
 
 	@Column(nullable = false)
