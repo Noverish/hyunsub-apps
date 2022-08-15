@@ -1,5 +1,6 @@
 package kim.hyunsub.common.api
 
+import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.FileStat
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Service
@@ -12,4 +13,7 @@ class ApiCaller(
 
 	fun readdirDetail(path: String): List<FileStat> =
 		apiClient.get("/api/fs/readdir/detail", mapOf("path" to path))
+
+	fun ffprobe(path: String): ObjectNode =
+		apiClient.get("/api/ffprobe", mapOf("path" to path))
 }
