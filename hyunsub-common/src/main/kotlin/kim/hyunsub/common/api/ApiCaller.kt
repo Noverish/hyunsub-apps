@@ -2,6 +2,8 @@ package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.FileStat
+import kim.hyunsub.common.api.model.VideoThumbnailParams
+import kim.hyunsub.common.api.model.VideoThumbnailResult
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean
 import org.springframework.stereotype.Service
 
@@ -16,4 +18,7 @@ class ApiCaller(
 
 	fun ffprobe(path: String): ObjectNode =
 		apiClient.get("/api/ffprobe", mapOf("path" to path))
+
+	fun videoThumbnail(params: VideoThumbnailParams): VideoThumbnailResult =
+		apiClient.post("/api/video-thumbnail", params)
 }

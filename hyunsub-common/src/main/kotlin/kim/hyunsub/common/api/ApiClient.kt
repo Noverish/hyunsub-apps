@@ -25,6 +25,10 @@ class ApiClient(
 		return request(path, HttpMethod.GET, queryParams, null, typeReference())
 	}
 
+	inline fun <reified T> post(path: String, body: Any?): T {
+		return request(path, HttpMethod.POST, emptyMap(), body, typeReference())
+	}
+
 	fun <T> request(
 		path: String,
 		method: HttpMethod,
