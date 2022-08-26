@@ -1,6 +1,7 @@
 package kim.hyunsub.video.service.scan
 
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.error.ErrorCode
@@ -15,6 +16,7 @@ import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoSubtitle
+import kim.hyunsub.video.service.VideoMetadataService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
@@ -30,6 +32,7 @@ class VideoScannerService(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
+	private val videoMetadataService: VideoMetadataService,
 ) {
 	companion object : Log
 
@@ -101,6 +104,7 @@ class VideoScannerService(
 		val videoDate = videoFileStat.mDate
 		val videoName = Path(videoPath).nameWithoutExtension
 		val thumbnailPath = files.firstOrNull { Path(it.path).name == "$videoName.jpg" }?.path
+			?: apiCaller.videoThumbnail(VideoThumbnailParams(input = videoPath)).result
 
 		val video = Video(
 			id = randomGenerator.generateRandomString(6),
@@ -128,6 +132,8 @@ class VideoScannerService(
 			log.debug("scanSingleVideo: subtitle={}", it)
 			videoSubtitleRepository.save(it)
 		}
+
+		videoMetadataService.scanAndSave(video.id)
 
 		return VideoRegisterResult(
 			video = video,
