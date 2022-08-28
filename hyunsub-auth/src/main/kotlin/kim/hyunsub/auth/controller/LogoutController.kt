@@ -1,5 +1,6 @@
 package kim.hyunsub.auth.controller
 
+import kim.hyunsub.auth.annotation.HyunsubCors
 import kim.hyunsub.auth.model.LogoutResult
 import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.common.log.Log
@@ -21,6 +22,7 @@ class LogoutController(
 ) {
 	companion object : Log
 
+	@HyunsubCors
 	@PostMapping("/api/v1/logout")
 	fun logoutApi(
 		@RequestHeader(HttpHeaders.REFERER) referer: String,
