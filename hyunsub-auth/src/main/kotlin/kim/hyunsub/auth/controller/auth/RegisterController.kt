@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.controller
+package kim.hyunsub.auth.controller.auth
 
 import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/register")
+@RequestMapping("/api/v1/auth/register")
 class RegisterController(
 	private val registerService: RegisterService,
 	private val rsaKeyService: RsaKeyService,

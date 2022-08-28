@@ -1,8 +1,10 @@
-package kim.hyunsub.auth.controller
+package kim.hyunsub.auth.controller.auth
 
 import kim.hyunsub.auth.model.LoginApiParams
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
+import kim.hyunsub.auth.model.auth.ValidUrlParams
+import kim.hyunsub.auth.model.auth.ValidUrlResult
 import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.auth.service.LoginService
 import kim.hyunsub.auth.service.RsaKeyService
@@ -11,11 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URL
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @RestController
-@RequestMapping("/api/v1/login")
+@RequestMapping("/api/v1/auth/login")
 class LoginController(
 	private val loginService: LoginService,
 	private val cookieGenerator: CookieGenerator,

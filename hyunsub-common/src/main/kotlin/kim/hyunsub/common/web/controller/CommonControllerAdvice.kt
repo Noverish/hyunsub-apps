@@ -5,6 +5,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -25,6 +26,11 @@ class CommonControllerAdvice {
 	// 필수적인 Request Param이 없는 경우
 	@ExceptionHandler(MissingServletRequestParameterException::class)
 	fun missingServletRequestParameterException(ex: MissingServletRequestParameterException): ResponseEntity<Map<String, Any?>> =
+		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER.code, ex.message)
+
+	// RequestBody가 포맷에 맞지 않는 경우
+	@ExceptionHandler(HttpMessageNotReadableException::class)
+	fun httpMessageNotReadableException(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, Any?>> =
 		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER.code, ex.message)
 
 	@ExceptionHandler(Exception::class)

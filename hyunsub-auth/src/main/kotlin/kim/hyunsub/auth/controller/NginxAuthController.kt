@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
 import kim.hyunsub.auth.config.AuthConstants
+import kim.hyunsub.auth.service.AuthorityService
 import kim.hyunsub.auth.service.JwtService
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.config.WebConstants
@@ -11,10 +12,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.WebUtils
 import java.net.URL
 import java.net.URLDecoder
@@ -23,8 +21,11 @@ import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
 @RestController
-@RequestMapping("/api/v1/auth")
-class AuthController(private val jwtService: JwtService) {
+@RequestMapping("/api/v1/nginx/auth")
+class NginxAuthController(
+	private val jwtService: JwtService,
+	private val authorityService: AuthorityService
+) {
 	companion object : Log
 
 	private val mapper = jacksonObjectMapper()
@@ -45,9 +46,10 @@ class AuthController(private val jwtService: JwtService) {
 			}
 
 			val payload = parseJwt(request)
-			log.info("[Auth Success] payload={}, ip={}, url={}", payload, originalIp, decodedUrl)
+			val userAuth = authorityService.getUserAuth(payload.idNo)
+			log.info("[Auth Success] userAuth={}, ip={}, url={}", userAuth, originalIp, decodedUrl)
 			response.status = HttpStatus.OK.value()
-			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
+			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
 		} catch (e: ErrorCodeException) {
 			log.info("[Auth Failed] {}: ip={}, url={}", e.message, originalIp, decodedUrl)
 			response.status = HttpStatus.UNAUTHORIZED.value()
