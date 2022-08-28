@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*
 import org.springframework.web.util.WebUtils
 import java.net.URL
 import java.net.URLDecoder
+import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
@@ -37,7 +38,7 @@ class NginxAuthController(
 		@RequestHeader("X-Original-URL") originalUrl: String,
 		@RequestHeader("X-Original-IP") originalIp: String,
 	) {
-		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString())
+		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8)
 
 		try {
 			val isValidUrl = URL(decodedUrl).host.endsWith(".hyunsub.kim")
@@ -59,7 +60,8 @@ class NginxAuthController(
 				val res = mapOf("code" to e.errorCode.code, "msg" to e.errorCode.msg, "payload" to e.payload)
 				response.setHeader("X-Auth-Failed", mapper.writeValueAsString(res))
 			} else {
-				val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$originalUrl"
+				val encodedUrl = URLEncoder.encode(decodedUrl, StandardCharsets.UTF_8)
+				val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$encodedUrl"
 				response.setHeader("X-Redirect-URL", redirectUrl)
 			}
 		}
