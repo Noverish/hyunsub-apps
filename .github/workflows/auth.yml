@@ -10,9 +10,9 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
-      NGINX_CONF: auth2.conf
+      NGINX_CONF: auth.conf
       MODULE_NAME: hyunsub-auth
-      WORKING_DIR: ~/docker/hyunsub-auth2
+      WORKING_DIR: ~/apps/hyunsub-auth
 
     steps:
       - uses: actions/checkout@v2

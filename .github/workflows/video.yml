@@ -12,7 +12,7 @@ jobs:
     env:
       NGINX_CONF: video.conf
       MODULE_NAME: hyunsub-video
-      WORKING_DIR: ~/docker/hyunsub-video
+      WORKING_DIR: ~/apps/hyunsub-video
 
     steps:
       - uses: actions/checkout@v2
