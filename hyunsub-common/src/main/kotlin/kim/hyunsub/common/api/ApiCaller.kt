@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.api.model.VideoThumbnailResult
+import org.springframework.core.ParameterizedTypeReference
+import org.springframework.http.HttpMethod
 import org.springframework.web.client.HttpClientErrorException
 
 class ApiCaller(
@@ -25,6 +27,9 @@ class ApiCaller(
 		apiClient.post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to))
 	}
 
+	fun walk(path: String): List<String> =
+		apiClient.get("/api/fs/walk", mapOf("path" to path))
+
 	fun walkDetail(path: String): List<FileStat> =
 		apiClient.get("/api/fs/walk/detail", mapOf("path" to path))
 
@@ -36,4 +41,14 @@ class ApiCaller(
 
 	fun videoThumbnail(params: VideoThumbnailParams): VideoThumbnailResult =
 		apiClient.post("/api/video/generate-thumbnail", params)
+
+	fun upload(path: String, data: ByteArray) {
+		apiClient.request(
+			path = "/upload/binary",
+			method = HttpMethod.POST,
+			queryParams = mapOf("path" to path),
+			body = data,
+			type = object : ParameterizedTypeReference<ObjectNode>() {}
+		)
+	}
 }

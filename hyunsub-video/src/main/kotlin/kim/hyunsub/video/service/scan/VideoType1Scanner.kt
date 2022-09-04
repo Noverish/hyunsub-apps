@@ -58,7 +58,7 @@ class VideoType1Scanner(
 
 		val videoDate = searcher.stat(videoPath)?.mDate ?: return
 		val videoName = Path(videoPath).nameWithoutExtension
-		val thumbnailPath = filePaths.firstOrNull { it.endsWith("$videoName.thumbnail.jpg") }
+		val thumbnailPath = filePaths.firstOrNull { it.endsWith("$videoName.jpg") }
 
 		val videoEntry = VideoEntry(
 			id = randomGenerator.generateRandomString(6),

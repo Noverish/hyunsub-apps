@@ -23,10 +23,8 @@ import kotlin.io.path.nameWithoutExtension
 class VideoRegisterService(
 	private val randomGenerator: RandomGenerator,
 	private val apiCaller: ApiCaller,
-	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
-	private val videoSubtitleRepository: VideoSubtitleRepository,
 	private val videoMetadataService: VideoMetadataService,
 ) {
 	companion object : Log
