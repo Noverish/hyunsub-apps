@@ -1,7 +1,11 @@
 package kim.hyunsub.video.model
 
 data class VideoRegisterParams(
-	val type: Int,
+	val category: String,
 	val videoPath: String,
-	val videoEntryId: String,
+	val outputPath: String,
+
+	val videoEntryId: String?,
+	val videoGroupId: String?,
+	val videoSeason: String?,
 )

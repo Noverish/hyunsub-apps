@@ -27,4 +27,7 @@ enum class ErrorCode(
 	NO_AUTHORITY(2008, "No Authority", HttpStatus.FORBIDDEN),
 	CAPTCHA_REQUIRED(2011, "Captcha Required"),
 	CAPTCHA_FAILURE(2012, "Captcha Failure"),
+
+	NO_SUCH_FILE(3001, "No Such File"),
+	NO_SUCH_VIDEO_ENTRY(3002, "No Such Video Entry"),
 }

@@ -10,6 +10,7 @@ import kim.hyunsub.video.model.VideoRegisterParams
 import kim.hyunsub.video.model.VideoRegisterResult
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.service.VideoEntryService
+import kim.hyunsub.video.service.VideoRegisterService
 import kim.hyunsub.video.service.VideoService
 import kim.hyunsub.video.service.scan.VideoScannerService
 import org.springframework.data.repository.findByIdOrNull
@@ -22,7 +23,7 @@ class VideoController(
 	private val videoRepository: VideoRepository,
 	private val videoEntryService: VideoEntryService,
 	private val videoService: VideoService,
-	private val videoScannerService: VideoScannerService,
+	private val videoRegisterService: VideoRegisterService,
 ) {
 	companion object : Log
 
@@ -47,6 +48,6 @@ class VideoController(
 		user: UserAuth,
 		@RequestBody params: VideoRegisterParams,
 	): VideoRegisterResult {
-		return videoScannerService.scanSingleVideo(params)
+		return videoRegisterService.registerVideo(params)
 	}
 }
