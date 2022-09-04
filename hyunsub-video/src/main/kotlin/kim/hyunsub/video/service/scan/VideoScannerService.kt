@@ -39,7 +39,7 @@ class VideoScannerService(
 	@Transactional
 	fun scan(params: RestScanParams): ScanResult {
 		log.debug("Video Scan Params: {}", params)
-		val files = apiCaller.walk2(params.path)
+		val files = apiCaller.walkDetail(params.path)
 
 		val scanner: VideoScanner = when (params.type) {
 			1 -> VideoType1Scanner(randomGenerator, params.category, files)
