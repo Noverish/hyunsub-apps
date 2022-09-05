@@ -13,6 +13,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
 import kotlin.io.path.Path
@@ -32,21 +33,28 @@ class VideoSubtitleController(
 	@PostMapping("")
 	fun uploadSubtitle(
 		@PathVariable videoId: String,
-		file: MultipartFile,
 		lang: String,
+		@RequestParam(required = false) file: MultipartFile? = null,
+		@RequestParam(required = false) path: String? = null,
 	): VideoSubtitle {
-		log.debug("uploadSubtitle: videoId={}, lang={}, file={}", videoId, lang, file.originalFilename)
+		log.debug("uploadSubtitle: videoId={}, lang={}, path={}, file={}", videoId, lang, path, file?.originalFilename)
 
 		val video = videoRepository.findByIdOrNull(videoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val fileName = file.originalFilename
-			?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
+		val fileExt =
+			if (file != null) {
+				file.originalFilename
+					?.let { Path(it).extension }
+					?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
+			} else if (path != null) {
+				Path(path).extension
+			} else {
+				throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
+			}
 
-		val fileExt = Path(fileName).extension
-			.let { if (lang.isEmpty()) it else "$lang.$it" }
-
-		val subtitlePath = video.path.replace(Regex("mp4$"), fileExt)
+		val subtitleExt = fileExt.let { if (lang.isEmpty()) it else "$lang.$it" }
+		val subtitlePath = video.path.replace(Regex("mp4$"), subtitleExt)
 		log.debug("uploadSubtitle: subtitlePath={}", subtitlePath)
 
 		val subtitles = videoSubtitleRepository.findByVideoId(videoId)
@@ -55,7 +63,11 @@ class VideoSubtitleController(
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST)
 		}
 
-		apiCaller.upload(subtitlePath, file.bytes)
+		if (file != null) {
+			apiCaller.upload(subtitlePath, file.bytes)
+		} else if (path != null) {
+			apiCaller.rename(path, subtitlePath)
+		}
 
 		val videoSubtitle = VideoSubtitle(
 			id = randomGenerator.generateRandomString(6),
