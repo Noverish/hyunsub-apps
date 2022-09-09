@@ -14,10 +14,16 @@ import org.springframework.stereotype.Service
 @Service
 class RegisterService(
 	private val userRepository: UserRepository,
+	private val captchaService: CaptchaService,
 ) {
 	companion object : Log
 
 	fun register(params: RegisterParams): RegisterResult {
+		val captchaSuccess = captchaService.verify(params.captcha, params.remoteAddr)
+		if (!captchaSuccess) {
+			throw ErrorCodeException(ErrorCode.CAPTCHA_FAILURE)
+		}
+
 		val user = userRepository.findByUsername(params.username)
 		if (user != null) {
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST_USERNAME)

@@ -1,5 +1,6 @@
 package kim.hyunsub.common.api
 
+import kim.hyunsub.common.http.HttpClient
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -12,17 +13,15 @@ import java.time.Duration
 @EnableConfigurationProperties(ApiProperties::class)
 class ApiConfiguration {
 	@Bean
-	fun apiClient(apiProperties: ApiProperties, builder: RestTemplateBuilder): ApiClient {
+	fun apiCaller(apiProperties: ApiProperties, builder: RestTemplateBuilder): ApiCaller {
 		val restTemplate = builder
 			.setConnectTimeout(Duration.ofSeconds(1))
 			.setReadTimeout(Duration.ofSeconds(3))
-			.build();
-		return ApiClient(restTemplate, apiProperties)
-	}
+			.build()
 
-	@Bean
-	fun apiCaller(apiClient: ApiClient): ApiCaller {
-		return ApiCaller(apiClient)
+		val httpClient = HttpClient(restTemplate)
+
+		return ApiCaller(httpClient, apiProperties)
 	}
 
 	@Bean

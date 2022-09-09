@@ -9,8 +9,10 @@ import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.auth.service.LoginService
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.model.HyunsubHeader
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.net.URL
@@ -28,11 +30,10 @@ class LoginController(
 
 	@PostMapping("")
 	fun login(
-		request: HttpServletRequest,
 		response: HttpServletResponse,
+		@RequestHeader(HyunsubHeader.X_ORIGINAL_IP) remoteAddr: String,
 		@RequestBody params: LoginApiParams,
 	): LoginResult {
-		val remoteAddr = request.remoteAddr
 		log.debug("login: params={}, remoteAddr={}", params, remoteAddr)
 		val decryptedParams = LoginParams(
 			username = rsaKeyService.decrypt(params.username),
