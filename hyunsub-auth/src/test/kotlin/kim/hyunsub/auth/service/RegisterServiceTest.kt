@@ -15,7 +15,8 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 
 class RegisterServiceTest: FreeSpec({
 	val userRepository = mockk<UserRepository>()
-	val service = RegisterService(userRepository)
+	val captchaService = mockk<CaptchaService>()
+	val service = RegisterService(userRepository, captchaService)
 
 	val slot = slot<User>()
 	val params = mockk<RegisterParams>()

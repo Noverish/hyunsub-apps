@@ -26,7 +26,7 @@ class UserAuthArgumentResolver : HandlerMethodArgumentResolver {
 	): Any {
 		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
 		val header = request.getHeader(WebConstants.USER_AUTH_HEADER)
-			?: throw ErrorCodeException(ErrorCode.NOT_LOGIN)
+			?: throw ErrorCodeException(ErrorCode.NO_USER_AUTH)
 		return mapper.readValue<UserAuth>(header)
 	}
 }

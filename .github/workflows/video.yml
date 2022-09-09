@@ -10,9 +10,9 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     env:
-      NGINX_CONF: video2.conf
+      NGINX_CONF: video.conf
       MODULE_NAME: hyunsub-video
-      WORKING_DIR: ~/docker/hyunsub-video2
+      WORKING_DIR: ~/apps/hyunsub-video
 
     steps:
       - uses: actions/checkout@v2

@@ -1,0 +1,119 @@
+{
+  "videoGroups": [
+    {
+      "id": "000000",
+      "name": "group1"
+    }
+  ],
+  "videoEntries": [
+    {
+      "id": "000001",
+      "name": "video1",
+      "thumbnail": "/root/group1/folder1/video1.thumbnail.jpg",
+      "category": "kotest_category",
+      "videoGroupId": "000000"
+    },
+    {
+      "id": "000005",
+      "name": "video2",
+      "thumbnail": "/root/group1/folder2/video2.thumbnail.jpg",
+      "category": "kotest_category",
+      "videoGroupId": "000000"
+    },
+    {
+      "id": "000009",
+      "name": "no_group",
+      "thumbnail": "/root/folder3/no_group.thumbnail.jpg",
+      "category": "kotest_category",
+      "videoGroupId": null
+    },
+    {
+      "id": "000014",
+      "name": "no_group_no_thumbnail",
+      "thumbnail": null,
+      "category": "kotest_category",
+      "videoGroupId": null
+    }
+  ],
+  "videos": [
+    {
+      "id": "000002",
+      "path": "/root/group1/folder1/video1.mp4",
+      "thumbnail": "/root/group1/folder1/video1.thumbnail.jpg",
+      "regDt": "2020-09-13 21:26:43",
+      "videoEntryId": "000001",
+      "videoSeason": null
+    },
+    {
+      "id": "000006",
+      "path": "/root/group1/folder2/video2.mp4",
+      "thumbnail": "/root/group1/folder2/video2.thumbnail.jpg",
+      "regDt": "2020-09-13 21:26:49",
+      "videoEntryId": "000005",
+      "videoSeason": null
+    },
+    {
+      "id": "000010",
+      "path": "/root/folder3/no_group.mp4",
+      "thumbnail": "/root/folder3/no_group.thumbnail.jpg",
+      "regDt": "2020-09-13 21:26:54",
+      "videoEntryId": "000009",
+      "videoSeason": null
+    },
+    {
+      "id": "000015",
+      "path": "/root/folder4/no_group_no_thumbnail.mp4",
+      "thumbnail": null,
+      "regDt": "2020-09-13 21:27:00",
+      "videoEntryId": "000014",
+      "videoSeason": null
+    }
+  ],
+  "subtitles": [
+    {
+      "id": "000003",
+      "path": "/root/group1/folder1/video1.en.srt",
+      "videoId": "000002"
+    },
+    {
+      "id": "000004",
+      "path": "/root/group1/folder1/video1.smi",
+      "videoId": "000002"
+    },
+    {
+      "id": "000007",
+      "path": "/root/group1/folder2/video2.en.srt",
+      "videoId": "000006"
+    },
+    {
+      "id": "000008",
+      "path": "/root/group1/folder2/video2.smi",
+      "videoId": "000006"
+    },
+    {
+      "id": "000011",
+      "path": "/root/folder3/no_group.en.srt",
+      "videoId": "000010"
+    },
+    {
+      "id": "000012",
+      "path": "/root/folder3/no_group.ko.smi",
+      "videoId": "000010"
+    },
+    {
+      "id": "000013",
+      "path": "/root/folder3/no_group.ko2.smi",
+      "videoId": "000010"
+    },
+    {
+      "id": "000016",
+      "path": "/root/folder4/no_group_no_thumbnail.en.srt",
+      "videoId": "000015"
+    },
+    {
+      "id": "000017",
+      "path": "/root/folder4/no_group_no_thumbnail.ko.smi",
+      "videoId": "000015"
+    }
+  ]
+}

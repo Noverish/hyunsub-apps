@@ -1,37 +1,33 @@
 package kim.hyunsub.auth.controller.admin
 
+import kim.hyunsub.auth.model.kms.KmsDecryptApiParams
+import kim.hyunsub.auth.model.kms.KmsEncryptApiParams
 import kim.hyunsub.common.kms.KmsEncryptor
 import kim.hyunsub.common.kms.KmsProperties
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.isLocalhost
+import kim.hyunsub.common.web.annotation.Authorized
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletRequest
 
+@Authorized(["admin"])
 @RestController
 @RequestMapping("/api/v1/admin/kms")
 class KmsController(private val kmsProperties: KmsProperties) {
 	companion object : Log
 
 	@PostMapping("/encrypt")
-	fun encrypt(request: HttpServletRequest, @RequestParam text: String): String {
-		log.info("KMS Encrypt: {} - {}", request.remoteAddr, text)
-		return if (request.isLocalhost()) {
-			KmsEncryptor.encrypt(kmsProperties.profile, kmsProperties.keyId, text)
-		} else {
-			request.remoteAddr
-		}
+	fun encrypt(@RequestBody params: KmsEncryptApiParams): String {
+		val text = params.text
+		log.info("KMS Encrypt: {}", text)
+		return KmsEncryptor.encrypt(kmsProperties.profile, kmsProperties.keyId, text)
 	}
 
 	@PostMapping("/decrypt")
-	fun decrypt(request: HttpServletRequest, @RequestParam cipher: String): String {
-		log.info("KMS Decrypt: {} - {}", request.remoteAddr, cipher)
-		return if (request.isLocalhost()) {
-			KmsEncryptor.decrypt(kmsProperties.profile, kmsProperties.keyId, cipher)
-		} else {
-			request.remoteAddr
-		}
+	fun decrypt(@RequestBody params: KmsDecryptApiParams): String {
+		val cipher = params.cipher
+		log.info("KMS Decrypt: {}", cipher)
+		return KmsEncryptor.decrypt(kmsProperties.profile, kmsProperties.keyId, cipher)
 	}
 }

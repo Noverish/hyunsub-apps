@@ -1,0 +1,89 @@
+[
+  {
+    "path": "/root/group1/folder1/video1.en.srt",
+    "mtime": 1600000001000
+  },
+  {
+    "path": "/root/group1/folder1/video1.jpg",
+    "mtime": 1600000002000
+  },
+  {
+    "path": "/root/group1/folder1/video1.mp4",
+    "mtime": 1600000003000
+  },
+  {
+    "path": "/root/group1/folder1/video1.smi",
+    "mtime": 1600000004000
+  },
+  {
+    "path": "/root/group1/folder1/video1.thumbnail.jpg",
+    "mtime": 1600000005000
+  },
+  {
+    "path": "/root/group1/folder1/video1.thumbnail.thumbnail.jpg",
+    "mtime": 1600000006000
+  },
+
+  {
+    "path": "/root/group1/folder2/video2.en.srt",
+    "mtime": 1600000007000
+  },
+  {
+    "path": "/root/group1/folder2/video2.jpg",
+    "mtime": 1600000008000
+  },
+  {
+    "path": "/root/group1/folder2/video2.mp4",
+    "mtime": 1600000009000
+  },
+  {
+    "path": "/root/group1/folder2/video2.smi",
+    "mtime": 1600000010000
+  },
+  {
+    "path": "/root/group1/folder2/video2.thumbnail.jpg",
+    "mtime": 1600000011000
+  },
+
+  {
+    "path": "/root/folder3/no_group.en.srt",
+    "mtime": 1600000012000
+  },
+  {
+    "path": "/root/folder3/no_group.jpg",
+    "mtime": 1600000013000
+  },
+  {
+    "path": "/root/folder3/no_group.mp4",
+    "mtime": 1600000014000
+  },
+  {
+    "path": "/root/folder3/no_group.ko.smi",
+    "mtime": 1600000015000
+  },
+  {
+    "path": "/root/folder3/no_group.ko2.smi",
+    "mtime": 1600000016000
+  },
+  {
+    "path": "/root/folder3/no_group.thumbnail.jpg",
+    "mtime": 1600000017000
+  },
+
+  {
+    "path": "/root/folder4/no_group_no_thumbnail.en.srt",
+    "mtime": 1600000018000
+  },
+  {
+    "path": "/root/folder4/no_group_no_thumbnail.jpg",
+    "mtime": 1600000019000
+  },
+  {
+    "path": "/root/folder4/no_group_no_thumbnail.mp4",
+    "mtime": 1600000020000
+  },
+  {
+    "path": "/root/folder4/no_group_no_thumbnail.ko.smi",
+    "mtime": 1600000021000
+  }
+]

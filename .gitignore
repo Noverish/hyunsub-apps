@@ -1,4 +1,6 @@
+*.pem
 .java-version
+logs/
 
 HELP.md
 .gradle
