@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service
 class VideoService(
 	private val videoSubtitleRepository: VideoSubtitleRepository,
 	private val videoMetadataRepository: VideoMetadataRepository,
-	private val restModelConverter: RestModelConverter,
+	private val apiModelConverter: ApiModelConverter,
 ) {
 	fun loadVideo(video: Video): RestVideo {
 		val subtitles = videoSubtitleRepository.findByVideoId(video.id)
 		val metadata = videoMetadataRepository.findByIdOrNull(video.path)
-		return restModelConverter.convertVideo(video, subtitles, metadata)
+		return apiModelConverter.convertVideo(video, subtitles, metadata)
 	}
 }

@@ -11,7 +11,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
 
 @Service
-class RestModelConverter(
+class ApiModelConverter(
 	private val fileUrlConverter: FileUrlConverter,
 ) {
 	fun convertVideoEntry(entry: VideoEntry): RestVideoEntry {

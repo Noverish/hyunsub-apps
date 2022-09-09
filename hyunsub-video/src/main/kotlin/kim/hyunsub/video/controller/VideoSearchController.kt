@@ -6,7 +6,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.RestVideoSearchResult
-import kim.hyunsub.video.service.RestModelConverter
+import kim.hyunsub.video.service.ApiModelConverter
 import kim.hyunsub.video.service.VideoCategoryService
 import kim.hyunsub.video.service.VideoSearchService
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 class VideoSearchController(
 	private val videoCategoryService: VideoCategoryService,
 	private val videoSearchService: VideoSearchService,
-	private val restModelConverter: RestModelConverter,
+	private val apiModelConverter: ApiModelConverter,
 ) {
 	companion object : Log
 
@@ -35,6 +35,6 @@ class VideoSearchController(
 
 		val result = videoSearchService.search(categories, q)
 
-		return restModelConverter.convertVideoSearchResult(result)
+		return apiModelConverter.convertVideoSearchResult(result)
 	}
 }

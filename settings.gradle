@@ -2,3 +2,5 @@ rootProject.name = 'hyunsub-apps'
 include 'hyunsub-auth'
 include 'hyunsub-common'
 include 'hyunsub-video'
+include 'hyunsub-photo'
+

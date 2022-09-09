@@ -9,7 +9,7 @@ import kim.hyunsub.video.model.RestVideoEntry
 import kim.hyunsub.video.model.RestVideoEntryDetail
 import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.repository.VideoEntryRepository
-import kim.hyunsub.video.service.RestModelConverter
+import kim.hyunsub.video.service.ApiModelConverter
 import kim.hyunsub.video.service.VideoCategoryService
 import kim.hyunsub.video.service.VideoEntryService
 import org.springframework.data.domain.PageRequest
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*
 class VideoEntryController(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoCategoryService: VideoCategoryService,
-	private val restModelConverter: RestModelConverter,
+	private val apiModelConverter: ApiModelConverter,
 	private val videoEntryService: VideoEntryService,
 ) {
 	companion object : Log
@@ -52,7 +52,7 @@ class VideoEntryController(
 			VideoSort.new -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "regDt"))
 		}
 
-		return sorted.map { restModelConverter.convertVideoEntry(it) }
+		return sorted.map { apiModelConverter.convertVideoEntry(it) }
 	}
 
 	@GetMapping("/{entryId}")
