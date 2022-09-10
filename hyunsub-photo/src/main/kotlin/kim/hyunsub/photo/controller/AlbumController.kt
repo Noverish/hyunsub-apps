@@ -5,8 +5,8 @@ import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
+import kim.hyunsub.photo.model.RestApiAlbumPreview
 import kim.hyunsub.photo.model.RestApiAlbum
-import kim.hyunsub.photo.model.RestApiAlbumDetail
 import kim.hyunsub.photo.model.RestApiPhoto
 import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.PhotoRepository
@@ -29,23 +29,22 @@ class AlbumController(
 	companion object : Log
 
 	@GetMapping("")
-	fun list(): List<RestApiAlbum> {
+	fun list(): List<RestApiAlbumPreview> {
 		return albumRepository.findAll()
 			.sortedBy { it.name }
-			.map { apiModelConverter.convert(it) }
+			.map { apiModelConverter.convertToPreview(it) }
 	}
 
 	@GetMapping("/{albumId}")
-	fun detail(@PathVariable albumId: Int): RestApiAlbumDetail {
+	fun detail(@PathVariable albumId: Int): RestApiAlbum {
 		val album = albumRepository.findByIdOrNull(albumId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val page = PageRequest.of(0, PhotoConstants.PHOTO_PAGE_SIZE)
-		val photos = photoRepository.findByAlbumId(albumId, page)
+		val total = photoRepository.countByAlbumId(albumId)
 
-		return RestApiAlbumDetail(
-			album = apiModelConverter.convert(album),
-			photos = photos.map { apiModelConverter.convert(it) },
+		return RestApiAlbum(
+			preview = apiModelConverter.convertToPreview(album),
+			total = total,
 		)
 	}
 

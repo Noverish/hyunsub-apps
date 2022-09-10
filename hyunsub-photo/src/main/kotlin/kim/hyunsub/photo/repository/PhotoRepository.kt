@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface PhotoRepository: JpaRepository<Photo, Int> {
 	fun findByAlbumId(albumId: Int, page: Pageable = Pageable.unpaged()): List<Photo>
+	fun countByAlbumId(albumId: Int): Int
 }

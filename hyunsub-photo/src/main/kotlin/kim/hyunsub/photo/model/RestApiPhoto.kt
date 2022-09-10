@@ -10,4 +10,8 @@ data class RestApiPhoto(
 	val height: Int,
 	val date: LocalDateTime,
 	val size: Int,
-)
+	val liveVideo: String? = null,
+) {
+	val isVideo: Boolean
+		get() = url.endsWith(".mp4", true)
+}
