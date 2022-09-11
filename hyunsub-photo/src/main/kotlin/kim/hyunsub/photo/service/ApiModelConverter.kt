@@ -2,6 +2,7 @@ package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.log.hashWithMD5
+import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.RestApiAlbumPreview
 import kim.hyunsub.photo.model.RestApiPhoto
@@ -29,7 +30,7 @@ class ApiModelConverter(
 			width = photo.width,
 			height = photo.height,
 			date = photo.date,
-			size = photo.size,
+			size = getHumanReadableSize(photo.size.toLong()),
 		)
 
 	private fun getThumbnailUrl(path: String) =

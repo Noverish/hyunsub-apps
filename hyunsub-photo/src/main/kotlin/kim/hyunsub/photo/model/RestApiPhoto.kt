@@ -9,7 +9,7 @@ data class RestApiPhoto(
 	val width: Int,
 	val height: Int,
 	val date: LocalDateTime,
-	val size: Int,
+	val size: String,
 	val liveVideo: String? = null,
 ) {
 	val isVideo: Boolean

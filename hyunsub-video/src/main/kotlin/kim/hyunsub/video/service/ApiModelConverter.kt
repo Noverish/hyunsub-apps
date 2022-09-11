@@ -1,6 +1,8 @@
 package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.util.getHumanReadableBitrate
+import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.video.model.*
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
@@ -84,29 +86,9 @@ class ApiModelConverter(
 		val min = (duration / 60) % 60
 		val hour = duration / 3600
 		val durationStr = if (hour > 0) "${hour}시간 ${min}분" else "${min}분 ${sec}초"
-
-		val size = metadata.size
-		val mb = 1000 * 1000
-		val gb = 1000 * 1000 * 1000
-		val sizeStr = if (size > gb) {
-			val tmp = String.format("%.2f", size.toDouble() / gb.toDouble())
-			"$tmp GB"
-		} else {
-			val tmp = String.format("%.2f", size.toDouble() / mb.toDouble())
-			"$tmp MB"
-		}
-
+		val sizeStr = getHumanReadableSize(metadata.size)
+		val bitrateStr = getHumanReadableBitrate(metadata.bitrate)
 		val resolution = "${metadata.width} x ${metadata.height}"
-
-		val bitrate = metadata.bitrate
-		val kb = 1000
-		val bitrateStr = if (bitrate > mb) {
-			val tmp = String.format("%.2f", bitrate.toDouble() / mb.toDouble())
-			"$tmp mbp/s"
-		} else {
-			val tmp = String.format("%.2f", bitrate.toDouble() / kb.toDouble())
-			"$tmp kbp/s"
-		}
 
 		return RestVideoMetadata(
 			duration = durationStr,
