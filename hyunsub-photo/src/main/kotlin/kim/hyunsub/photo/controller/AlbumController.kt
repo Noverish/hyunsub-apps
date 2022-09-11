@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*
 
 @Authorized(authorities = ["service_photo"])
 @RestController
-@RequestMapping("/api/v1/album")
+@RequestMapping("/api/v1/albums")
 class AlbumController(
 	private val albumRepository: AlbumRepository,
 	private val photoRepository: PhotoRepository,
