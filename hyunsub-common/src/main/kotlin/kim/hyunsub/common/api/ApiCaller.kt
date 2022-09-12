@@ -1,5 +1,6 @@
 package kim.hyunsub.common.api
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.VideoThumbnailParams
@@ -47,6 +48,9 @@ class ApiCaller(
 
 	fun videoThumbnail(params: VideoThumbnailParams): VideoThumbnailResult =
 		post("/api/video/generate-thumbnail", params)
+
+	fun exif(path: String): String =
+		get("/api/image/exif", mapOf("path" to path))
 
 	fun upload(path: String, data: ByteArray) {
 		post<ObjectNode>("/upload/binary", data, mapOf("path" to path))

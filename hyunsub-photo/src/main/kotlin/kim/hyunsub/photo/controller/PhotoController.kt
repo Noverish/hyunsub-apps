@@ -8,6 +8,7 @@ import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.RestApiPhoto
+import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.service.ApiModelConverter
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/photos")
 class PhotoController(
 	private val photoRepository: PhotoRepository,
+	private val photoMetadataRepository: PhotoMetadataRepository,
 	private val apiModelConverter: ApiModelConverter,
 	private val mapper: ObjectMapper,
 ) {
@@ -37,6 +39,18 @@ class PhotoController(
 		return apiModelConverter.convert(photo)
 	}
 
+	@GetMapping("/{photoId}/exif")
+	fun exif(@PathVariable photoId: Int): String {
+		val photo = photoRepository.findByIdOrNull(photoId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		val metadata = photoMetadataRepository.findByIdOrNull(photo.path)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		return metadata.data
+	}
+
+	@Authorized(authorities = ["admin"])
 	@PutMapping("/{photoId}")
 	fun update(
 		@PathVariable photoId: Int,
