@@ -83,15 +83,16 @@ class NginxAuthController(
 			response.status = HttpStatus.UNAUTHORIZED.value()
 			return
 		}
+		val userAuth = authorityService.getUserAuth(payload.idNo)
 
 		val path = URL(decodedUrl).path
-		val allowed = payload.authorityPaths.any { path.startsWith(it) }
+		val allowed = userAuth.authorityPaths.any { path.startsWith(it) }
 		if (allowed) {
-			log.info("[AuthFile Success] payload={}, ip={}, url={}", payload, originalIp, decodedUrl)
+			log.info("[AuthFile Success] payload={}, ip={}, url={}", userAuth, originalIp, decodedUrl)
 			response.status = HttpStatus.OK.value()
-			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(payload))
+			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
 		} else {
-			log.info("[AuthFile Failed] Forbidden: payload={}, ip={}, url={}", payload, originalIp, decodedUrl)
+			log.info("[AuthFile Failed] Forbidden: payload={}, ip={}, url={}", userAuth, originalIp, decodedUrl)
 			response.status = HttpStatus.FORBIDDEN.value()
 		}
 	}
