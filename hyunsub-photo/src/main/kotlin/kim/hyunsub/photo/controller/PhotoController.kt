@@ -1,15 +1,21 @@
 package kim.hyunsub.photo.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.convertValue
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.util.convertToMap
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.RestApiPhoto
 import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.service.ApiModelConverter
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -19,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 class PhotoController(
 	private val photoRepository: PhotoRepository,
 	private val apiModelConverter: ApiModelConverter,
+	private val mapper: ObjectMapper,
 ) {
 	companion object : Log
 
@@ -26,6 +33,21 @@ class PhotoController(
 	fun detail(@PathVariable photoId: Int): RestApiPhoto {
 		val photo = photoRepository.findByIdOrNull(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		return apiModelConverter.convert(photo)
+	}
+
+	@PutMapping("/{photoId}")
+	fun update(
+		@PathVariable photoId: Int,
+		@RequestBody body: Map<String, Any>,
+	): RestApiPhoto {
+		val photo = photoRepository.findByIdOrNull(photoId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		val origin = mapper.convertToMap(photo)
+		val merged: Photo = mapper.convertValue(origin + body)
+		photoRepository.save(merged)
 
 		return apiModelConverter.convert(photo)
 	}
