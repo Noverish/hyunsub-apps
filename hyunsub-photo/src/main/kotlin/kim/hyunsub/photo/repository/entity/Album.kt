@@ -6,7 +6,8 @@ import javax.persistence.*
 @Table(name = "photo_album")
 data class Album(
 	@Id
-	val id: Int,
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	val id: Int = 0,
 
 	@Column(nullable = false)
 	val name: String,

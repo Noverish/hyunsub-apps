@@ -1,23 +1,23 @@
 package kim.hyunsub.photo.controller
 
+import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
-import kim.hyunsub.photo.model.RestApiAlbum
-import kim.hyunsub.photo.model.RestApiAlbumPreview
-import kim.hyunsub.photo.model.RestApiExifDate
-import kim.hyunsub.photo.model.RestApiPhoto
+import kim.hyunsub.photo.model.*
 import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.service.ApiModelConverter
 import kim.hyunsub.photo.service.PhotoMetadataDateParser
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
+import kotlin.io.path.Path
 
 @Authorized(authorities = ["service_photo"])
 @RestController
@@ -28,6 +28,7 @@ class AlbumController(
 	private val photoMetadataRepository: PhotoMetadataRepository,
 	private val apiModelConverter: ApiModelConverter,
 	private val photoMetadataDateParser: PhotoMetadataDateParser,
+	private val apiCaller: ApiCaller,
 ) {
 	companion object : Log
 
@@ -38,6 +39,20 @@ class AlbumController(
 			.map { apiModelConverter.convertToPreview(it) }
 	}
 
+	@Authorized(authorities = ["admin"])
+	@PostMapping("")
+	fun create(@RequestBody params: RestApiAlbumCreateParams): RestApiAlbumPreview {
+		val dirPath = Path(PhotoConstants.basePath, params.name).toString()
+		apiCaller.mkdir(dirPath)
+
+		val album = Album(
+			name = params.name,
+			thumbnail = ""
+		)
+		albumRepository.saveAndFlush(album)
+		return apiModelConverter.convertToPreview(album)
+	}
+
 	@GetMapping("/{albumId}")
 	fun detail(@PathVariable albumId: Int): RestApiAlbum {
 		val album = albumRepository.findByIdOrNull(albumId)
@@ -45,10 +60,7 @@ class AlbumController(
 
 		val total = photoRepository.countByAlbumId(albumId)
 
-		return RestApiAlbum(
-			preview = apiModelConverter.convertToPreview(album),
-			total = total,
-		)
+		return apiModelConverter.convert(album, total)
 	}
 
 	@GetMapping("/{albumId}/photos")
@@ -96,11 +108,11 @@ class AlbumController(
 		val pageRequest = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
 		val photos = photoRepository.findByAlbumIdOrderByDate(albumId, pageRequest)
 		val list = photoMetadataRepository.findAllById(photos.map { it.path })
-			.sortedBy { it.date }
 			.map { metadata ->
 				val photo = photos.first { it.path == metadata.path }
 				photoMetadataDateParser.parse(photo, metadata)
 			}
+			.sortedBy { it.date }
 
 		return RestApiPageResult(
 			total = total,

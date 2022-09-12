@@ -1,16 +1,14 @@
 package kim.hyunsub.photo.repository.entity
 
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
+import javax.persistence.*
 
 @Entity
 @Table(name = "photo")
 data class Photo(
 	@Id
-	val id: Int,
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	val id: Int = 0,
 
 	@Column(nullable = false)
 	val path: String,
@@ -29,4 +27,7 @@ data class Photo(
 
 	@Column
 	val albumId: Int?,
+
+	@Column(nullable = false)
+	val regDt: LocalDateTime,
 )
