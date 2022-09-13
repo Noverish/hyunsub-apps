@@ -63,6 +63,13 @@ class PhotoUploadController(
 
 		val filePath = Path(PhotoConstants.basePath, album.name, fileName).toString()
 		log.debug("Upload Photo: filePath={}", filePath)
+
+		val existPhoto = photoRepository.findByPath(filePath)
+		if (existPhoto != null) {
+			log.debug("Upload Photo: existPhoto={}", existPhoto)
+			throw ErrorCodeException(ErrorCode.ALREADY_EXIST)
+		}
+
 		try {
 			apiCaller.upload(filePath, file.bytes, override = true)
 		} catch (ex: HttpClientErrorException) {

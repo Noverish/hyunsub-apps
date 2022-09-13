@@ -20,6 +20,7 @@ class PhotoMetadataDateParser {
 		private val format2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSXXX")
 		private val format3 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSS")
 		private val format4 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss")
+		private val format5 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 	}
 
 	private val mapper = jacksonObjectMapper()
@@ -79,7 +80,7 @@ class PhotoMetadataDateParser {
 			}
 		}
 
-		for (format in listOf(format3, format4)) {
+		for (format in listOf(format3, format4, format5)) {
 			try {
 				return if (offset != null) {
 					val ldt = LocalDateTime.parse(str, format)
@@ -136,7 +137,8 @@ class PhotoMetadataDateParser {
 			node["OffsetTimeDigitized"]?.asText(),
 		).firstOrNull()
 
-		return node["SubSecDateTimeOriginal"]?.asText()?.let { parse(it, offset) }
+		return node["CreationDate"]?.asText()?.let { parse(it, offset) }
+			?: node["SubSecDateTimeOriginal"]?.asText()?.let { parse(it, offset) }
 			?: node["SubSecCreateDate"]?.asText()?.let { parse(it, offset) }
 			?: node["DateTimeOriginal"]?.asText()?.let { parse(it, offset) }
 			?: node["CreateDate"]?.asText()?.let { parse(it, offset) }

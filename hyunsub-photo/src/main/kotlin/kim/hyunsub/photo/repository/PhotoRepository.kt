@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query
 
 interface PhotoRepository: JpaRepository<Photo, Int> {
 	fun findByAlbumIdOrderByDate(albumId: Int, page: Pageable = Pageable.unpaged()): List<Photo>
+	fun findByPath(path: String): Photo?
 	fun countByAlbumId(albumId: Int): Int
 
 	@Query(

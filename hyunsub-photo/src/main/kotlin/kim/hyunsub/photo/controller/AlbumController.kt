@@ -7,13 +7,14 @@ import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
-import kim.hyunsub.photo.model.*
+import kim.hyunsub.photo.model.RestApiAlbum
+import kim.hyunsub.photo.model.RestApiAlbumCreateParams
+import kim.hyunsub.photo.model.RestApiAlbumPreview
+import kim.hyunsub.photo.model.RestApiPhoto
 import kim.hyunsub.photo.repository.AlbumRepository
-import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.service.ApiModelConverter
-import kim.hyunsub.photo.service.PhotoMetadataDateParser
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
@@ -25,9 +26,7 @@ import kotlin.io.path.Path
 class AlbumController(
 	private val albumRepository: AlbumRepository,
 	private val photoRepository: PhotoRepository,
-	private val photoMetadataRepository: PhotoMetadataRepository,
 	private val apiModelConverter: ApiModelConverter,
-	private val photoMetadataDateParser: PhotoMetadataDateParser,
 	private val apiCaller: ApiCaller,
 ) {
 	companion object : Log
@@ -93,32 +92,6 @@ class AlbumController(
 			page = page,
 			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
 			data = photos,
-		)
-	}
-
-	@GetMapping("/{albumId}/exif/date")
-	fun exifDate(
-		@PathVariable albumId: Int,
-		@RequestParam p: Int,
-	): RestApiPageResult<RestApiExifDate> {
-		albumRepository.findByIdOrNull(albumId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-
-		val total = photoRepository.countByAlbumId(albumId)
-		val pageRequest = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
-		val photos = photoRepository.findByAlbumIdOrderByDate(albumId, pageRequest)
-		val list = photoMetadataRepository.findAllById(photos.map { it.path })
-			.map { metadata ->
-				val photo = photos.first { it.path == metadata.path }
-				photoMetadataDateParser.parse(photo, metadata)
-			}
-			.sortedBy { it.date }
-
-		return RestApiPageResult(
-			total = total,
-			page = p,
-			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
-			data = list,
 		)
 	}
 }

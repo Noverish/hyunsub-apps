@@ -12,8 +12,10 @@ class PhotoMetadataDateParserTest: FreeSpec({
 		parser.parse("2020:07:19 12:35:03.123+00:00") shouldBe LocalDateTime.parse("2020-07-19T21:35:03.123")
 		parser.parse("2020:08:27 19:21:18.1152") shouldBe LocalDateTime.parse("2020-08-27T19:21:18.1152")
 		parser.parse("2019:09:21 10:31:21") shouldBe LocalDateTime.parse("2019-09-21T10:31:21")
+		parser.parse("2019-09-21 10:31:21") shouldBe LocalDateTime.parse("2019-09-21T10:31:21")
 		parser.parse("2020:08:27 09:21:18.1152", "+05:00") shouldBe LocalDateTime.parse("2020-08-27T13:21:18.1152")
 		parser.parse("2019:09:21 10:31:21", "-01:00") shouldBe LocalDateTime.parse("2019-09-21T20:31:21")
+		parser.parse("2019-09-21 10:31:21", "-01:00") shouldBe LocalDateTime.parse("2019-09-21T20:31:21")
 	}
 
 	"parseFromFileName" {
