@@ -13,5 +13,5 @@ data class Album(
 	val name: String,
 
 	@Column(nullable = false)
-	val thumbnail: String
+	val thumbnail: String? = null,
 )

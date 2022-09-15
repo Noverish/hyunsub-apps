@@ -1,10 +1,7 @@
 package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.model.FileStat
-import kim.hyunsub.common.api.model.PhotoConvertParams
-import kim.hyunsub.common.api.model.VideoThumbnailParams
-import kim.hyunsub.common.api.model.VideoThumbnailResult
+import kim.hyunsub.common.api.model.*
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders
@@ -58,6 +55,12 @@ class ApiCaller(
 	fun upload(path: String, data: ByteArray, override: Boolean = false) {
 		post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
 	}
+
+	fun ffmpeg(params: FFmpegParams): FFmpegResult =
+		post("/api/video/ffmpeg", params)
+
+	fun ffmpegStatus(): FFmpegStatus =
+		get("/api/video/ffmpeg/status", emptyMap())
 
 	private inline fun <reified T> get(path: String, queryParams: Map<String, String>) =
 		request<T>(path, HttpMethod.GET, queryParams, null)
