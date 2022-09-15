@@ -10,6 +10,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException
+import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 @RestControllerAdvice
 class CommonControllerAdvice {
@@ -31,6 +32,11 @@ class CommonControllerAdvice {
 	// RequestBody가 포맷에 맞지 않는 경우
 	@ExceptionHandler(HttpMessageNotReadableException::class)
 	fun httpMessageNotReadableException(ex: HttpMessageNotReadableException): ResponseEntity<Map<String, Any?>> =
+		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER.code, ex.message)
+
+	// multipart 파일 크키가 설정보다 넘어선 경우
+	@ExceptionHandler(MaxUploadSizeExceededException::class)
+	fun maxUploadSizeExceededException(ex: MaxUploadSizeExceededException): ResponseEntity<Map<String, Any?>> =
 		generateResponseEntity(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER.code, ex.message)
 
 	@ExceptionHandler(Exception::class)

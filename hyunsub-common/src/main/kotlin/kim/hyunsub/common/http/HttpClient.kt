@@ -52,7 +52,11 @@ class HttpClient(private val restTemplate: RestTemplate) {
 		val stopWatch = StopWatch()
 		stopWatch.start()
 		try {
-			log.debug("[API Request] {} {} {} {}", method, newUrl, body, headers)
+			if (body is ByteArray) {
+				log.debug("[API Request] {} {} bytes={} {}", method, newUrl, body.size, headers)
+			} else {
+				log.debug("[API Request] {} {} {} {}", method, newUrl, body, headers)
+			}
 			val res = restTemplate.exchange(newUrl, method, entity, type)
 			stopWatch.stop()
 			log.debug("[Api Response] {}ms {} {} {}", stopWatch.totalTimeMillis, res.statusCode, res.body, res.headers)

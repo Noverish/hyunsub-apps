@@ -2,11 +2,11 @@ package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.FileStat
+import kim.hyunsub.common.api.model.PhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.api.model.VideoThumbnailResult
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
@@ -48,8 +48,15 @@ class ApiCaller(
 	fun videoThumbnail(params: VideoThumbnailParams): VideoThumbnailResult =
 		post("/api/video/generate-thumbnail", params)
 
-	fun upload(path: String, data: ByteArray) {
-		post<ObjectNode>("/upload/binary", data, mapOf("path" to path))
+	fun exif(path: String): String =
+		get("/api/image/exif", mapOf("path" to path))
+
+	fun imageConvert(params: PhotoConvertParams) {
+		post<ObjectNode>("/api/image/convert", params)
+	}
+
+	fun upload(path: String, data: ByteArray, override: Boolean = false) {
+		post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
 	}
 
 	private inline fun <reified T> get(path: String, queryParams: Map<String, String>) =

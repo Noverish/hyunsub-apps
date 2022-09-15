@@ -16,7 +16,7 @@ class VideoEntryService(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoCategoryService: VideoCategoryService,
 	private val videoRepository: VideoRepository,
-	private val restModelConverter: RestModelConverter,
+	private val apiModelConverter: ApiModelConverter,
 	private val videoGroupService: VideoGroupService,
 	private val videoService: VideoService,
 ) {
@@ -44,7 +44,7 @@ class VideoEntryService(
 		val episodes =
 			if (videos.size > 1) {
 				videos.groupBy { it.videoSeason ?: "" }
-					.mapValues { (_, v) -> v.map { restModelConverter.convertToEpisode(it) }.sortedBy { it.title } }
+					.mapValues { (_, v) -> v.map { apiModelConverter.convertToEpisode(it) }.sortedBy { it.title } }
 			} else {
 				null
 			}

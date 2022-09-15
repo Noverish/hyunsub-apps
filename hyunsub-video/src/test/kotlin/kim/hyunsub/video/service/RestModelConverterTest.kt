@@ -5,13 +5,12 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.video.model.RestVideoSubtitle
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 
 class RestModelConverterTest: FreeSpec({
 	val fileUrlConverter = mockk<FileUrlConverter>()
-	val service = RestModelConverter(fileUrlConverter)
+	val service = ApiModelConverter(fileUrlConverter)
 
 	beforeSpec {
 		every { fileUrlConverter.pathToUrl(any()) } answers {
