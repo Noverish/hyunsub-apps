@@ -8,6 +8,7 @@ import kim.hyunsub.encode.repository.entity.Encode
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import kotlin.io.path.Path
+import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
 class EncodeThread(
@@ -89,6 +90,7 @@ class EncodeThread(
 			return "$input.mp4"
 		}
 
-		return Path(input).nameWithoutExtension + ".mp4"
+		val ext = Path(input).extension
+		return input.replace(Regex("$ext$"), "mp4")
 	}
 }
