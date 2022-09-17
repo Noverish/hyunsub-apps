@@ -2,7 +2,6 @@ package kim.hyunsub.encode.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.FFmpegParams
-import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.repository.entity.Encode
@@ -10,12 +9,10 @@ import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.extension
-import kotlin.io.path.nameWithoutExtension
 
 class EncodeThread(
 	private val encodeRepository: EncodeRepository,
 	private val apiCaller: ApiCaller,
-	private val httpClient: HttpClient,
 	private val resume: Boolean = false,
 ) : Thread() {
 	companion object : Log
@@ -57,7 +54,7 @@ class EncodeThread(
 			log.debug("[EncodeThread] percent={}", percent)
 
 			encodeRepository.findByIdOrNull(candidate.id)!!
-				.let { it.copy(progress = percent) }
+				.copy(progress = percent)
 				.let { encodeRepository.saveAndFlush(it) }
 		}
 
@@ -70,9 +67,9 @@ class EncodeThread(
 			apiCaller.rename(generateOutput(result.input), result.input)
 		}
 
-		result.callback?.let { httpClient.get<String>(it) }
+		result.callback?.let { apiCaller.get(it) }
 
-		EncodeThread(encodeRepository, apiCaller, httpClient).start()
+		EncodeThread(encodeRepository, apiCaller).start()
 	}
 
 	private fun startEncode(candidate: Encode) {

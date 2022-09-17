@@ -14,7 +14,6 @@ import java.time.LocalDateTime
 class EncodeService(
 	private val encodeRepository: EncodeRepository,
 	private val apiCaller: ApiCaller,
-	private val httpClient: HttpClient,
 ) {
 	companion object : Log
 
@@ -29,6 +28,6 @@ class EncodeService(
 		log.debug("[EncodeService] encode: newEncode={}", newEncode)
 		encodeRepository.saveAndFlush(newEncode)
 
-		EncodeThread(encodeRepository, apiCaller, httpClient).start()
+		EncodeThread(encodeRepository, apiCaller).start()
 	}
 }
