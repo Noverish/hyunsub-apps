@@ -46,7 +46,6 @@ class AlbumController(
 
 		val album = Album(
 			name = params.name,
-			thumbnail = ""
 		)
 		albumRepository.saveAndFlush(album)
 		return apiModelConverter.convertToPreview(album)

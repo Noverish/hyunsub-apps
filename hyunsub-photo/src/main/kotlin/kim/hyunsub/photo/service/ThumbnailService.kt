@@ -17,9 +17,8 @@ class ThumbnailService(
 		path.hashWithMD5()
 			.let { Paths.get(PhotoConstants.thumbnailDirPath, "$it.jpg").toString() }
 
-	fun getThumbnailUrl(path: String) =
-		path.takeIf { it.isNotBlank() }
-			?.hashWithMD5()
+	fun getThumbnailUrl(path: String?) =
+		path?.hashWithMD5()
 			?.let { Paths.get(PhotoConstants.thumbnailDirPath, "$it.jpg").toString() }
 			?.let { fileUrlConverter.pathToUrl(it) }
 			?: "/img/placeholder.jpg"
