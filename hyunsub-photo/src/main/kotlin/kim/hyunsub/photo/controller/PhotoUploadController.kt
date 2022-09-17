@@ -15,8 +15,11 @@ import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoMetadata
 import kim.hyunsub.photo.service.ApiModelConverter
+import kim.hyunsub.photo.service.EncodeApiCaller
 import kim.hyunsub.photo.service.PhotoMetadataDateParser
 import kim.hyunsub.photo.service.ThumbnailService
+import kim.hyunsub.photo.util.isImage
+import kim.hyunsub.photo.util.isVideo
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -27,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.extension
+import kotlin.io.path.nameWithoutExtension
 
 @Authorized(authorities = ["service_photo", "admin"])
 @RestController
@@ -40,6 +44,7 @@ class PhotoUploadController(
 	private val photoRepository: PhotoRepository,
 	private val apiModelConverter: ApiModelConverter,
 	private val thumbnailService: ThumbnailService,
+	private val encodeApiCaller: EncodeApiCaller,
 ) {
 	companion object : Log
 
@@ -56,8 +61,7 @@ class PhotoUploadController(
 			?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
 		log.debug("Upload Photo: fileName={}", fileName)
 
-		val fileExt = Path(fileName).extension.lowercase()
-		if (fileExt !in listOf("jpg", "jpeg", "png")) {
+		if (!isVideo(fileName) && !isImage(fileName)) {
 			throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
 		}
 
@@ -77,9 +81,6 @@ class PhotoUploadController(
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST, mapper.readTree(ex.responseBodyAsString))
 		}
 
-		val thumbnailPath = thumbnailService.generateThumbnail(filePath)
-		log.debug("Upload Photo: thumbnailPath={}", thumbnailPath)
-
 		val metadataStr = apiCaller.exif(filePath)
 		val metadata = PhotoMetadata(
 			path = filePath,
@@ -93,8 +94,18 @@ class PhotoUploadController(
 		val height = metadataNode[0]["ImageHeight"].asInt()
 		val size = metadataNode[0]["FileSize"].asInt()
 
+		val realFilePath = if (isImage(filePath))
+			filePath
+		else {
+			val ext = Path(filePath).extension
+			filePath.replace(Regex("$ext$"), "mp4")
+		}
+
+		val thumbnailPath = thumbnailService.generateThumbnail(filePath, realFilePath)
+		log.debug("Upload Photo: thumbnailPath={}", thumbnailPath)
+
 		val photo = Photo(
-			path = filePath,
+			path = realFilePath,
 			width = width,
 			height = height,
 			date = photoMetadataDateParser.determineDate(metadata)!!,
@@ -104,6 +115,10 @@ class PhotoUploadController(
 		)
 		log.debug("Upload Photo : {}", photo)
 		photoRepository.saveAndFlush(photo)
+
+		if (isVideo(filePath)) {
+			encodeApiCaller.encode(filePath)
+		}
 
 		return apiModelConverter.convert(photo)
 	}

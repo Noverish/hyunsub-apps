@@ -27,5 +27,7 @@ class PhotoMetadataDateParserTest: FreeSpec({
 		parser.parseFromFileName("beauty_20190917203531.jpg") shouldBe LocalDateTime.parse("2019-09-17T20:35:31")
 		parser.parseFromFileName("CAP_20190911_174209.jpg") shouldBe LocalDateTime.parse("2019-09-11T17:42:09")
 		parser.parseFromFileName("Screenshot_20191114-212728_KakaoTalk.jpg") shouldBe LocalDateTime.parse("2019-11-14T21:27:28")
+		parser.parseFromFileName("KakaoTalk_Photo_2022-06-20-22-03-10 014.jpeg") shouldBe LocalDateTime.parse("2022-06-20T22:03:10")
+		parser.parseFromFileName("KakaoTalk_Video_2022-06-20-22-04-08.mp4") shouldBe LocalDateTime.parse("2022-06-20T22:04:08")
 	}
 })

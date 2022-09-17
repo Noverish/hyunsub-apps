@@ -3,8 +3,11 @@ package kim.hyunsub.photo.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.PhotoConvertParams
+import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.log.hashWithMD5
 import kim.hyunsub.photo.config.PhotoConstants
+import kim.hyunsub.photo.util.isImage
+import kim.hyunsub.photo.util.isVideo
 import org.springframework.stereotype.Service
 import java.nio.file.Paths
 
@@ -23,14 +26,27 @@ class ThumbnailService(
 			?.let { fileUrlConverter.pathToUrl(it) }
 			?: "/img/placeholder.jpg"
 
-	fun generateThumbnail(path: String): String {
-		val thumbnailPath = getThumbnailPath(path)
-		apiCaller.imageConvert(PhotoConvertParams(
-			input = path,
-			output = thumbnailPath,
-			resize = "512x512>",
-			quality = 60,
-		))
+	fun generateThumbnail(path: String) =
+		generateThumbnail(path, path)
+
+	fun generateThumbnail(originPath: String, targetPath: String): String {
+		val thumbnailPath = getThumbnailPath(targetPath)
+
+		if (isImage(originPath)) {
+			apiCaller.imageConvert(PhotoConvertParams(
+				input = originPath,
+				output = thumbnailPath,
+				resize = "512x512>",
+				quality = 60,
+			))
+		} else if (isVideo(originPath)) {
+			apiCaller.videoThumbnail(VideoThumbnailParams(
+				input = originPath,
+				output = thumbnailPath,
+				time = 0.0,
+			))
+		}
+
 		return thumbnailPath
 	}
 }

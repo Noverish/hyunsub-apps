@@ -63,6 +63,11 @@ class HttpClient(private val restTemplate: RestTemplate) {
 			return res.body!!
 		} catch (e: HttpStatusCodeException) {
 			stopWatch.stop()
+			if (body is ByteArray) {
+				log.error("[API Request] {} {} bytes={} {}", method, newUrl, body.size, headers)
+			} else {
+				log.error("[API Request] {} {} {} {}", method, newUrl, body, headers)
+			}
 			log.error("[Api Response] {}ms {} {} {}", stopWatch.totalTimeMillis, e.statusCode, e.responseBodyAsString, e.responseHeaders)
 			throw e
 		}
