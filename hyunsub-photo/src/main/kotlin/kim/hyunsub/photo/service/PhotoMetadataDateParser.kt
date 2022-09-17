@@ -113,6 +113,10 @@ class PhotoMetadataDateParser {
 			return LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"))
 		}
 
+		Regex("20\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}").find(name)?.value?.let {
+			return LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyy-MM-dd-HH-mm-ss"))
+		}
+
 		Regex("20\\d{12}").find(name)?.value?.let {
 			return LocalDateTime.parse(it, DateTimeFormatter.ofPattern("yyyyMMddHHmmss"))
 		}
