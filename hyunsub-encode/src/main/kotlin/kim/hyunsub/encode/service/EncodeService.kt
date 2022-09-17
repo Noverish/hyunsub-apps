@@ -2,6 +2,7 @@ package kim.hyunsub.encode.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.FFmpegParams
+import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.encode.model.EncodeParams
 import kim.hyunsub.encode.repository.EncodeRepository
@@ -13,6 +14,7 @@ import java.time.LocalDateTime
 class EncodeService(
 	private val encodeRepository: EncodeRepository,
 	private val apiCaller: ApiCaller,
+	private val httpClient: HttpClient,
 ) {
 	companion object : Log
 
@@ -22,10 +24,11 @@ class EncodeService(
 			options = params.options,
 			output = params.output,
 			regDt = LocalDateTime.now(),
+			callback = params.callback,
 		)
 		log.debug("[EncodeService] encode: newEncode={}", newEncode)
 		encodeRepository.saveAndFlush(newEncode)
 
-		EncodeThread(encodeRepository, apiCaller).start()
+		EncodeThread(encodeRepository, apiCaller, httpClient).start()
 	}
 }

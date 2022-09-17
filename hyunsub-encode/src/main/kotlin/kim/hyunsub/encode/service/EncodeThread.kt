@@ -2,6 +2,7 @@ package kim.hyunsub.encode.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.FFmpegParams
+import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.repository.entity.Encode
@@ -14,6 +15,7 @@ import kotlin.io.path.nameWithoutExtension
 class EncodeThread(
 	private val encodeRepository: EncodeRepository,
 	private val apiCaller: ApiCaller,
+	private val httpClient: HttpClient,
 	private val resume: Boolean = false,
 ) : Thread() {
 	companion object : Log
@@ -68,7 +70,9 @@ class EncodeThread(
 			apiCaller.rename(generateOutput(result.input), result.input)
 		}
 
-		EncodeThread(encodeRepository, apiCaller).start()
+		result.callback?.let { httpClient.get<String>(it) }
+
+		EncodeThread(encodeRepository, apiCaller, httpClient).start()
 	}
 
 	private fun startEncode(candidate: Encode) {

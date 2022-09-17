@@ -1,6 +1,7 @@
 package kim.hyunsub.encode
 
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.service.EncodeThread
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -14,5 +15,6 @@ fun main(args: Array<String>) {
 
 	val encodeRepository = ctx.getBean(EncodeRepository::class.java)
 	val apiCaller = ctx.getBean(ApiCaller::class.java)
-	EncodeThread(encodeRepository, apiCaller, true).start()
+	val httpClient = ctx.getBean(HttpClient::class.java)
+	EncodeThread(encodeRepository, apiCaller, httpClient, true).start()
 }
