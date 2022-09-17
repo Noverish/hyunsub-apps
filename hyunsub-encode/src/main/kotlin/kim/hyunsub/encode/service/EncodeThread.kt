@@ -18,58 +18,62 @@ class EncodeThread(
 	companion object : Log
 
 	override fun run() {
-		log.info("[EncodeThread resume={}", resume)
+		try {
+			log.info("[EncodeThread resume={}", resume)
 
-		val candidate = encodeRepository.findByEndDtIsNull().minByOrNull { it.regDt }
-		if (candidate == null) {
-			log.info("[EncodeThread] No candidate")
-			return
-		}
-
-		log.info("[EncodeThread] candidate={}", candidate)
-		if (candidate.startDt != null) {
-			if (!resume) {
-				log.info("[EncodeThread] Candidate is already in progress")
+			val candidate = encodeRepository.findByEndDtIsNull().minByOrNull { it.regDt }
+			if (candidate == null) {
+				log.info("[EncodeThread] No candidate")
 				return
 			}
-		} else {
-			startEncode(candidate)
-		}
 
-		val ffprobe = apiCaller.ffprobe(candidate.input)
-		val duration = ffprobe["format"]["duration"].asInt()
-		log.debug("[EncodeThread] duration={}", duration)
-
-		while (true) {
-			sleep(3000)
-
-			val status = apiCaller.ffmpegStatus().status
-			log.debug("[EncodeThread] status={}", status)
-			if (status.q == "-1.0") {
-				break
+			log.info("[EncodeThread] candidate={}", candidate)
+			if (candidate.startDt != null) {
+				if (!resume) {
+					log.info("[EncodeThread] Candidate is already in progress")
+					return
+				}
+			} else {
+				startEncode(candidate)
 			}
 
-			val progress = status.progress
-			val percent = (progress.toDouble() / duration.toDouble() * 100).toInt()
-			log.debug("[EncodeThread] percent={}", percent)
+			val ffprobe = apiCaller.ffprobe(candidate.input)
+			val duration = ffprobe["format"]["duration"].asInt()
+			log.debug("[EncodeThread] duration={}", duration)
 
-			encodeRepository.findByIdOrNull(candidate.id)!!
-				.copy(progress = percent)
-				.let { encodeRepository.saveAndFlush(it) }
+			while (true) {
+				sleep(3000)
+
+				val status = apiCaller.ffmpegStatus().status
+				log.debug("[EncodeThread] status={}", status)
+				if (status.q == "-1.0") {
+					break
+				}
+
+				val progress = status.progress
+				val percent = (progress.toDouble() / duration.toDouble() * 100).toInt()
+				log.debug("[EncodeThread] percent={}", percent)
+
+				encodeRepository.findByIdOrNull(candidate.id)!!
+					.copy(progress = percent)
+					.let { encodeRepository.saveAndFlush(it) }
+			}
+
+			val result = encodeRepository.findByIdOrNull(candidate.id)!!
+				.copy(endDt = LocalDateTime.now(), progress = 100)
+			encodeRepository.saveAndFlush(result)
+
+			if (result.output == null && result.input.endsWith(".mp4", true)) {
+				apiCaller.rename(result.input, result.input + ".old")
+				apiCaller.rename(generateOutput(result.input), result.input)
+			}
+
+			result.callback?.let { apiCaller.get(it) }
+
+			EncodeThread(encodeRepository, apiCaller).start()
+		} catch (ex: Exception) {
+			log.error(ex.message, ex)
 		}
-
-		val result = encodeRepository.findByIdOrNull(candidate.id)!!
-			.copy(endDt = LocalDateTime.now(), progress = 100)
-		encodeRepository.saveAndFlush(result)
-
-		if (result.output == null && result.input.endsWith(".mp4", true)) {
-			apiCaller.rename(result.input, result.input + ".old")
-			apiCaller.rename(generateOutput(result.input), result.input)
-		}
-
-		result.callback?.let { apiCaller.get(it) }
-
-		EncodeThread(encodeRepository, apiCaller).start()
 	}
 
 	private fun startEncode(candidate: Encode) {
