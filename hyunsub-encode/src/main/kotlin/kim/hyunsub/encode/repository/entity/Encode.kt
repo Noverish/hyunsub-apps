@@ -30,4 +30,7 @@ data class Encode(
 
 	@Column
 	val endDt: LocalDateTime? = null,
+
+	@Column
+	val callback: String? = null,
 )
