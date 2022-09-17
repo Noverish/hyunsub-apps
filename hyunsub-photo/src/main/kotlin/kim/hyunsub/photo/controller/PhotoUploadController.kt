@@ -31,9 +31,8 @@ import org.springframework.web.client.HttpClientErrorException
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.extension
-import kotlin.io.path.nameWithoutExtension
 
-@Authorized(authorities = ["service_photo", "admin"])
+@Authorized(authorities = ["service_photo"])
 @RestController
 @RequestMapping("/api/v1")
 class PhotoUploadController(

@@ -65,6 +65,9 @@ class ApiCaller(
 	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
 		request(urlOrPath, HttpMethod.GET, queryParams, null)
 
+	fun post(urlOrPath: String, body: Any?): String =
+		request(urlOrPath, HttpMethod.POST, emptyMap(), body)
+
 	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>) =
 		request<T>(urlOrPath, HttpMethod.GET, queryParams, null)
 
