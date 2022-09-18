@@ -63,6 +63,9 @@ class PhotoController(
 
 		photoMetadataRepository.saveAndFlush(metadata)
 
+		val newPhoto = photo.update(metadata)
+		photoRepository.saveAndFlush(newPhoto)
+
 		return metadata.data
 	}
 
