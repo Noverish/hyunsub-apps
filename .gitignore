@@ -1,6 +1,7 @@
 *.pem
 .java-version
 logs/
+Hyunsub*ApplicationTest.kt
 
 HELP.md
 .gradle
