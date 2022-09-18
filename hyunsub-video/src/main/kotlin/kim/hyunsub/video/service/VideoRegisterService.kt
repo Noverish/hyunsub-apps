@@ -17,6 +17,7 @@ import kim.hyunsub.video.repository.entity.VideoEntry
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import kotlin.io.path.Path
+import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
 @Service
@@ -36,18 +37,28 @@ class VideoRegisterService(
 			?: throw ErrorCodeException(ErrorCode.NO_SUCH_FILE)
 		log.debug("registerVideo: videoStat={}", videoStat)
 
-		val folderPath = Path(params.outputPath).parent.toString()
-		log.debug("registerVideo: dirPath={}", folderPath)
-		apiCaller.mkdir(folderPath)
-		apiCaller.rename(params.videoPath, params.outputPath)
+		if (params.videoPath != params.outputPath) {
+			val folderPath = Path(params.outputPath).parent.toString()
+			log.debug("registerVideo: dirPath={}", folderPath)
+			apiCaller.mkdir(folderPath)
+			apiCaller.rename(params.videoPath, params.outputPath)
+		}
 
 		// 파일 이동 확인
 		apiCaller.stat(params.outputPath) ?: throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
 
 		val videoPath = params.outputPath
 		val videoDate = videoStat.mDate
+		val videoExt = Path(videoPath).extension
 		val videoName = Path(videoPath).nameWithoutExtension
-		val thumbnailPath = apiCaller.videoThumbnail(VideoThumbnailParams(input = videoPath)).result
+		val thumbnailPath = videoPath.replace(Regex("$videoExt$"), "jpg")
+
+		if (apiCaller.stat(thumbnailPath) == null) {
+			log.debug("registerVideo: generate thumbnail: {}", thumbnailPath)
+			apiCaller.videoThumbnail(
+				VideoThumbnailParams(input = videoPath, output = thumbnailPath)
+			)
+		}
 
 		val videoEntry =
 			if (params.videoEntryId != null) {
