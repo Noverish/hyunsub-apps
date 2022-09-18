@@ -9,29 +9,33 @@
     {
       "id": "000001",
       "name": "video1",
-      "thumbnail": "/root/group1/folder1/video1.thumbnail.jpg",
+      "thumbnail": "/root/group1/folder1/video1.jpg",
       "category": "kotest_category",
+      "regDt": "2020-09-13 21:26:43",
       "videoGroupId": "000000"
     },
     {
       "id": "000005",
       "name": "video2",
-      "thumbnail": "/root/group1/folder2/video2.thumbnail.jpg",
+      "thumbnail": "/root/group1/folder2/video2.jpg",
       "category": "kotest_category",
+      "regDt": "2020-09-13 21:26:49",
       "videoGroupId": "000000"
     },
     {
       "id": "000009",
       "name": "no_group",
-      "thumbnail": "/root/folder3/no_group.thumbnail.jpg",
+      "thumbnail": "/root/folder3/no_group.jpg",
       "category": "kotest_category",
+      "regDt": "2020-09-13 21:26:54",
       "videoGroupId": null
     },
     {
       "id": "000014",
       "name": "no_group_no_thumbnail",
-      "thumbnail": null,
+      "thumbnail": "/root/folder4/no_group_no_thumbnail.jpg",
       "category": "kotest_category",
+      "regDt": "2020-09-13 21:27:00",
       "videoGroupId": null
     }
   ],
@@ -39,7 +43,7 @@
     {
       "id": "000002",
       "path": "/root/group1/folder1/video1.mp4",
-      "thumbnail": "/root/group1/folder1/video1.thumbnail.jpg",
+      "thumbnail": "/root/group1/folder1/video1.jpg",
       "regDt": "2020-09-13 21:26:43",
       "videoEntryId": "000001",
       "videoSeason": null
@@ -47,7 +51,7 @@
     {
       "id": "000006",
       "path": "/root/group1/folder2/video2.mp4",
-      "thumbnail": "/root/group1/folder2/video2.thumbnail.jpg",
+      "thumbnail": "/root/group1/folder2/video2.jpg",
       "regDt": "2020-09-13 21:26:49",
       "videoEntryId": "000005",
       "videoSeason": null
@@ -55,7 +59,7 @@
     {
       "id": "000010",
       "path": "/root/folder3/no_group.mp4",
-      "thumbnail": "/root/folder3/no_group.thumbnail.jpg",
+      "thumbnail": "/root/folder3/no_group.jpg",
       "regDt": "2020-09-13 21:26:54",
       "videoEntryId": "000009",
       "videoSeason": null
@@ -63,7 +67,7 @@
     {
       "id": "000015",
       "path": "/root/folder4/no_group_no_thumbnail.mp4",
-      "thumbnail": null,
+      "thumbnail": "/root/folder4/no_group_no_thumbnail.jpg",
       "regDt": "2020-09-13 21:27:00",
       "videoEntryId": "000014",
       "videoSeason": null
