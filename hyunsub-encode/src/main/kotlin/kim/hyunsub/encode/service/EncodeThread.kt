@@ -3,6 +3,7 @@ package kim.hyunsub.encode.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.FFmpegParams
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.log.hashWithMD5
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.repository.entity.Encode
 import org.springframework.data.repository.findByIdOrNull
@@ -65,10 +66,13 @@ class EncodeThread(
 				.copy(endDt = LocalDateTime.now(), progress = 100)
 			encodeRepository.saveAndFlush(result)
 
-			if (result.output == null && result.input.endsWith(".mp4", true)) {
+			if (result.input == result.output) {
 				log.info("[EncodeThread] rename: result={}", result)
 				apiCaller.rename(result.input, result.input + ".old")
-				apiCaller.rename(generateOutput(result.input), result.input)
+				apiCaller.rename(getRealOutputPath(result), result.input)
+				apiCaller.copyMDate(result.input + ".old", result.output)
+			} else {
+				apiCaller.copyMDate(result.input, result.output)
 			}
 
 			result.callback
@@ -82,7 +86,7 @@ class EncodeThread(
 	}
 
 	private fun startEncode(candidate: Encode) {
-		val output = candidate.output ?: generateOutput(candidate.input)
+		val output = getRealOutputPath(candidate)
 		apiCaller.ffmpeg(
 			FFmpegParams(
 				input = candidate.input,
@@ -95,12 +99,15 @@ class EncodeThread(
 			.let { encodeRepository.saveAndFlush(it) }
 	}
 
-	private fun generateOutput(input: String): String {
-		if (input.endsWith(".mp4", true)) {
-			return "$input.mp4"
+	private fun getRealOutputPath(encode: Encode): String {
+		if (encode.input != encode.output) {
+			return encode.output
 		}
 
-		val ext = Path(input).extension
-		return input.replace(Regex("$ext$"), "mp4")
+		val hash = encode.input.hashWithMD5()
+		val path = Path(encode.input)
+		val ext = path.extension
+		val dir = path.parent.toString()
+		return Path(dir, "$hash.$ext").toString()
 	}
 }
