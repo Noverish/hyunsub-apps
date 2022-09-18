@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.repository.entity
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.time.LocalDateTime
 import javax.persistence.*
 
@@ -30,4 +31,14 @@ data class Photo(
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime,
-)
+) {
+	fun update(metadata: PhotoMetadata): Photo {
+		val mapper = jacksonObjectMapper()
+		val node = mapper.readTree(metadata.data)
+		return this.copy(
+			width = node[0]["ImageWidth"].asInt(),
+			height = node[0]["ImageHeight"].asInt(),
+			size = node[0]["FileSize"].asInt(),
+		)
+	}
+}
