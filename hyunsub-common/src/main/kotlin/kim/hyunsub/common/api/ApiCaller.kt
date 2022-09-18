@@ -1,5 +1,6 @@
 package kim.hyunsub.common.api
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.*
 import kim.hyunsub.common.http.HttpClient
@@ -38,6 +39,10 @@ class ApiCaller(
 
 	fun readdirDetail(path: String): List<FileStat> =
 		_get("/api/fs/readdir/detail", mapOf("path" to path))
+
+	fun copyMDate(from: String, to: String) {
+		_post<ObjectNode>("/api/fs/copy-mdate", mapOf("from" to from, "to" to to))
+	}
 
 	fun ffprobe(path: String): ObjectNode =
 		_get("/api/video/ffprobe", mapOf("path" to path))

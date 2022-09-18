@@ -16,8 +16,8 @@ data class Encode(
 	@Column(nullable = false)
 	val options: String,
 
-	@Column
-	val output: String? = null,
+	@Column(nullable = false)
+	val output: String,
 
 	@Column(nullable = false)
 	val progress: Int = 0,
