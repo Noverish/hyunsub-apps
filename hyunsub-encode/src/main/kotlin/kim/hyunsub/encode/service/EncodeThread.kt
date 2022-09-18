@@ -52,23 +52,28 @@ class EncodeThread(
 
 				val progress = status.progress
 				val percent = (progress.toDouble() / duration.toDouble() * 100).toInt()
-				log.debug("[EncodeThread] percent={}", percent)
+				log.info("[EncodeThread] percent={}", percent)
 
 				encodeRepository.findByIdOrNull(candidate.id)!!
 					.copy(progress = percent)
 					.let { encodeRepository.saveAndFlush(it) }
 			}
 
+			log.info("[EncodeThread] Finished")
+
 			val result = encodeRepository.findByIdOrNull(candidate.id)!!
 				.copy(endDt = LocalDateTime.now(), progress = 100)
 			encodeRepository.saveAndFlush(result)
 
 			if (result.output == null && result.input.endsWith(".mp4", true)) {
+				log.info("[EncodeThread] rename: result={}", result)
 				apiCaller.rename(result.input, result.input + ".old")
 				apiCaller.rename(generateOutput(result.input), result.input)
 			}
 
-			result.callback?.let { apiCaller.get(it) }
+			result.callback
+				?.let { apiCaller.get(it) }
+				?.let { log.info("[EncodeThread] callback={}", it) }
 
 			EncodeThread(encodeRepository, apiCaller).start()
 		} catch (ex: Exception) {
