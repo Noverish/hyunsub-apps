@@ -2,6 +2,7 @@ package kim.hyunsub.photo.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.convertValue
+import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.util.convertToMap
 import kim.hyunsub.common.web.annotation.Authorized
@@ -11,14 +12,11 @@ import kim.hyunsub.photo.model.RestApiPhoto
 import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
+import kim.hyunsub.photo.repository.entity.PhotoMetadata
 import kim.hyunsub.photo.service.ApiModelConverter
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.time.LocalDateTime
 
 @Authorized(authorities = ["service_photo"])
 @RestController
@@ -28,6 +26,7 @@ class PhotoController(
 	private val photoMetadataRepository: PhotoMetadataRepository,
 	private val apiModelConverter: ApiModelConverter,
 	private val mapper: ObjectMapper,
+	private val apiCaller: ApiCaller,
 ) {
 	companion object : Log
 
@@ -46,6 +45,23 @@ class PhotoController(
 
 		val metadata = photoMetadataRepository.findByIdOrNull(photo.path)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		return metadata.data
+	}
+
+	@PostMapping("/{photoId}/exif/reload")
+	fun reloadExif(@PathVariable photoId: Int): String {
+		val photo = photoRepository.findByIdOrNull(photoId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		val exif = apiCaller.exif(photo.path)
+		val metadata = PhotoMetadata(
+			path = photo.path,
+			data = exif,
+			date = LocalDateTime.now(),
+		)
+
+		photoMetadataRepository.saveAndFlush(metadata)
 
 		return metadata.data
 	}

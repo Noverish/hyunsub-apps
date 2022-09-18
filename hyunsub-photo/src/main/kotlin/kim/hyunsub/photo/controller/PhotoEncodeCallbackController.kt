@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
-@Authorized(authorities = ["service_encode"])
+@Authorized(authorities = ["server_encode"])
 @RestController
 @RequestMapping("/api/v1/encode/callback")
 class PhotoEncodeCallbackController(
