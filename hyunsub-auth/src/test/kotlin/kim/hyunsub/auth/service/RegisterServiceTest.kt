@@ -22,10 +22,15 @@ class RegisterServiceTest: FreeSpec({
 	val params = mockk<RegisterParams>()
 	val username = "kotest_username"
 	val password = "kotest_password"
+	val captcha = "kotest_captcha"
+	val remoteAddr = "1.2.3.4"
 
 	beforeTest {
 		every { params.username } returns username
 		every { params.password } returns password
+		every { params.captcha } returns captcha
+		every { params.remoteAddr } returns remoteAddr
+		every { captchaService.verify(captcha, remoteAddr) } returns true
 		every { userRepository.findByUsername(username) } returns null
 		every { userRepository.existsById(any()) } returns false
 		every { userRepository.saveAndFlush(capture(slot)) } answers { slot.captured }
@@ -34,6 +39,12 @@ class RegisterServiceTest: FreeSpec({
 	"Success" {
 		val result = service.register(params)
 		result.idNo shouldNotBe null
+	}
+
+	"Captcha Failed" {
+		every { captchaService.verify(captcha, remoteAddr) } returns false
+		val ex = shouldThrow<ErrorCodeException> { service.register(params) }
+		ex.errorCode shouldBe ErrorCode.CAPTCHA_FAILURE
 	}
 
 	"Already exist username" {
