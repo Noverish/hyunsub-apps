@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@Authorized(authorities = ["server_photo"])
+@Authorized(authorities = ["service_encode"])
 @RestController
 @RequestMapping("/api/v1/encode")
 class EncodeController(
