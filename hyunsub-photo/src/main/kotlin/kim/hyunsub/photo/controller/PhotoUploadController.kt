@@ -16,7 +16,7 @@ import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoMetadata
 import kim.hyunsub.photo.service.ApiModelConverter
-import kim.hyunsub.photo.service.EncodeApiCaller
+import kim.hyunsub.photo.service.PhotoEncodeApiCaller
 import kim.hyunsub.photo.service.PhotoMetadataDateParser
 import kim.hyunsub.photo.service.ThumbnailService
 import kim.hyunsub.photo.util.isImage
@@ -44,7 +44,7 @@ class PhotoUploadController(
 	private val photoRepository: PhotoRepository,
 	private val apiModelConverter: ApiModelConverter,
 	private val thumbnailService: ThumbnailService,
-	private val encodeApiCaller: EncodeApiCaller,
+	private val photoEncodeApiCaller: PhotoEncodeApiCaller,
 	private val fileUrlConverter: FileUrlConverter,
 ) {
 	companion object : Log
@@ -124,7 +124,7 @@ class PhotoUploadController(
 		photoRepository.saveAndFlush(photo)
 
 		if (isVideoFile) {
-			encodeApiCaller.encode(filePath, targetFilePath, photo.id)
+			photoEncodeApiCaller.encode(filePath, targetFilePath, photo.id)
 		}
 
 		return apiModelConverter.convert(photo)

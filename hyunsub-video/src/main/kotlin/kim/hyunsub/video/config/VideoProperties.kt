@@ -1,13 +1,10 @@
-package kim.hyunsub.common.api
+package kim.hyunsub.video.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConstructorBinding
-@ConfigurationProperties("api")
-data class ApiProperties(
+@ConfigurationProperties("video")
+data class VideoProperties(
 	val host: String,
-	val token: String,
-	val nonceBase: String = "/hyunsub/file/upload",
-	val encodeHost: String,
 )
