@@ -11,8 +11,9 @@ class ApiModelConverter(
 	private val fileUrlConverter: FileUrlConverter,
 ) {
 	fun convert(userId: String, apparel: Apparel): RestApiApparel {
-		val path = "/hyunsub/apparel/apparel/$userId/${apparel.id}/${apparel.thumbnail}"
-		val url = fileUrlConverter.pathToUrl(path)
+		val url = apparel.thumbnail
+			?.let { FilePathConverter.getApparelPhotoPath(userId, apparel.id, it) }
+			?.let { fileUrlConverter.pathToUrl(it) }
 
 		return RestApiApparel(
 			id = apparel.id,
@@ -26,13 +27,13 @@ class ApiModelConverter(
 			buyDt = apparel.buyDt,
 			buyLoc = apparel.buyLoc,
 			makeDt = apparel.makeDt,
-			photos = listOf(url),
+			photos = listOfNotNull(url),
 		)
 	}
 
 	fun convert(userId: String, apparel: Apparel, photos: List<ApparelPhoto>): RestApiApparel {
 		val urls = photos
-			.map { "/hyunsub/apparel/apparel/$userId/${apparel.id}/${it.fileName}" }
+			.map { FilePathConverter.getApparelPhotoPath(userId, apparel.id, it.fileName) }
 			.map { fileUrlConverter.pathToUrl(it) }
 
 		return RestApiApparel(
