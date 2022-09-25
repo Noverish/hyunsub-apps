@@ -18,13 +18,16 @@ data class Apparel(
 	val userId: String,
 
 	@Column(nullable = false)
-	val itemId: String,
+	val itemNo: String,
 
 	@Column(nullable = false)
 	val name: String,
 
 	@Column(nullable = false)
 	val brand: String,
+
+	@Column(nullable = false)
+	val type: String,
 
 	@Column(nullable = false)
 	val size: String,
@@ -39,6 +42,12 @@ data class Apparel(
 	val discountPrice: Int?,
 
 	@Column(nullable = false)
+	val material: String,
+
+	@Column(nullable = false)
+	val size2: String,
+
+	@Column(nullable = false)
 	val buyDt: LocalDate,
 
 	@Column(nullable = false)
@@ -47,9 +56,9 @@ data class Apparel(
 	@Column
 	val makeDt: String?,
 
-	@Column
-	val thumbnail: String?,
+	@Column(columnDefinition = "CHAR(10)")
+	val imageId: String?,
 
 	@Column(nullable = false)
-	val regDt: LocalDateTime,
+	val regDt: LocalDateTime = LocalDateTime.now(),
 )

@@ -13,5 +13,5 @@ class RandomGenerator {
 		Array(size) { source[random.nextInt(source.length)] }.joinToString("")
 
 	fun generateRandomId(size: Int) =
-		Array(size) { sourceForId[random.nextInt(source.length)] }.joinToString("")
+		Array(size) { sourceForId[random.nextInt(sourceForId.length)] }.joinToString("")
 }

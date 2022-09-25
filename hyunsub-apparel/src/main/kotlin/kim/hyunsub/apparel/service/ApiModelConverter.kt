@@ -1,8 +1,11 @@
 package kim.hyunsub.apparel.service
 
 import kim.hyunsub.apparel.model.RestApiApparel
+import kim.hyunsub.apparel.model.RestApiApparelImage
+import kim.hyunsub.apparel.model.RestApiApparelPreview
 import kim.hyunsub.apparel.repository.entity.Apparel
-import kim.hyunsub.apparel.repository.entity.ApparelPhoto
+import kim.hyunsub.apparel.repository.entity.ApparelImage
+import kim.hyunsub.apparel.repository.entity.ApparelPreview
 import kim.hyunsub.common.api.FileUrlConverter
 import org.springframework.stereotype.Service
 
@@ -10,45 +13,47 @@ import org.springframework.stereotype.Service
 class ApiModelConverter(
 	private val fileUrlConverter: FileUrlConverter,
 ) {
-	fun convert(userId: String, apparel: Apparel): RestApiApparel {
-		val url = apparel.thumbnail
+	fun convert(userId: String, apparel: ApparelPreview): RestApiApparelPreview {
+		val url = apparel.fileName
 			?.let { FilePathConverter.getApparelPhotoPath(userId, apparel.id, it) }
 			?.let { fileUrlConverter.pathToUrl(it) }
+			?: "/img/placeholder.jpg"
 
-		return RestApiApparel(
+		return RestApiApparelPreview(
 			id = apparel.id,
-			itemId = apparel.itemId,
 			name = apparel.name,
-			brand = apparel.brand,
-			size = apparel.size,
-			color = apparel.color,
-			originPrice = apparel.originPrice,
-			discountPrice = apparel.discountPrice,
-			buyDt = apparel.buyDt,
-			buyLoc = apparel.buyLoc,
-			makeDt = apparel.makeDt,
-			photos = listOfNotNull(url),
+			thumbnail = url,
 		)
 	}
 
-	fun convert(userId: String, apparel: Apparel, photos: List<ApparelPhoto>): RestApiApparel {
-		val urls = photos
-			.map { FilePathConverter.getApparelPhotoPath(userId, apparel.id, it.fileName) }
-			.map { fileUrlConverter.pathToUrl(it) }
+	fun convert(userId: String, image: ApparelImage): RestApiApparelImage {
+		val path = FilePathConverter.getApparelPhotoPath(userId, image.apparelId, image.fileName)
+		val url = fileUrlConverter.pathToUrl(path)
 
+		return RestApiApparelImage(
+			imageId = image.id,
+			apparelId = image.apparelId,
+			url = url,
+		)
+	}
+
+	fun convert(userId: String, apparel: Apparel, images: List<ApparelImage>): RestApiApparel {
 		return RestApiApparel(
 			id = apparel.id,
-			itemId = apparel.itemId,
+			itemNo = apparel.itemNo,
 			name = apparel.name,
 			brand = apparel.brand,
+			type = apparel.type,
 			size = apparel.size,
 			color = apparel.color,
 			originPrice = apparel.originPrice,
 			discountPrice = apparel.discountPrice,
+			material = apparel.material,
+			size2 = apparel.size2,
 			buyDt = apparel.buyDt,
 			buyLoc = apparel.buyLoc,
 			makeDt = apparel.makeDt,
-			photos = urls,
+			images = images.map { convert(userId, it) },
 		)
 	}
 }

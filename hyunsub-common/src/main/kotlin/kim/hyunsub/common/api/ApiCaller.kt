@@ -31,6 +31,10 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to))
 	}
 
+	fun unlink(path: String) {
+		_post<ObjectNode>("/api/fs/unlink", mapOf("path" to path))
+	}
+
 	fun walk(path: String): List<String> =
 		_get("/api/fs/walk", mapOf("path" to path))
 
