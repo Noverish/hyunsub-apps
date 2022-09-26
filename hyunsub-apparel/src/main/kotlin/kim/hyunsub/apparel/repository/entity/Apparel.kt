@@ -1,5 +1,6 @@
 package kim.hyunsub.apparel.repository.entity
 
+import kim.hyunsub.common.random.RandomGenerator
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -17,41 +18,41 @@ data class Apparel(
 	@Column(nullable = false)
 	val userId: String,
 
-	@Column(nullable = false)
-	val itemNo: String,
+	@Column
+	val itemNo: String?,
 
 	@Column(nullable = false)
 	val name: String,
 
-	@Column(nullable = false)
-	val brand: String,
+	@Column
+	val brand: String?,
 
 	@Column(nullable = false)
 	val type: String,
 
-	@Column(nullable = false)
-	val size: String,
+	@Column
+	val size: String?,
 
-	@Column(nullable = false)
-	val color: String,
+	@Column
+	val color: String?,
 
-	@Column(nullable = false)
-	val originPrice: Int,
+	@Column
+	val originPrice: Int?,
 
 	@Column
 	val discountPrice: Int?,
 
-	@Column(nullable = false)
-	val material: String,
+	@Column
+	val material: String?,
 
-	@Column(nullable = false)
-	val size2: String,
+	@Column
+	val size2: String?,
 
-	@Column(nullable = false)
-	val buyDt: LocalDate,
+	@Column
+	val buyDt: LocalDate?,
 
-	@Column(nullable = false)
-	val buyLoc: String,
+	@Column
+	val buyLoc: String?,
 
 	@Column
 	val makeDt: String?,
@@ -61,4 +62,8 @@ data class Apparel(
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now(),
-)
+) {
+	companion object {
+		fun generateId(generator: RandomGenerator) = generator.generateRandomId(8)
+	}
+}

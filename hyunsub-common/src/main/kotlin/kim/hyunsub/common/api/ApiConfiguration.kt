@@ -16,7 +16,7 @@ class ApiConfiguration {
 	fun apiCaller(apiProperties: ApiProperties, builder: RestTemplateBuilder): ApiCaller {
 		val restTemplate = builder
 			.setConnectTimeout(Duration.ofSeconds(1))
-			.setReadTimeout(Duration.ofSeconds(3))
+			.setReadTimeout(Duration.ofSeconds(10))
 			.build()
 
 		val httpClient = HttpClient(restTemplate)
