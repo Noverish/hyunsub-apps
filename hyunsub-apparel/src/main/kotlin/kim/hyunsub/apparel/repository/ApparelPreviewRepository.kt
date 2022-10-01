@@ -10,4 +10,7 @@ interface ApparelPreviewRepository: JpaRepository<ApparelPreview, String> {
 
 	fun findByCategoryAndUserId(category: String, userId: String, page: Pageable = Pageable.unpaged()): List<ApparelPreview>
 	fun countByCategoryAndUserId(category: String, userId: String): Int
+
+	fun findByBrandAndUserId(brand: String, userId: String, page: Pageable = Pageable.unpaged()): List<ApparelPreview>
+	fun countByBrandAndUserId(brand: String, userId: String): Int
 }

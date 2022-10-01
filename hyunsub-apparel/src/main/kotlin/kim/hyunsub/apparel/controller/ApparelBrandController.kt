@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*
 
 @Authorized(authorities = ["service_apparel"])
 @RestController
-@RequestMapping("/api/v1/categories")
-class ApparelCategoryController(
+@RequestMapping("/api/v1/brands")
+class ApparelBrandController(
 	private val apparelRepository: ApparelRepository,
 	private val apparelPreviewRepository: ApparelPreviewRepository,
 	private val apiModelConverter: ApiModelConverter,
@@ -22,22 +22,22 @@ class ApparelCategoryController(
 	companion object : Log
 
 	@GetMapping("")
-	fun categories(userAuth: UserAuth): List<String> {
-		return apparelRepository.findCategories(userAuth.idNo).sorted()
+	fun brands(userAuth: UserAuth): List<String> {
+		return apparelRepository.findBrands(userAuth.idNo).filterNotNull().sorted()
 	}
 
-	@GetMapping("/{category}/apparels")
-	fun categoryApparels(
+	@GetMapping("/{brand}/apparels")
+	fun brandApparels(
 		userAuth: UserAuth,
 		@RequestParam p: Int,
-		@PathVariable category: String,
+		@PathVariable brand: String,
 	): RestApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
 
-		val total = apparelPreviewRepository.countByCategoryAndUserId(category, userId)
+		val total = apparelPreviewRepository.countByBrandAndUserId(brand, userId)
 		val pageRequest = PageRequest.of(p, 48)
 
-		val list = apparelPreviewRepository.findByCategoryAndUserId(category, userAuth.idNo, pageRequest)
+		val list = apparelPreviewRepository.findByBrandAndUserId(brand, userAuth.idNo, pageRequest)
 			.map { apiModelConverter.convert(userAuth.idNo, it) }
 
 		return RestApiPageResult(total, p, 48, list)
