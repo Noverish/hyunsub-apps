@@ -4,4 +4,4 @@ include 'hyunsub-common'
 include 'hyunsub-video'
 include 'hyunsub-photo'
 include 'hyunsub-encode'
-
+include 'hyunsub-apparel'
