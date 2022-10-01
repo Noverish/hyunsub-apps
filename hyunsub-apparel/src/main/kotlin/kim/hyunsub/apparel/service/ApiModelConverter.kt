@@ -43,7 +43,7 @@ class ApiModelConverter(
 			itemNo = apparel.itemNo,
 			name = apparel.name,
 			brand = apparel.brand,
-			type = apparel.type,
+			category = apparel.category,
 			size = apparel.size,
 			color = apparel.color,
 			originPrice = apparel.originPrice,

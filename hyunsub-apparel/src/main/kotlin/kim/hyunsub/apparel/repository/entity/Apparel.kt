@@ -28,7 +28,7 @@ data class Apparel(
 	val brand: String?,
 
 	@Column(nullable = false)
-	val type: String,
+	val category: String,
 
 	@Column
 	val size: String?,

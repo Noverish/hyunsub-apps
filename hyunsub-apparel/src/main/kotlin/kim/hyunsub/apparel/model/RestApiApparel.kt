@@ -7,7 +7,7 @@ data class RestApiApparel(
 	val itemNo: String?,
 	val name: String,
 	val brand: String?,
-	val type: String,
+	val category: String,
 	val size: String?,
 	val color: String?,
 	val originPrice: Int?,

@@ -39,6 +39,7 @@ class ApparelController(
 	): RestApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
 
+		// TODO 48을 어디 따로 저장하기
 		val total = apparelPreviewRepository.countByUserId(userId)
 		val pageRequest = PageRequest.of(p, 48)
 		val list = apparelPreviewRepository.findByUserId(userId, pageRequest)

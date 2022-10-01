@@ -18,6 +18,12 @@ data class ApparelPreview(
 	@Column(nullable = false)
 	val name: String,
 
+	@Column(nullable = false)
+	val category: String,
+
+	@Column
+	val brand: String?,
+
 	@Column
 	val imageId: String?,
 
