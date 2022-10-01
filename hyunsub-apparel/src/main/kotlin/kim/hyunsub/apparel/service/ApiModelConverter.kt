@@ -15,7 +15,7 @@ class ApiModelConverter(
 ) {
 	fun convert(userId: String, apparel: ApparelPreview): RestApiApparelPreview {
 		val url = apparel.fileName
-			?.let { FilePathConverter.getApparelPhotoPath(userId, apparel.id, it) }
+			?.let { FilePathConverter.getApparelImagePath(userId, apparel.id, it) }
 			?.let { fileUrlConverter.pathToUrl(it) }
 			?: "/img/placeholder.jpg"
 
@@ -27,7 +27,7 @@ class ApiModelConverter(
 	}
 
 	fun convert(userId: String, image: ApparelImage): RestApiApparelImage {
-		val path = FilePathConverter.getApparelPhotoPath(userId, image.apparelId, image.fileName)
+		val path = FilePathConverter.getApparelImagePath(userId, image.apparelId, image.fileName)
 		val url = fileUrlConverter.pathToUrl(path)
 
 		return RestApiApparelImage(

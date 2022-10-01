@@ -1,20 +1,18 @@
 package kim.hyunsub.apparel.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.convertValue
 import kim.hyunsub.apparel.model.RestApiApparel
 import kim.hyunsub.apparel.model.RestApiApparelPreview
 import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
-import kim.hyunsub.apparel.repository.entity.Apparel
 import kim.hyunsub.apparel.service.ApiModelConverter
+import kim.hyunsub.apparel.service.ApparelService
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
-import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
@@ -23,12 +21,11 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/v1/apparels")
 class ApparelController(
+	private val apparelService: ApparelService,
 	private val apparelRepository: ApparelRepository,
 	private val apparelPreviewRepository: ApparelPreviewRepository,
 	private val apparelImageRepository: ApparelImageRepository,
 	private val apiModelConverter: ApiModelConverter,
-	private val mapper: ObjectMapper,
-	private val randomGenerator: RandomGenerator,
 ) {
 	companion object : Log
 
@@ -58,9 +55,9 @@ class ApparelController(
 		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val photos = apparelImageRepository.findByApparelId(apparelId)
+		val images = apparelImageRepository.findByApparelId(apparelId)
 
-		return apiModelConverter.convert(userId, apparel, photos)
+		return apiModelConverter.convert(userId, apparel, images)
 	}
 
 	@PostMapping("")
@@ -69,19 +66,28 @@ class ApparelController(
 		@RequestBody body: Map<String, Any?>,
 	): RestApiApparel {
 		val userId = userAuth.idNo
-		val id = Apparel.generateId(randomGenerator)
-
-		val map = buildMap {
-			this += body.mapValues { if (it.value == "") null else it.value }
-			this["id"] = id
-			this["userId"] = userId
-		}
-
-		log.debug("[Create Apparel] map={}", map)
-		val apparel = mapper.convertValue<Apparel>(map)
-		apparelRepository.saveAndFlush(apparel)
-		log.debug("[Create Apparel] apparel={}", apparel)
-
+		val apparel = apparelService.create(userId, body)
 		return apiModelConverter.convert(userId, apparel, emptyList())
+	}
+
+	@PutMapping("/{apparelId}")
+	fun update(
+		userAuth: UserAuth,
+		@PathVariable apparelId: String,
+		@RequestBody body: Map<String, Any?>,
+	): RestApiApparel {
+		val userId = userAuth.idNo
+		val apparel = apparelService.update(userId, apparelId, body)
+		val images = apparelImageRepository.findByApparelId(apparelId)
+		return apiModelConverter.convert(userId, apparel, images)
+	}
+
+	@DeleteMapping("/{apparelId}")
+	fun delete(
+		userAuth: UserAuth,
+		@PathVariable apparelId: String,
+	): SimpleResponse {
+		apparelService.delete(userAuth.idNo, apparelId)
+		return SimpleResponse()
 	}
 }
