@@ -11,4 +11,13 @@ data class RestApiPageResult<T>(
 
 	val end: Int
 		get() = start + data.size - 1
+
+	companion object {
+		fun <T> empty() = RestApiPageResult<T>(
+			total = 0,
+			page = 0,
+			pageSize = 0,
+			data = emptyList(),
+		)
+	}
 }

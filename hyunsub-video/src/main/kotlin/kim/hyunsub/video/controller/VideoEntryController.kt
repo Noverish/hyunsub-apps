@@ -1,6 +1,7 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -36,11 +37,13 @@ class VideoEntryController(
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
 		@RequestParam(required = false, defaultValue = "random") sort: VideoSort,
-	): List<RestVideoEntry> {
+	): RestApiPageResult<RestVideoEntry> {
 		val availableCategories = videoCategoryService.getAvailableCategories(user)
 		if (availableCategories.none { it.name == category }) {
-			return emptyList()
+			return RestApiPageResult.empty()
 		}
+
+		val total = videoEntryRepository.countByCategory(category)
 
 		val randomSeed = seed ?: System.currentTimeMillis().toInt()
 
@@ -52,7 +55,12 @@ class VideoEntryController(
 			VideoSort.new -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "regDt"))
 		}
 
-		return sorted.map { apiModelConverter.convertVideoEntry(it) }
+		return RestApiPageResult(
+			total = total,
+			page = p,
+			pageSize = ps,
+			data = sorted.map { apiModelConverter.convert(it) },
+		)
 	}
 
 	@GetMapping("/{entryId}")

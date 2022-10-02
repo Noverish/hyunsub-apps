@@ -65,6 +65,9 @@ class ApiCaller(
 		_post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
 	}
 
+	fun uploadByUrl(url: String) =
+		_post<UploadResult>("/upload/url", mapOf("url" to url))
+
 	fun ffmpeg(params: FFmpegParams): FFmpegResult =
 		_post("/api/video/ffmpeg", params)
 

@@ -9,4 +9,7 @@ interface VideoGroupRepository: JpaRepository<VideoGroup, String> {
 	@Modifying
 	@Query("DELETE FROM VideoGroup v WHERE v.id IN (:ids)")
 	fun deleteByIdIn(ids: List<String>): Int
+
+	fun findByCategoryIdIn(categoryIds: List<Int>): List<VideoGroup>
+	fun findByName(name: String): VideoGroup?
 }

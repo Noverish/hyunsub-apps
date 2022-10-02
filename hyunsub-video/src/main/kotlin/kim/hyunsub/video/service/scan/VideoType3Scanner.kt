@@ -41,6 +41,7 @@ class VideoType3Scanner(
 		val videoGroup = VideoGroup(
 			id = randomGenerator.generateRandomString(6),
 			name = Path(path).name,
+			categoryId = 0,
 		)
 		videoGroups.add(videoGroup)
 
