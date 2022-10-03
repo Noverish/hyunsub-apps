@@ -34,10 +34,11 @@ class VideoSubtitleController(
 	fun uploadSubtitle(
 		@PathVariable videoId: String,
 		lang: String,
-		@RequestParam(required = false) file: MultipartFile? = null,
-		@RequestParam(required = false) path: String? = null,
+		@RequestParam(required = false) file: MultipartFile?,
+		@RequestParam(required = false) path: String?,
+		@RequestParam(required = false) override: Boolean = false,
 	): VideoSubtitle {
-		log.debug("uploadSubtitle: videoId={}, lang={}, path={}, file={}", videoId, lang, path, file?.originalFilename)
+		log.debug("[Upload Video Subtitle] videoId={}, lang={}, override={}, path={}, file={}", videoId, lang, override, path, file?.originalFilename)
 
 		val video = videoRepository.findByIdOrNull(videoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
@@ -55,26 +56,31 @@ class VideoSubtitleController(
 
 		val subtitleExt = fileExt.let { if (lang.isEmpty()) it else "$lang.$it" }
 		val subtitlePath = video.path.replace(Regex("mp4$"), subtitleExt)
-		log.debug("uploadSubtitle: subtitlePath={}", subtitlePath)
+		log.debug("[Upload Video Subtitle] subtitlePath={}", subtitlePath)
 
-		val subtitles = videoSubtitleRepository.findByVideoId(videoId)
-		log.debug("subtitles: subtitles={}", subtitles)
-		if (subtitles.any { it.path == subtitlePath }) {
+		val subtitle = videoSubtitleRepository.findByVideoId(videoId).firstOrNull { it.path == subtitlePath }
+		log.debug("[Upload Video Subtitle] exist subtitle={}", subtitle)
+
+		if (!override && subtitle != null) {
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST)
 		}
 
 		if (file != null) {
-			apiCaller.upload(subtitlePath, file.bytes)
+			apiCaller.upload(subtitlePath, file.bytes, override)
 		} else if (path != null) {
-			apiCaller.rename(path, subtitlePath)
+			apiCaller.rename(path, subtitlePath, override)
+		}
+
+		if (subtitle != null) {
+			return subtitle
 		}
 
 		val videoSubtitle = VideoSubtitle(
-			id = randomGenerator.generateRandomString(6),
+			id = VideoSubtitle.generateId(videoSubtitleRepository, randomGenerator),
 			path = subtitlePath,
 			videoId = videoId,
 		)
-		log.debug("uploadSubtitle: videoSubtitle={}", videoSubtitle)
+		log.debug("[Upload Video Subtitle] new subtitle={}", videoSubtitle)
 		videoSubtitleRepository.save(videoSubtitle)
 
 		return videoSubtitle

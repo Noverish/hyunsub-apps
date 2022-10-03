@@ -27,8 +27,8 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
 	}
 
-	fun rename(from: String, to: String) {
-		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to))
+	fun rename(from: String, to: String, override: Boolean = false) {
+		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
 	}
 
 	fun unlink(path: String) {

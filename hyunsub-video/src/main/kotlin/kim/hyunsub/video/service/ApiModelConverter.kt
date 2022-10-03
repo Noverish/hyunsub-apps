@@ -60,7 +60,6 @@ class ApiModelConverter(
 			.replace(".", "")
 			.ifEmpty { "ko" }
 
-		val srclang = code.substring(0, 2)
 		val label = code
 			.replace("en", "English ")
 			.replace("ko", "Korean ")
@@ -73,7 +72,7 @@ class ApiModelConverter(
 		return RestVideoSubtitle(
 			url = url,
 			label = label,
-			srclang = srclang,
+			srclang = code,
 		)
 	}
 
