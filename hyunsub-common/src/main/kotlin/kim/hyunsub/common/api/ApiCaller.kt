@@ -1,6 +1,5 @@
 package kim.hyunsub.common.api
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.*
 import kim.hyunsub.common.http.HttpClient

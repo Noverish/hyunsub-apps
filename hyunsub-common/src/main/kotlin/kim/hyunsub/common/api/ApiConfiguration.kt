@@ -28,4 +28,9 @@ class ApiConfiguration {
 	fun fileUrlConverter(apiProperties: ApiProperties): FileUrlConverter {
 		return FileUrlConverter(apiProperties)
 	}
+
+	@Bean
+	fun encodeApiCaller(apiCaller: ApiCaller, apiProperties: ApiProperties): EncodeApiCaller {
+		return EncodeApiCaller(apiCaller, apiProperties)
+	}
 }

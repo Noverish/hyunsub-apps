@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.Duration
 
 @Authorized(["admin"])
 @RestController
@@ -25,7 +26,8 @@ class TokenController(
 	@PostMapping("/issue")
 	fun encrypt(@RequestBody params: TokenIssueApiParams): String {
 		log.info("JWT Issue: {}", params)
-		return tokenGenerator.generateToken(params.idNo)
+		val duration = Duration.parse(params.duration)
+		return tokenGenerator.generateToken(params.idNo, duration)
 	}
 
 	@PostMapping("/verify")

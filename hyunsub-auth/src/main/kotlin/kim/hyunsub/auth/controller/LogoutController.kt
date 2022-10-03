@@ -45,7 +45,7 @@ class LogoutController(
 		val cookie = cookieGenerator.generateLogoutCookie()
 		response.addCookie(cookie)
 
-		val url = URLEncoder.encode(referer, StandardCharsets.UTF_8)
+		val url = URLEncoder.encode(referer, StandardCharsets.UTF_8.toString())
 		response.status = HttpStatus.TEMPORARY_REDIRECT.value()
 		response.sendRedirect("/login?url=$url")
 	}

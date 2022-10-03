@@ -3,7 +3,6 @@ package kim.hyunsub.common.api
 import kim.hyunsub.common.api.model.EncodeParams
 import org.springframework.stereotype.Service
 
-@Service
 class EncodeApiCaller(
 	private val apiCaller: ApiCaller,
 	apiProperties: ApiProperties,

@@ -38,7 +38,7 @@ class NginxAuthController(
 		@RequestHeader("X-Original-URL") originalUrl: String,
 		@RequestHeader("X-Original-IP") originalIp: String,
 	) {
-		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8)
+		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString())
 
 		try {
 			val isValidUrl = URL(decodedUrl).host.endsWith(".hyunsub.kim")
@@ -60,7 +60,7 @@ class NginxAuthController(
 				val res = mapOf("code" to e.errorCode.code, "msg" to e.errorCode.msg, "payload" to e.payload)
 				response.setHeader("X-Auth-Failed", mapper.writeValueAsString(res))
 			} else {
-				val encodedUrl = URLEncoder.encode(decodedUrl, StandardCharsets.UTF_8)
+				val encodedUrl = URLEncoder.encode(decodedUrl, StandardCharsets.UTF_8.toString())
 				val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$encodedUrl"
 				response.setHeader("X-Redirect-URL", redirectUrl)
 			}
