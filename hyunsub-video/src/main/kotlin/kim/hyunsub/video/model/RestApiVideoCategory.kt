@@ -2,7 +2,7 @@ package kim.hyunsub.video.model
 
 import kim.hyunsub.video.repository.entity.VideoCategory
 
-data class RestVideoCategory(
+data class RestApiVideoCategory(
 	val name: String,
 	val displayName: String,
 	val iconHtmlClass: String,

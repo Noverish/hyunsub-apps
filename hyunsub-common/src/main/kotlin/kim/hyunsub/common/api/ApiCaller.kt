@@ -27,8 +27,8 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
 	}
 
-	fun rename(from: String, to: String) {
-		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to))
+	fun rename(from: String, to: String, override: Boolean = false) {
+		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
 	}
 
 	fun unlink(path: String) {
@@ -64,6 +64,9 @@ class ApiCaller(
 	fun upload(path: String, data: ByteArray, override: Boolean = false) {
 		_post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
 	}
+
+	fun uploadByUrl(url: String) =
+		_post<UploadResult>("/upload/url", mapOf("url" to url))
 
 	fun ffmpeg(params: FFmpegParams): FFmpegResult =
 		_post("/api/video/ffmpeg", params)

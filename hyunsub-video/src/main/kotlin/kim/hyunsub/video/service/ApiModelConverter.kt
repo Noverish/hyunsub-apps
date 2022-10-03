@@ -4,10 +4,7 @@ import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.util.getHumanReadableBitrate
 import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.video.model.*
-import kim.hyunsub.video.repository.entity.Video
-import kim.hyunsub.video.repository.entity.VideoEntry
-import kim.hyunsub.video.repository.entity.VideoMetadata
-import kim.hyunsub.video.repository.entity.VideoSubtitle
+import kim.hyunsub.video.repository.entity.*
 import org.springframework.stereotype.Service
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
@@ -16,7 +13,7 @@ import kotlin.io.path.nameWithoutExtension
 class ApiModelConverter(
 	private val fileUrlConverter: FileUrlConverter,
 ) {
-	fun convertVideoEntry(entry: VideoEntry): RestVideoEntry {
+	fun convert(entry: VideoEntry): RestVideoEntry {
 		val yearRegex = Regex(" \\(\\d{4}\\)")
 		val name = entry.name.replace(yearRegex, "")
 
@@ -63,7 +60,6 @@ class ApiModelConverter(
 			.replace(".", "")
 			.ifEmpty { "ko" }
 
-		val srclang = code.substring(0, 2)
 		val label = code
 			.replace("en", "English ")
 			.replace("ko", "Korean ")
@@ -76,7 +72,7 @@ class ApiModelConverter(
 		return RestVideoSubtitle(
 			url = url,
 			label = label,
-			srclang = srclang,
+			srclang = code,
 		)
 	}
 
@@ -100,10 +96,17 @@ class ApiModelConverter(
 
 	fun convertVideoSearchResult(result: VideoSearchResult): RestVideoSearchResult {
 		val entries = result.entries.groupBy { it.category }
-			.mapValues { entry -> entry.value.map { convertVideoEntry(it) } }
+			.mapValues { entry -> entry.value.map { convert(it) } }
 
 		return RestVideoSearchResult(
 			entries = entries
+		)
+	}
+
+	fun convert(group: VideoGroup): RestApiVideoGroupPreview {
+		return RestApiVideoGroupPreview(
+			id = group.id,
+			name = group.name,
 		)
 	}
 }
