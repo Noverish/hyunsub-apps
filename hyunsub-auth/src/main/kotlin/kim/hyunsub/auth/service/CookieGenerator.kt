@@ -13,7 +13,7 @@ class CookieGenerator(
 	fun generateLoginCookie(token: String): Cookie =
 		Cookie(WebConstants.TOKEN_COOKIE_NAME, token).apply {
 			domain = AuthConstants.TOKEN_COOKIE_DOMAIN
-			maxAge = jwtProperties.duration.toSeconds().toInt()
+			maxAge = jwtProperties.duration.seconds.toInt()
 			path = "/"
 		}
 

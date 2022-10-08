@@ -9,6 +9,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.stereotype.Service
 import org.springframework.util.Base64Utils
 import java.nio.charset.StandardCharsets
+import java.time.Duration
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -26,8 +27,8 @@ class JwtService(private val jwtProperties: JwtProperties) {
 	private val aesKey = SecretKeySpec(Base64Utils.decodeFromString(jwtProperties.key), "AES")
 	private val iv = IvParameterSpec(Base64Utils.decodeFromString(jwtProperties.iv))
 
-	fun issue(payload: UserAuth): String {
-		val expire = Date(System.currentTimeMillis() + jwtProperties.duration.toMillis())
+	fun issue(payload: UserAuth, duration: Duration? = null): String {
+		val expire = Date(System.currentTimeMillis() + (duration ?: jwtProperties.duration).toMillis())
 
 		return Jwts.builder()
 			.setSubject(payload.idNo)
