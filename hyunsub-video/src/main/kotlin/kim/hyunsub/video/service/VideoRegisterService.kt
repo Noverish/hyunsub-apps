@@ -41,10 +41,35 @@ class VideoRegisterService(
 	fun registerVideo(params: VideoRegisterParams): VideoRegisterResult {
 		log.info("[Register Video] params={}", params)
 
+		// Entry 확인
+		val entryFromParam =
+			if (params.videoEntryId.isNotEmpty()) {
+				videoEntryRepository.findByIdOrNull(params.videoEntryId)
+					.apply { log.info("[Register Video] entry={}", this) }
+					?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No such entry: ${params.videoEntryId}")
+			} else {
+				null
+			}
+
 		// Category 확인
-		val category = videoCategoryRepository.findByName(params.category)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such category: ${params.category}")
-		log.info("[Register Video] category={}", category)
+		val categoryFromParam =
+			if (params.category.isNotEmpty()) {
+				videoCategoryRepository.findByName(params.category)
+					.apply { log.info("[Register Video] category={}", this) }
+					?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No such category: ${params.category}")
+			} else {
+				null
+			}
+
+		// Group 확인
+		val groupFromParam =
+			if (params.videoGroupId.isNotEmpty()) {
+				videoGroupRepository.findByIdOrNull(params.videoGroupId)
+					.apply { log.info("[Register Video] group={}", this) }
+					?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No such group: ${params.videoGroupId}")
+			} else {
+				null
+			}
 
 		// 비디오 파일이 존재하는지 확인
 		val videoStat = apiCaller.stat(params.videoPath)
@@ -74,27 +99,25 @@ class VideoRegisterService(
 			generateThumbnail(videoPath)
 		}
 
-		// Group 확인 또는 생성
-		val group = if (params.videoGroupId.isNotEmpty()) {
-			videoGroupRepository.findByIdOrNull(params.videoGroupId)
-				?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such group: ${params.videoGroupId}")
-		} else if (params.newGroupName.isNotEmpty()) {
-			generateGroup(params.newGroupName, category.id)
-		} else {
-			null
-		}
-		log.info("[Register Video] group={}", group)
+		val videoEntry = entryFromParam
+			?: run {
+				if (categoryFromParam == null) {
+					throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "category is null")
+				}
 
-		val videoEntry =
-			if (params.videoEntryId.isNotEmpty()) {
-				videoEntryRepository.findByIdOrNull(params.videoEntryId)
-					?: throw ErrorCodeException(ErrorCode.NO_SUCH_VIDEO_ENTRY)
-			} else {
+				// Group 확인 또는 생성
+				val group = if (params.newGroupName.isNotEmpty() && groupFromParam == null) {
+					generateGroup(params.newGroupName, categoryFromParam.id)
+				} else {
+					groupFromParam
+				}
+				log.info("[Register Video] group={}", group)
+
 				VideoEntry(
 					id = VideoEntry.generateId(videoEntryRepository, randomGenerator),
 					name = videoName,
 					thumbnail = thumbnailPath,
-					category = category.name,
+					category = categoryFromParam.name,
 					videoGroupId = group?.id,
 					regDt = videoDate,
 				).apply {
