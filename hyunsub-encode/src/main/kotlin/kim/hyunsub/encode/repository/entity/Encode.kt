@@ -1,7 +1,10 @@
 package kim.hyunsub.encode.repository.entity
 
+import kim.hyunsub.common.log.hashWithMD5
 import java.time.LocalDateTime
 import javax.persistence.*
+import kotlin.io.path.Path
+import kotlin.io.path.extension
 
 @Entity
 @Table(name = "encode")
@@ -33,4 +36,17 @@ data class Encode(
 
 	@Column
 	val callback: String? = null,
-)
+) {
+	val encodeOutput: String
+		get() {
+			if (input != output) {
+				return output
+			}
+
+			val hash = input.hashWithMD5()
+			val path = Path(input)
+			val ext = path.extension
+			val dir = path.parent.toString()
+			return Path(dir, "$hash.$ext").toString()
+		}
+}

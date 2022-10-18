@@ -1,7 +1,7 @@
 package kim.hyunsub.common.api.model
 
-data class FFmpegStatus(
+data class FFmpegStatus<T>(
 	val isRunning: Boolean,
-	val params: FFmpegParams,
 	val status: FFmpegStatusData,
+	val data: T,
 )

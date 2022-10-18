@@ -21,7 +21,7 @@ class EncodeController(
 	@PostMapping("")
 	fun encode(@RequestBody params: EncodeParams): SimpleResponse {
 		log.info("[EncodeController] encode: params={}", params)
-		encodeService.encode(params)
+		encodeService.pushToQueue(params)
 		return SimpleResponse()
 	}
 }
