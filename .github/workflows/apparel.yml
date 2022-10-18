@@ -35,7 +35,7 @@ jobs:
       - run: >
           rm -f ~/.gradle/caches/modules-2/modules-2.lock;
           rm -f ~/.gradle/caches/modules-2/gc.properties;
-      - run: echo "JAR_FILE_NAME=$(ls ${{ env.MODULE_NAME }}/build/libs)" >> $GITHUB_ENV
+      - run: echo "JAR_FILE_NAME=$(ls -1 ${{ env.MODULE_NAME }}/build/libs | grep -v plain)" >> $GITHUB_ENV
       - uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
