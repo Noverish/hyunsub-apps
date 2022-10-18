@@ -1,14 +1,14 @@
 import java.text.SimpleDateFormat
 
 plugins {
-    id 'org.springframework.boot' version '2.7.0'
+    id 'org.springframework.boot' version '2.7.4'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'jacoco'
-    id 'org.jetbrains.kotlin.jvm' version '1.7.0'
-    id 'org.jetbrains.kotlin.kapt' version '1.7.0'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.7.0'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '1.7.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'org.jetbrains.kotlin.kapt' version '1.7.20'
+    id 'org.jetbrains.kotlin.plugin.spring' version '1.7.20'
+    id 'org.jetbrains.kotlin.plugin.jpa' version '1.7.20'
 }
 
 allprojects {
@@ -54,14 +54,15 @@ allprojects {
         kapt 'org.springframework.boot:spring-boot-configuration-processor'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.3'
+        implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4'
+        implementation 'io.github.microutils:kotlin-logging-jvm:3.0.0'
 
-        runtimeOnly 'mysql:mysql-connector-java:8.0.29'
+        runtimeOnly 'mysql:mysql-connector-java:8.0.30'
 
-        testImplementation 'io.mockk:mockk:1.12.4'
-        testImplementation 'io.kotest:kotest-runner-junit5:5.3.1'
-        testImplementation 'io.kotest:kotest-assertions-core:5.3.1'
-        testImplementation 'io.kotest.extensions:kotest-extensions-spring:1.1.1'
+        testImplementation 'io.mockk:mockk:1.13.2'
+        testImplementation 'io.kotest:kotest-runner-junit5:5.5.0'
+        testImplementation 'io.kotest:kotest-assertions-core:5.5.0'
+        testImplementation 'io.kotest.extensions:kotest-extensions-spring:1.1.2'
     }
 
     tasks.named('test') {
