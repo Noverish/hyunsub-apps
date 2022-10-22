@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service
 @Service
 class KafkaConsumer(
 	private val encodeService: EncodeService,
+	private val encodeStatusService: EncodeStatusService,
 ) {
 	val log = KotlinLogging.logger { }
 	val mapper = jacksonObjectMapper()
@@ -17,12 +18,14 @@ class KafkaConsumer(
 
 	@KafkaListener(topics = ["encode"])
 	fun consume(msg: String) {
-		log.info { "KafkaConsumer: $msg" }
+		log.info { msg }
 		val status = mapper.readValue(msg, type)
-		val encodeId = status.data
 
 		if (!status.isRunning) {
+			val encodeId = status.data
 			encodeService.handleFinish(encodeId)
+		} else {
+			encodeStatusService.updateStatus(status)
 		}
 	}
 }
