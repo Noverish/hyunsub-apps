@@ -27,7 +27,7 @@ class EncodeStatusService(
 		val format = probed["format"] as ObjectNode
 		val duration = format["duration"].asDouble()
 
-		val percent = status.status.progress.toDouble() / duration
+		val percent = status.status.progress.toDouble() / duration * 100
 		val encodeStatus = EncodeStatus(encodeId, percent)
 		log.info { "[EncodeStatus] $encodeStatus" }
 		sink.tryEmitNext(encodeStatus)
