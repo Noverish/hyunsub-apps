@@ -8,6 +8,7 @@ import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Sinks
+import kotlin.math.floor
 
 @Service
 class EncodeStatusService(
@@ -27,7 +28,11 @@ class EncodeStatusService(
 		val format = probed["format"] as ObjectNode
 		val duration = format["duration"].asDouble()
 
-		val percent = status.status.progress.toDouble() / duration * 100
+		val percent =
+			if (status.isRunning)
+				floor(status.status.progress.toDouble() / duration * 10000) / 100
+			else
+				100.0
 		val encodeStatus = EncodeStatus(encodeId, percent)
 		log.info { "[EncodeStatus] $encodeStatus" }
 		sink.tryEmitNext(encodeStatus)
