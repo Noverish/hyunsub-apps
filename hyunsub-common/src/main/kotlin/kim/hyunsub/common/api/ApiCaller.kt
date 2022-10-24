@@ -70,7 +70,7 @@ class ApiCaller(
 	fun ffmpeg(params: FFmpegParams): FFmpegResult =
 		_post("/api/video/ffmpeg", params)
 
-	fun ffmpegStatus(): FFmpegStatus =
+	fun <T> ffmpegStatus(): FFmpegStatus<T> =
 		_get("/api/video/ffmpeg/status", emptyMap())
 
 	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
