@@ -54,6 +54,9 @@ allprojects {
         kapt 'org.springframework.boot:spring-boot-configuration-processor'
         testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+        implementation 'org.mapstruct:mapstruct:1.5.3.Final'
+        kapt 'org.mapstruct:mapstruct-processor:1.5.3.Final'
+
         implementation 'com.fasterxml.jackson.module:jackson-module-kotlin:2.13.4'
         implementation 'io.github.microutils:kotlin-logging-jvm:3.0.0'
 
