@@ -1,14 +1,18 @@
 package kim.hyunsub.common.util
 
 fun getHumanReadableSize(size: Long): String {
+	val kb = 1000
 	val mb = 1000 * 1000
 	val gb = 1000 * 1000 * 1000
 	return if (size > gb) {
 		val tmp = String.format("%.2f", size.toDouble() / gb.toDouble())
 		"$tmp GB"
-	} else {
+	} else if (size > mb) {
 		val tmp = String.format("%.2f", size.toDouble() / mb.toDouble())
 		"$tmp MB"
+	} else {
+		val tmp = String.format("%.2f", size.toDouble() / kb.toDouble())
+		"$tmp KB"
 	}
 }
 

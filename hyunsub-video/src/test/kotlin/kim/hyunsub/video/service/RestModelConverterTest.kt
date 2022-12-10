@@ -49,7 +49,7 @@ class RestModelConverterTest: FreeSpec({
 
 			val result = service.convertVideoSubtitle(video, subtitle)
 			result.label shouldBe "Korean 2"
-			result.srclang shouldBe "ko"
+			result.srclang shouldBe "ko2"
 			result.url shouldBe "https://example.com/a/b/c.ko2.vtt"
 		}
 
@@ -67,7 +67,7 @@ class RestModelConverterTest: FreeSpec({
 
 			val result = service.convertVideoSubtitle(video, subtitle)
 			result.label shouldBe "English 2"
-			result.srclang shouldBe "en"
+			result.srclang shouldBe "en2"
 			result.url shouldBe "https://example.com/a/b/c.en2.vtt"
 		}
 	}

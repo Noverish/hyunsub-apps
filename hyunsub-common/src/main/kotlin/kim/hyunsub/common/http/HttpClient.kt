@@ -43,6 +43,7 @@ class HttpClient(private val restTemplate: RestTemplate) {
 	): T {
 		val newUrl = UriComponentsBuilder.fromHttpUrl(url)
 			.queryParams(LinkedMultiValueMap<String, String>().apply { setAll(queryParams) })
+			.build(false)
 			.toUriString()
 			.replace("+", "%2B")
 

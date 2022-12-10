@@ -30,8 +30,8 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
 	}
 
-	fun unlink(path: String) {
-		_post<ObjectNode>("/api/fs/unlink", mapOf("path" to path))
+	fun rm(path: String) {
+		_post<ObjectNode>("/api/fs/rm", mapOf("path" to path))
 	}
 
 	fun walk(path: String): List<String> =
@@ -73,8 +73,8 @@ class ApiCaller(
 	fun <T> ffmpegStatus(): FFmpegStatus<T> =
 		_get("/api/video/ffmpeg/status", emptyMap())
 
-	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
-		request(urlOrPath, HttpMethod.GET, queryParams, null)
+	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap(), token: String? = null): String =
+		request(urlOrPath, HttpMethod.GET, queryParams, null, token)
 
 	fun post(urlOrPath: String, body: Any?): String =
 		request(urlOrPath, HttpMethod.POST, emptyMap(), body)
@@ -90,6 +90,7 @@ class ApiCaller(
 		method: HttpMethod,
 		queryParams: Map<String, String>,
 		body: Any?,
+		token: String? = null,
 	): T {
 		val url = if (urlOrPath.startsWith("https://")) {
 			urlOrPath
@@ -98,10 +99,11 @@ class ApiCaller(
 				.scheme("https")
 				.host(apiProperties.host)
 				.path(urlOrPath)
+				.build(false)
 				.toUriString()
 		}
 
-		val cookie = "${WebConstants.TOKEN_COOKIE_NAME}=${apiProperties.token}"
+		val cookie = "${WebConstants.TOKEN_COOKIE_NAME}=${token ?: apiProperties.token}"
 		val headers = buildMap {
 			this += (HttpHeaders.CONTENT_TYPE to MediaType.APPLICATION_JSON_VALUE)
 			this += (HttpHeaders.COOKIE to cookie)
