@@ -30,8 +30,8 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
 	}
 
-	fun rm(path: String) {
-		_post<ObjectNode>("/api/fs/rm", mapOf("path" to path))
+	fun remove(path: String) {
+		_post<ObjectNode>("/api/fs/remove", mapOf("path" to path))
 	}
 
 	fun walk(path: String): List<String> =
