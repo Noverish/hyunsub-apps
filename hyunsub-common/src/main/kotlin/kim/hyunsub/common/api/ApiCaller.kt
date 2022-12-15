@@ -40,8 +40,8 @@ class ApiCaller(
 	fun walkDetail(path: String): List<FileStat> =
 		_get("/api/fs/walk/detail", mapOf("path" to path))
 
-	fun readdirDetail(path: String): List<FileStat> =
-		_get("/api/fs/readdir/detail", mapOf("path" to path))
+	fun readdirDetail(path: String, token: String? = null): List<FileStat> =
+		_get("/api/fs/readdir/detail", mapOf("path" to path), token = token)
 
 	fun copyMDate(from: String, to: String) {
 		_post<ObjectNode>("/api/fs/copy-mdate", mapOf("from" to from, "to" to to))
@@ -79,8 +79,8 @@ class ApiCaller(
 	fun post(urlOrPath: String, body: Any?): String =
 		request(urlOrPath, HttpMethod.POST, emptyMap(), body)
 
-	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>) =
-		request<T>(urlOrPath, HttpMethod.GET, queryParams, null)
+	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>, token: String? = null) =
+		request<T>(urlOrPath, HttpMethod.GET, queryParams, null, token)
 
 	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap()) =
 		request<T>(urlOrPath, HttpMethod.POST, queryParams, body)

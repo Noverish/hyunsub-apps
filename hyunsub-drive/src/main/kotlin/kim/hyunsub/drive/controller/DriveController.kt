@@ -17,8 +17,11 @@ class DriveController(
 	private val apiCaller: ApiCaller,
 ) {
 	@PostMapping("/list")
-	fun list(@RequestBody params: PathParam): List<FileInfo> {
-		return apiCaller.readdirDetail(params.path)
+	fun list(
+		@RequestBody params: PathParam,
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
+	): List<FileInfo> {
+		return apiCaller.readdirDetail(params.path, token = token)
 			.map { FileInfo(it) }
 			.sortedBy { if (it.type == FileType.FOLDER) 0 else 1 }
 	}
@@ -28,7 +31,6 @@ class DriveController(
 		@RequestBody params: PathParam,
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
 	): String {
-		println(params.path)
 		return apiCaller.get(params.path, token = token)
 	}
 }

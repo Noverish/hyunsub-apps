@@ -1,6 +1,7 @@
 package kim.hyunsub.common.http
 
 import kim.hyunsub.common.log.Log
+import mu.KotlinLogging
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
@@ -12,7 +13,7 @@ import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 
 class HttpClient(private val restTemplate: RestTemplate) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	inline fun <reified T> typeReference() = object : ParameterizedTypeReference<T>() {}
 
@@ -53,18 +54,13 @@ class HttpClient(private val restTemplate: RestTemplate) {
 		val stopWatch = StopWatch()
 		stopWatch.start()
 		try {
-			if (body is ByteArray) {
-				log.debug("[API Request] {} {} bytes={} {}", method, newUrl, body.size, headers)
-			} else {
-				log.debug("[API Request] {} {} {} {}", method, newUrl, body, headers)
-			}
 			val res = restTemplate.exchange(newUrl, method, entity, type)
 			stopWatch.stop()
-			log.debug("[Api Response] {}ms {} {} {}", stopWatch.totalTimeMillis, res.statusCode, res.body, res.headers)
+			log.debug { "[HTTP] $method $url -> ${res.statusCode.value()} ${stopWatch.totalTimeMillis}ms" }
 			return res.body!!
 		} catch (e: HttpStatusCodeException) {
 			stopWatch.stop()
-			log.error("[Api Response] {}ms {} {} {}", stopWatch.totalTimeMillis, e.statusCode, e.responseBodyAsString, e.responseHeaders)
+			log.error { "[HTTP] $method $url -> ${e.statusCode.value()} ${stopWatch.totalTimeMillis}ms ${e.responseBodyAsString}" }
 			throw e
 		}
 	}
