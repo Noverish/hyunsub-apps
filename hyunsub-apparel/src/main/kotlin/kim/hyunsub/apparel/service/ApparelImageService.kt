@@ -75,6 +75,6 @@ class ApparelImageService(
 	fun deleteFile(userId: String, image: ApparelImage) {
 		log.debug("[Apparel Image File Delete] userId={}, image={}", userId, image)
 		val path = FilePathConverter.getApparelImagePath(userId, image.apparelId, image.fileName)
-		apiCaller.rm(path)
+		apiCaller.remove(path)
 	}
 }
