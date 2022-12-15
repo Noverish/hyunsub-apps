@@ -11,6 +11,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import mu.KotlinLogging
+import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -40,8 +41,14 @@ class NginxAuthController(
 		response: HttpServletResponse,
 		@RequestHeader("X-Original-URL") originalUrl: String,
 		@RequestHeader("X-Original-IP") originalIp: String,
-		@RequestHeader("X-Original-Method") originalMethod: String,
+		@RequestHeader("X-Original-Method", required = false) originalMethod: String?,
 	) {
+		if (HttpMethod.OPTIONS.name.equals(originalMethod, ignoreCase = true)) {
+			response.status = HttpStatus.OK.value()
+			response.setHeader(WebConstants.USER_AUTH_HEADER, "")
+			return
+		}
+
 		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString())
 
 		try {
@@ -77,8 +84,14 @@ class NginxAuthController(
 		response: HttpServletResponse,
 		@RequestHeader("X-Original-URL") originalUrl: String,
 		@RequestHeader("X-Original-IP") originalIp: String,
-		@RequestHeader("X-Original-Method") originalMethod: String,
+		@RequestHeader("X-Original-Method", required = false) originalMethod: String?,
 	) {
+		if (HttpMethod.OPTIONS.name.equals(originalMethod, ignoreCase = true)) {
+			response.status = HttpStatus.OK.value()
+			response.setHeader(WebConstants.USER_AUTH_HEADER, "")
+			return
+		}
+
 		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString()) // 로깅용
 
 		val payload = try {
