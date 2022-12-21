@@ -26,8 +26,12 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
 	}
 
-	fun rename(from: String, to: String, override: Boolean = false) {
-		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
+	fun rename(from: String, to: String, override: Boolean = false, token: String? = null) {
+		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()), token = token)
+	}
+
+	fun renameBulk(params: RenameBulkParams, token: String? = null) {
+		_post<ObjectNode>("/api/fs/rename/bulk", params, token = token)
 	}
 
 	fun remove(path: String) {
@@ -82,8 +86,8 @@ class ApiCaller(
 	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>, token: String? = null) =
 		request<T>(urlOrPath, HttpMethod.GET, queryParams, null, token)
 
-	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap()) =
-		request<T>(urlOrPath, HttpMethod.POST, queryParams, body)
+	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap(), token: String? = null) =
+		request<T>(urlOrPath, HttpMethod.POST, queryParams, body, token)
 
 	private inline fun <reified T> request(
 		urlOrPath: String,

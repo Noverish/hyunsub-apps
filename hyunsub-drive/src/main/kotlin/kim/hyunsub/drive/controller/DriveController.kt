@@ -5,6 +5,8 @@ import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.drive.model.FileInfo
 import kim.hyunsub.drive.model.FileType
 import kim.hyunsub.drive.model.PathParam
+import kim.hyunsub.common.api.model.RenameBulkParams
+import kim.hyunsub.common.web.model.SimpleResponse
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -32,5 +34,14 @@ class DriveController(
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
 	): String {
 		return apiCaller.get(params.path, token = token)
+	}
+
+	@PostMapping("/rename-bulk")
+	fun renameBulk(
+		@RequestBody params: RenameBulkParams,
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
+	): SimpleResponse {
+		apiCaller.renameBulk(params, token = token)
+		return SimpleResponse()
 	}
 }
