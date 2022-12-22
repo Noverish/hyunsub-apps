@@ -22,8 +22,8 @@ class ApiCaller(
 		}
 	}
 
-	fun mkdir(path: String) {
-		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
+	fun mkdir(path: String, token: String? = null) {
+		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path), token = token)
 	}
 
 	fun rename(from: String, to: String, override: Boolean = false, token: String? = null) {

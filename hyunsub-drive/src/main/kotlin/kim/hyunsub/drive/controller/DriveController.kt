@@ -44,4 +44,13 @@ class DriveController(
 		apiCaller.renameBulk(params, token = token)
 		return SimpleResponse()
 	}
+
+	@PostMapping("/new-folder")
+	fun newFolder(
+		@RequestBody params: PathParam,
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
+	): SimpleResponse {
+		apiCaller.mkdir(params.path, token = token)
+		return SimpleResponse()
+	}
 }
