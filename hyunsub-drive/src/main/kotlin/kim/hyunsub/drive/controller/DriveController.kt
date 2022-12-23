@@ -7,6 +7,8 @@ import kim.hyunsub.drive.model.FileType
 import kim.hyunsub.drive.model.PathParam
 import kim.hyunsub.common.api.model.RenameBulkParams
 import kim.hyunsub.common.web.model.SimpleResponse
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -32,8 +34,10 @@ class DriveController(
 	fun downloadText(
 		@RequestBody params: PathParam,
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
-	): String {
-		return apiCaller.get(params.path, token = token)
+	): ResponseEntity<String> {
+		return ResponseEntity.ok()
+			.contentType(MediaType.TEXT_PLAIN)
+			.body(apiCaller.get(params.path, token = token))
 	}
 
 	@PostMapping("/rename-bulk")
