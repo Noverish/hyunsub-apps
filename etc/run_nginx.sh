@@ -11,6 +11,8 @@ APPAREL_CONF_PATH=$ROOT_PATH/../hyunsub-apparel/etc/apparel-local.conf
 DRIVE_CONF_PATH=$ROOT_PATH/../hyunsub-drive/etc/drive-local.conf
 NGINX_IMG=nginx:1.23.1
 
+docker stop hyunsub_nginx || true
+
 docker run -d --rm -p 80:80 -p 443:443 \
   --name hyunsub_nginx \
   --platform linux/amd64 \
