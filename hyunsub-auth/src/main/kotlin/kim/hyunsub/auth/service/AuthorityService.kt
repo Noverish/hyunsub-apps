@@ -18,9 +18,15 @@ class AuthorityService(
 		return UserAuth(
 			idNo = idNo,
 			names = authorities.map { it.name },
-			paths = authorities.flatMap { it.path?.split(",") ?: emptyList() },
-			uploads = authorities.flatMap { it.upload?.split(",") ?: emptyList() },
-			apis = authorities.flatMap { it.api?.split(",") ?: emptyList() },
+			paths = flatMapPaths(idNo, authorities.mapNotNull { it.path }),
+			uploads = flatMapPaths(idNo, authorities.mapNotNull { it.upload }),
+			apis = flatMapPaths(idNo, authorities.mapNotNull { it.api }),
 		)
+	}
+
+	private fun flatMapPaths(idNo: String, list: List<String>): List<String> {
+		return list.flatMap { it.split(',') }
+			.map { it.replace("{idNo}", idNo) }
+			.distinct()
 	}
 }
