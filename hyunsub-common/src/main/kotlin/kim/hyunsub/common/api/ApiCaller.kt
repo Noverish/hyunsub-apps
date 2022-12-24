@@ -34,6 +34,10 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/rename/bulk", params, token = token)
 	}
 
+	fun moveBulk(params: MoveBulkParams, token: String? = null) {
+		_post<ObjectNode>("/api/fs/move/bulk", params, token = token)
+	}
+
 	fun remove(path: String) {
 		_post<ObjectNode>("/api/fs/remove", mapOf("path" to path))
 	}

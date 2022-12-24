@@ -1,6 +1,7 @@
 package kim.hyunsub.drive.controller
 
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.api.model.MoveBulkParams
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.drive.model.FileInfo
 import kim.hyunsub.drive.model.FileType
@@ -46,6 +47,15 @@ class DriveController(
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
 	): SimpleResponse {
 		apiCaller.renameBulk(params, token = token)
+		return SimpleResponse()
+	}
+
+	@PostMapping("/move-bulk")
+	fun moveBulk(
+		@RequestBody params: MoveBulkParams,
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
+	): SimpleResponse {
+		apiCaller.moveBulk(params, token = token)
 		return SimpleResponse()
 	}
 
