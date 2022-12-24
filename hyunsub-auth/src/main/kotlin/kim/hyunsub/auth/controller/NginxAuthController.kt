@@ -6,6 +6,7 @@ import io.jsonwebtoken.security.SignatureException
 import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.service.AuthorityService
 import kim.hyunsub.auth.service.JwtService
+import kim.hyunsub.common.config.AppProperties
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -29,7 +30,8 @@ import javax.servlet.http.HttpServletResponse
 @RequestMapping("/api/v1/nginx/auth")
 class NginxAuthController(
 	private val jwtService: JwtService,
-	private val authorityService: AuthorityService
+	private val authorityService: AuthorityService,
+	private val appProperties: AppProperties,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -50,6 +52,7 @@ class NginxAuthController(
 		}
 
 		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString())
+		val isFromApi = URL(decodedUrl).path.startsWith("/api")
 
 		try {
 			val isValidUrl = URL(decodedUrl).host.endsWith(".hyunsub.kim")
@@ -59,6 +62,7 @@ class NginxAuthController(
 
 			val payload = parseJwt(request)
 			val userAuth = authorityService.getUserAuth(payload.idNo)
+
 			log.info { "[Auth Success] userAuth=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
 			response.status = HttpStatus.OK.value()
 			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
@@ -66,13 +70,12 @@ class NginxAuthController(
 			log.info { "[Auth Failed] ${e.message}: ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
 			response.status = HttpStatus.UNAUTHORIZED.value()
 
-			val isFromApi = URL(decodedUrl).path.startsWith("/api")
 			if (isFromApi) {
 				val res = mapOf("code" to e.errorCode.code, "msg" to e.errorCode.msg, "payload" to e.payload)
 				response.setHeader("X-Auth-Failed", mapper.writeValueAsString(res))
 			} else {
 				val encodedUrl = URLEncoder.encode(decodedUrl, StandardCharsets.UTF_8.toString())
-				val redirectUrl = "https://${AuthConstants.AUTH_DOMAIN}/login?url=$encodedUrl"
+				val redirectUrl = "https://${appProperties.host}/login?url=$encodedUrl"
 				response.setHeader("X-Redirect-URL", redirectUrl)
 			}
 		}
@@ -92,26 +95,39 @@ class NginxAuthController(
 			return
 		}
 
-		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString()) // 로깅용
-
-		val payload = try {
-			parseJwt(request)
-		} catch (e: ErrorCodeException) {
-			log.info { "[Auth Failed] ${e.message}: ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
-			response.status = HttpStatus.UNAUTHORIZED.value()
-			return
-		}
-		val userAuth = authorityService.getUserAuth(payload.idNo)
-
+		val decodedUrl = URLDecoder.decode(originalUrl, StandardCharsets.UTF_8.toString())
 		val path = URL(decodedUrl).path
-		val allowed = userAuth.paths.any { path.startsWith(it) }
-		if (allowed) {
-			log.info { "[AuthFile Success] payload=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
+		val isFromApi = path.startsWith("/api") || path.startsWith("/upload")
+
+		try {
+			val isValidUrl = URL(decodedUrl).host.endsWith("file.hyunsub.kim")
+			if (!isValidUrl) {
+				throw ErrorCodeException(ErrorCode.INVALID_URL, mapOf("url" to decodedUrl))
+			}
+
+			val payload = parseJwt(request)
+			val userAuth = authorityService.getUserAuth(payload.idNo)
+
+			val paths = if (isFromApi) userAuth.apis else userAuth.paths
+			val allowed = paths.any { path.startsWith(it) }
+			if (!allowed) {
+				throw ErrorCodeException(ErrorCode.NO_AUTHORITY, mapOf("path" to path))
+			}
+
+			log.info { "[AuthFile Success] userAuth=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
 			response.status = HttpStatus.OK.value()
 			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
-		} else {
-			log.info { "[AuthFile Failed] Forbidden: payload=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
-			response.status = HttpStatus.FORBIDDEN.value()
+		} catch (e: ErrorCodeException) {
+			log.info { "[AuthFile Failed] ${e.message}: ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
+			response.status = HttpStatus.UNAUTHORIZED.value()
+
+			if (isFromApi) {
+				val res = mapOf("code" to e.errorCode.code, "msg" to e.errorCode.msg, "payload" to e.payload)
+				response.setHeader("X-Auth-Failed", mapper.writeValueAsString(res))
+			} else {
+				val res = if (e.errorCode == ErrorCode.NO_AUTHORITY) HttpStatus.FORBIDDEN.toString() else HttpStatus.UNAUTHORIZED.toString()
+				response.setHeader("X-Auth-Failed", res)
+			}
 		}
 	}
 
