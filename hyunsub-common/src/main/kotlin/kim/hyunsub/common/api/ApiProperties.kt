@@ -9,5 +9,4 @@ data class ApiProperties(
 	val host: String,
 	val token: String,
 	val nonceBase: String = "/hyunsub/file/upload",
-	val encodeHost: String,
 )

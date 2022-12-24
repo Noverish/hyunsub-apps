@@ -14,6 +14,12 @@ data class Authority(
 	@Column(nullable = false)
 	val name: String,
 
-	@Column(nullable = false)
-	val paths: String,
+	@Column
+	val path: String?,
+
+	@Column
+	val upload: String?,
+
+	@Column
+	val api: String?,
 )

@@ -1,6 +1,5 @@
 package kim.hyunsub.auth.service
 
-import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.stereotype.Service
 import java.time.Duration
 
@@ -10,14 +9,7 @@ class TokenGenerator(
 	private val jwtService: JwtService,
 ) {
 	fun generateToken(idNo: String, duration: Duration? = null): String {
-		val searchResult = authorityService.searchAuthorities(idNo)
-
-		val payload = UserAuth(
-			idNo = idNo,
-			authorityNames = searchResult.names,
-			authorityPaths = searchResult.paths,
-		)
-
-		return jwtService.issue(payload, duration)
+		val userAuth = authorityService.getUserAuth(idNo)
+		return jwtService.issue(userAuth, duration)
 	}
 }

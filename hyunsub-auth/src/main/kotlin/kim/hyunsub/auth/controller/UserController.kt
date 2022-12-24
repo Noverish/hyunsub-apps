@@ -68,5 +68,5 @@ class UserController(
 	@HyunsubCors
 	@GetMapping("/authorities")
 	fun authorities(user: User): List<String> =
-		authorityService.searchAuthorities(user.idNo).names
+		authorityService.getUserAuth(user.idNo).names
 }

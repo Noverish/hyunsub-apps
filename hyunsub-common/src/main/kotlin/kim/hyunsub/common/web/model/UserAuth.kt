@@ -5,8 +5,14 @@ data class UserAuth(
 	val idNo: String,
 
 	/** 권한 이름 목록 */
-	val authorityNames: List<String> = emptyList(),
+	val names: List<String> = emptyList(),
 
 	/** 권한 경로 목록 */
-	val authorityPaths: List<String> = emptyList(),
+	val paths: List<String> = emptyList(),
+
+	/** 업로드 가능 경로 목록 */
+	val uploads: List<String> = emptyList(),
+
+	/** API 목록 */
+	val apis: List<String> = emptyList(),
 )

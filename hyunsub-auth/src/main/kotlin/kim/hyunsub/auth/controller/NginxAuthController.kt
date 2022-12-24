@@ -104,7 +104,7 @@ class NginxAuthController(
 		val userAuth = authorityService.getUserAuth(payload.idNo)
 
 		val path = URL(decodedUrl).path
-		val allowed = userAuth.authorityPaths.any { path.startsWith(it) }
+		val allowed = userAuth.paths.any { path.startsWith(it) }
 		if (allowed) {
 			log.info { "[AuthFile Success] payload=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
 			response.status = HttpStatus.OK.value()

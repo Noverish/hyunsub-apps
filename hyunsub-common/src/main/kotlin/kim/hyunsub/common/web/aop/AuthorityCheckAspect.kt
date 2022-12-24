@@ -17,7 +17,6 @@ import org.aspectj.lang.reflect.MethodSignature
 import org.springframework.stereotype.Component
 import org.springframework.web.context.request.RequestContextHolder
 import org.springframework.web.context.request.ServletRequestAttributes
-import java.lang.reflect.Method
 
 /**
  * Check authority to access API
@@ -80,7 +79,7 @@ class AuthorityCheckAspect {
 	}
 
 	private fun checkAuthorityWithAnnotation(userAuth: UserAuth, annotation: Authorized) {
-		val hasAllAuthorities = userAuth.authorityNames.containsAll(annotation.authorities.toList())
+		val hasAllAuthorities = userAuth.names.containsAll(annotation.authorities.toList())
 		if (!hasAllAuthorities) {
 			throw ErrorCodeException(ErrorCode.NO_AUTHORITY)
 		}

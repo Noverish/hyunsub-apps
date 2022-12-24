@@ -11,6 +11,6 @@ class VideoCategoryService(
 ) {
 	fun getAvailableCategories(user: UserAuth): List<VideoCategory> {
 		return videoCategoryRepository.findAll()
-			.filter { it.authority.isEmpty() || user.authorityNames.contains(it.authority) }
+			.filter { it.authority.isEmpty() || user.names.contains(it.authority) }
 	}
 }
