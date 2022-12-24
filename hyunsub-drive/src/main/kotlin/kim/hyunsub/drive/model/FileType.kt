@@ -19,7 +19,7 @@ enum class FileType {
 				"mp4" -> VIDEO
 				"mp3", "aac" -> AUDIO
 				"pdf" -> PDF
-				"txt", "md", "srt", "smi" -> TEXT
+				"txt", "md", "srt", "smi", "sh", "yml", "json" -> TEXT
 				else -> ETC
 			}
 		}
