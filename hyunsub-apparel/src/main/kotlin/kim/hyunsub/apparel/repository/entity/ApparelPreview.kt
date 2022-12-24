@@ -24,7 +24,7 @@ data class ApparelPreview(
 	@Column
 	val brand: String?,
 
-	@Column
+	@Column(columnDefinition = "CHAR(10)")
 	val imageId: String?,
 
 	@Column

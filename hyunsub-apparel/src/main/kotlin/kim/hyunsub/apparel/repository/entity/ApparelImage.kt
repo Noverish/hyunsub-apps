@@ -11,7 +11,7 @@ data class ApparelImage(
 	@Column(columnDefinition = "CHAR(10)")
 	val id: String,
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "CHAR(8)")
 	val apparelId: String,
 
 	@Column(nullable = false)
