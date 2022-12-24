@@ -20,7 +20,7 @@ data class VideoRenameHistory(
 	@Column(nullable = false)
 	val to: String,
 
-	@Column(nullable = false)
+	@Column(nullable = false, columnDefinition = "TINYINT")
 	val isRegex: Boolean,
 
 	@Column(nullable = false)
