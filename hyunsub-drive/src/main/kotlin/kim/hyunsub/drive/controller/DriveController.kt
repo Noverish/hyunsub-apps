@@ -22,49 +22,34 @@ class DriveController(
 	private val apiCaller: ApiCaller,
 ) {
 	@PostMapping("/list")
-	fun list(
-		@RequestBody params: PathParam,
-		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
-	): List<FileInfo> {
-		return apiCaller.readdirDetail(params.path, token = token)
+	fun list(@RequestBody params: PathParam): List<FileInfo> {
+		return apiCaller.readdirDetail(params.path)
 			.map { FileInfo(it) }
 			.sortedBy { if (it.type == FileType.FOLDER) 0 else 1 }
 	}
 
 	@PostMapping("/download-text")
-	fun downloadText(
-		@RequestBody params: PathParam,
-		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
-	): ResponseEntity<String> {
+	fun downloadText(@RequestBody params: PathParam): ResponseEntity<String> {
 		return ResponseEntity.ok()
 			.contentType(MediaType.TEXT_PLAIN)
-			.body(apiCaller.get(params.path, token = token))
+			.body(apiCaller.get(params.path))
 	}
 
 	@PostMapping("/rename-bulk")
-	fun renameBulk(
-		@RequestBody params: RenameBulkParams,
-		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
-	): SimpleResponse {
-		apiCaller.renameBulk(params, token = token)
+	fun renameBulk(@RequestBody params: RenameBulkParams): SimpleResponse {
+		apiCaller.renameBulk(params)
 		return SimpleResponse()
 	}
 
 	@PostMapping("/move-bulk")
-	fun moveBulk(
-		@RequestBody params: MoveBulkParams,
-		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
-	): SimpleResponse {
-		apiCaller.moveBulk(params, token = token)
+	fun moveBulk(@RequestBody params: MoveBulkParams): SimpleResponse {
+		apiCaller.moveBulk(params)
 		return SimpleResponse()
 	}
 
 	@PostMapping("/new-folder")
-	fun newFolder(
-		@RequestBody params: PathParam,
-		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String?,
-	): SimpleResponse {
-		apiCaller.mkdir(params.path, token = token)
+	fun newFolder(@RequestBody params: PathParam): SimpleResponse {
+		apiCaller.mkdir(params.path)
 		return SimpleResponse()
 	}
 }

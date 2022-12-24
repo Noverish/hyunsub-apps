@@ -22,20 +22,20 @@ class ApiCaller(
 		}
 	}
 
-	fun mkdir(path: String, token: String? = null) {
-		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path), token = token)
+	fun mkdir(path: String) {
+		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
 	}
 
-	fun rename(from: String, to: String, override: Boolean = false, token: String? = null) {
-		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()), token = token)
+	fun rename(from: String, to: String, override: Boolean = false) {
+		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
 	}
 
-	fun renameBulk(params: RenameBulkParams, token: String? = null) {
-		_post<ObjectNode>("/api/fs/rename/bulk", params, token = token)
+	fun renameBulk(params: RenameBulkParams) {
+		_post<ObjectNode>("/api/fs/rename/bulk", params)
 	}
 
-	fun moveBulk(params: MoveBulkParams, token: String? = null) {
-		_post<ObjectNode>("/api/fs/move/bulk", params, token = token)
+	fun moveBulk(params: MoveBulkParams) {
+		_post<ObjectNode>("/api/fs/move/bulk", params)
 	}
 
 	fun remove(path: String) {
@@ -48,8 +48,8 @@ class ApiCaller(
 	fun walkDetail(path: String): List<FileStat> =
 		_get("/api/fs/walk/detail", mapOf("path" to path))
 
-	fun readdirDetail(path: String, token: String? = null): List<FileStat> =
-		_get("/api/fs/readdir/detail", mapOf("path" to path), token = token)
+	fun readdirDetail(path: String): List<FileStat> =
+		_get("/api/fs/readdir/detail", mapOf("path" to path))
 
 	fun copyMDate(from: String, to: String) {
 		_post<ObjectNode>("/api/fs/copy-mdate", mapOf("from" to from, "to" to to))
@@ -81,24 +81,23 @@ class ApiCaller(
 	fun <T> ffmpegStatus(): FFmpegStatus<T> =
 		_get("/api/video/ffmpeg/status", emptyMap())
 
-	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap(), token: String? = null): String =
-		request(urlOrPath, HttpMethod.GET, queryParams, null, token)
+	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
+		request(urlOrPath, HttpMethod.GET, queryParams, null)
 
 	fun post(urlOrPath: String, body: Any?): String =
 		request(urlOrPath, HttpMethod.POST, emptyMap(), body)
 
-	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>, token: String? = null) =
-		request<T>(urlOrPath, HttpMethod.GET, queryParams, null, token)
+	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>) =
+		request<T>(urlOrPath, HttpMethod.GET, queryParams, null)
 
-	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap(), token: String? = null) =
-		request<T>(urlOrPath, HttpMethod.POST, queryParams, body, token)
+	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap()) =
+		request<T>(urlOrPath, HttpMethod.POST, queryParams, body)
 
 	private inline fun <reified T> request(
 		urlOrPath: String,
 		method: HttpMethod,
 		queryParams: Map<String, String>,
 		body: Any?,
-		token: String? = null,
 	): T {
 		val url = if (urlOrPath.startsWith("https://")) {
 			urlOrPath
@@ -111,7 +110,7 @@ class ApiCaller(
 				.toUriString()
 		}
 
-		val cookie = "${WebConstants.TOKEN_COOKIE_NAME}=${token ?: apiProperties.token}"
+		val cookie = "${WebConstants.TOKEN_COOKIE_NAME}=${apiProperties.token}"
 		val headers = buildMap {
 			this += (HttpHeaders.CONTENT_TYPE to MediaType.APPLICATION_JSON_VALUE)
 			this += (HttpHeaders.COOKIE to cookie)
