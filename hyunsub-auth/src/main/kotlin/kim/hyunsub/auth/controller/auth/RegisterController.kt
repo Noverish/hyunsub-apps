@@ -6,9 +6,11 @@ import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.service.RegisterService
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.model.HyunsubHeader
 import org.springframework.web.bind.annotation.*
 
+@IgnoreAuthorize
 @RestController
 @RequestMapping("/api/v1/auth/register")
 class RegisterController(

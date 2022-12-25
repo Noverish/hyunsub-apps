@@ -9,6 +9,7 @@ import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.auth.service.LoginService
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.model.HyunsubHeader
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -19,6 +20,7 @@ import java.net.URL
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+@IgnoreAuthorize
 @RestController
 @RequestMapping("/api/v1/auth/login")
 class LoginController(
