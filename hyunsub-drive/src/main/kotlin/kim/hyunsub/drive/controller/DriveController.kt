@@ -35,28 +35,35 @@ class DriveController(
 			.sortedBy { if (it.type == FileType.FOLDER) 0 else 1 }
 	}
 
-	@PostMapping("/download-text")
-	fun downloadText(@RequestBody params: PathParam): ResponseEntity<String> {
-		return ResponseEntity.ok()
-			.contentType(MediaType.TEXT_PLAIN)
-			.body(apiCaller.get(params.path))
-	}
-
 	@PostMapping("/rename-bulk")
-	fun renameBulk(@RequestBody params: ApiRenameBulkParams): SimpleResponse {
-		apiCaller.renameBulk(params)
+	fun renameBulk(
+		userAuth: UserAuth,
+		@RequestBody params: ApiRenameBulkParams,
+	): SimpleResponse {
+		val newParams = params.copy(path = drivePathService.getPath(userAuth, params.path))
+		apiCaller.renameBulk(newParams)
 		return SimpleResponse()
 	}
 
 	@PostMapping("/move-bulk")
-	fun moveBulk(@RequestBody params: ApiMoveBulkParams): SimpleResponse {
-		apiCaller.moveBulk(params)
+	fun moveBulk(
+		userAuth: UserAuth,
+		@RequestBody params: ApiMoveBulkParams
+	): SimpleResponse {
+		val newParams = params.copy(
+			from = drivePathService.getPath(userAuth, params.from),
+			to = drivePathService.getPath(userAuth, params.to),
+		)
+		apiCaller.moveBulk(newParams)
 		return SimpleResponse()
 	}
 
 	@PostMapping("/new-folder")
-	fun newFolder(@RequestBody params: PathParam): SimpleResponse {
-		apiCaller.mkdir(params.path)
+	fun newFolder(
+		userAuth: UserAuth,
+		@RequestBody params: PathParam,
+	): SimpleResponse {
+		apiCaller.mkdir(drivePathService.getPath(userAuth, params.path))
 		return SimpleResponse()
 	}
 
