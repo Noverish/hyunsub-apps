@@ -7,5 +7,5 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConfigurationProperties("app")
 data class AppProperties(
 	val host: String,
-	val authority: String?,
+	val authorities: List<String>?,
 )

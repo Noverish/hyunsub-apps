@@ -3,6 +3,7 @@ package kim.hyunsub.common.web.aop
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kim.hyunsub.common.config.AppProperties
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.config.WebConstants
@@ -23,18 +24,29 @@ import org.springframework.web.context.request.ServletRequestAttributes
  */
 @Aspect
 @Component
-class AuthorityCheckAspect {
+class AuthorityCheckAspect(
+	private val appProperties: AppProperties,
+) {
 	companion object : Log
 
 	private val mapper = jacksonObjectMapper()
 
-	@Pointcut("within(@kim.hyunsub.common.web.annotation.Authorized *)")
-	fun isAuthorizedClass() = Unit
+	@Pointcut("execution(* kim.hyunsub.**.controller..*(..))")
+	fun controllerMethod() = Unit
 
-	@Pointcut("@annotation(kim.hyunsub.common.web.annotation.Authorized) && execution(* kim.hyunsub.**.controller..*(..))")
-	fun isAuthorizedMethod() = Unit
+	@Pointcut("@annotation(org.springframework.web.bind.annotation.PostMapping)")
+	fun postMapping() = Unit
 
-	@Around("isAuthorizedClass() || isAuthorizedMethod()")
+	@Pointcut("@annotation(org.springframework.web.bind.annotation.GetMapping)")
+	fun getMapping() = Unit
+
+	@Pointcut("@annotation(org.springframework.web.bind.annotation.PutMapping)")
+	fun putMapping() = Unit
+
+	@Pointcut("@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
+	fun deleteMapping() = Unit
+
+	@Around("controllerMethod() && (postMapping() || getMapping() || putMapping() || deleteMapping())")
 	fun checkAuthority(joinPoint: ProceedingJoinPoint): Any? {
 		val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
 		val request = requestAttributes.request
@@ -65,8 +77,13 @@ class AuthorityCheckAspect {
 			}
 
 			// Check class authority
-			joinPoint.target.javaClass.getAnnotation(Authorized::class.java).let {
+			joinPoint.target.javaClass.getAnnotation(Authorized::class.java)?.let {
 				checkAuthorityWithAnnotation(userAuth, it)
+			}
+
+			// Check service authority
+			appProperties.authorities?.let {
+				checkAuthorityWithAnnotation(userAuth, Authorized(it.toTypedArray()))
 			}
 
 			log.debug("[Check Authority] Success: method={}, userAuth={}", method, userAuth)

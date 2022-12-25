@@ -25,8 +25,12 @@ class DriveController(
 	private val drivePathService: DrivePathService,
 ) {
 	@PostMapping("/list")
-	fun list(@RequestBody params: PathParam): List<FileInfo> {
-		return apiCaller.readdirDetail(params.path)
+	fun list(
+		userAuth: UserAuth,
+		@RequestBody params: PathParam,
+	): List<FileInfo> {
+		val path = drivePathService.getPath(userAuth, params.path)
+		return apiCaller.readdirDetail(path)
 			.map { FileInfo(it) }
 			.sortedBy { if (it.type == FileType.FOLDER) 0 else 1 }
 	}
@@ -61,8 +65,7 @@ class DriveController(
 		userAuth: UserAuth,
 		@RequestBody params: PathParam,
 	): Map<String, String> {
-		val basePath = drivePathService.getBasePath(userAuth)
-		val path = Path(basePath, params.path).toString()
+		val path = drivePathService.getPath(userAuth, params.path)
 		val sessionKey = apiCaller.uploadSession(path)
 		return mapOf("sessionKey" to sessionKey)
 	}
@@ -72,8 +75,7 @@ class DriveController(
 		userAuth: UserAuth,
 		@RequestBody params: DriveRemoveBulkParams,
 	): SimpleResponse {
-		val basePath = drivePathService.getBasePath(userAuth)
-		val paths = params.paths.map { Path(basePath, it).toString() }
+		val paths = params.paths.map { drivePathService.getPath(userAuth, it) }
 		apiCaller.removeBulk(paths)
 		return SimpleResponse()
 	}
