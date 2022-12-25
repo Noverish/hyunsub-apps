@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
@@ -32,7 +31,6 @@ import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 
-@Authorized(authorities = ["service_photo"])
 @RestController
 @RequestMapping("/api/v1")
 class PhotoUploadController(

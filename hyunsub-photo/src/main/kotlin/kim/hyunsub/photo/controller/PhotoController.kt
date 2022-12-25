@@ -18,7 +18,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
-@Authorized(authorities = ["service_photo"])
 @RestController
 @RequestMapping("/api/v1/photos")
 class PhotoController(

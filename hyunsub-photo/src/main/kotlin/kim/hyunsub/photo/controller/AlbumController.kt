@@ -20,7 +20,6 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 import kotlin.io.path.Path
 
-@Authorized(authorities = ["service_photo"])
 @RestController
 @RequestMapping("/api/v1/albums")
 class AlbumController(

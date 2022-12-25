@@ -1,7 +1,6 @@
 package kim.hyunsub.photo.controller
 
 import kim.hyunsub.common.model.RestApiPageResult
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
@@ -14,7 +13,6 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
-@Authorized(authorities = ["service_photo"])
 @RestController
 @RequestMapping("/api/v1")
 class PhotoDateController(
