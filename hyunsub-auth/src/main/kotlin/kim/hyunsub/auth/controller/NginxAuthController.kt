@@ -7,6 +7,7 @@ import kim.hyunsub.auth.service.AuthorityService
 import kim.hyunsub.auth.service.JwtService
 import kim.hyunsub.common.config.AppProperties
 import kim.hyunsub.common.util.isNotEmpty
+import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -26,6 +27,7 @@ import java.nio.charset.StandardCharsets
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 
+@IgnoreAuthorize
 @RestController
 @RequestMapping("/api/v1/nginx/auth")
 class NginxAuthController(

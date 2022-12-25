@@ -31,6 +31,9 @@ class AuthorityCheckAspect(
 
 	private val mapper = jacksonObjectMapper()
 
+	@Pointcut("within(@kim.hyunsub.common.web.annotation.IgnoreAuthorize *)")
+	fun ignoreAuthorize() = Unit
+
 	@Pointcut("execution(* kim.hyunsub.**.controller..*(..))")
 	fun controllerMethod() = Unit
 
@@ -46,7 +49,7 @@ class AuthorityCheckAspect(
 	@Pointcut("@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
 	fun deleteMapping() = Unit
 
-	@Around("controllerMethod() && (postMapping() || getMapping() || putMapping() || deleteMapping())")
+	@Around("!ignoreAuthorize() && controllerMethod() && (postMapping() || getMapping() || putMapping() || deleteMapping())")
 	fun checkAuthority(joinPoint: ProceedingJoinPoint): Any? {
 		val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
 		val request = requestAttributes.request
