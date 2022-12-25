@@ -18,7 +18,6 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
-@Authorized(authorities = ["service_video"])
 @RestController
 @RequestMapping("/api/v1/entry")
 class VideoEntryController(

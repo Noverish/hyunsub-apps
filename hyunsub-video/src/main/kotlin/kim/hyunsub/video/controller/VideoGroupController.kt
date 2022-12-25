@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
-@Authorized(authorities = ["service_video"])
 @RestController
 @RequestMapping("/api/v1/groups")
 class VideoGroupController(

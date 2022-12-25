@@ -16,7 +16,6 @@ import kim.hyunsub.video.service.scan.VideoScannerService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
 
-@Authorized(authorities = ["service_video"])
 @RestController
 @RequestMapping("/api/v1/video")
 class VideoController(
