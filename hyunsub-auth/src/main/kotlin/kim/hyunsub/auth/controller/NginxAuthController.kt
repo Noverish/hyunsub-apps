@@ -3,10 +3,10 @@ package kim.hyunsub.auth.controller
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
-import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.service.AuthorityService
 import kim.hyunsub.auth.service.JwtService
 import kim.hyunsub.common.config.AppProperties
+import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -88,6 +88,7 @@ class NginxAuthController(
 		@RequestHeader("X-Original-URL") originalUrl: String,
 		@RequestHeader("X-Original-IP") originalIp: String,
 		@RequestHeader("X-Original-Method", required = false) originalMethod: String?,
+		@RequestHeader("X-Original-Referer", required = false) originalReferer: String?,
 	) {
 		if (HttpMethod.OPTIONS.name.equals(originalMethod, ignoreCase = true)) {
 			response.status = HttpStatus.OK.value()
@@ -108,17 +109,24 @@ class NginxAuthController(
 			val payload = parseJwt(request)
 			val userAuth = authorityService.getUserAuth(payload.idNo)
 
+			if (originalReferer.isNotEmpty() && originalReferer.endsWith("drive.hyunsub.kim/")) {
+				log.info { "[AuthFile Success] ip=$originalIp, url=$decodedUrl, method=$originalMethod, referer=$originalReferer, userAuth=$userAuth" }
+				response.status = HttpStatus.OK.value()
+				response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
+				return
+			}
+
 			val paths = if (isFromApi) userAuth.apis else userAuth.paths
 			val allowed = paths.any { path.startsWith(it) }
 			if (!allowed) {
 				throw ErrorCodeException(ErrorCode.NO_AUTHORITY, mapOf("path" to path))
 			}
 
-			log.info { "[AuthFile Success] userAuth=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
+			log.info { "[AuthFile Success] ip=$originalIp, url=$decodedUrl, method=$originalMethod, referer=$originalReferer, userAuth=$userAuth" }
 			response.status = HttpStatus.OK.value()
 			response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
 		} catch (e: ErrorCodeException) {
-			log.info { "[AuthFile Failed] ${e.message}: ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
+			log.info { "[AuthFile Failed] ${e.message}: ip=$originalIp, url=$decodedUrl, method=$originalMethod, referer=$originalReferer" }
 			response.status = HttpStatus.UNAUTHORIZED.value()
 
 			if (isFromApi) {
