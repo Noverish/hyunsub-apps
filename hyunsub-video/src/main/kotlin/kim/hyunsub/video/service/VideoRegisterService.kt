@@ -2,7 +2,7 @@ package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.api.model.PhotoConvertParams
+import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.random.RandomGenerator
@@ -186,7 +186,7 @@ class VideoRegisterService(
 		log.info("[Register Video] Download thumbnail from web: thumbnailPath={}", thumbnailPath)
 
 		apiCaller.imageConvert(
-			PhotoConvertParams(
+			ApiPhotoConvertParams(
 				input = thumbnailOriginalPath,
 				output = thumbnailPath,
 				resize = "512x512>",

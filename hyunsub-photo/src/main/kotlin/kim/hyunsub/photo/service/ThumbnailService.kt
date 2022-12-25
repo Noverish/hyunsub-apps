@@ -2,7 +2,7 @@ package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.api.model.PhotoConvertParams
+import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.log.hashWithMD5
 import kim.hyunsub.photo.config.PhotoConstants
@@ -33,7 +33,7 @@ class ThumbnailService(
 		val thumbnailPath = getThumbnailPath(targetPath)
 
 		if (isImage(originPath)) {
-			apiCaller.imageConvert(PhotoConvertParams(
+			apiCaller.imageConvert(ApiPhotoConvertParams(
 				input = originPath,
 				output = thumbnailPath,
 				resize = "512x512>",

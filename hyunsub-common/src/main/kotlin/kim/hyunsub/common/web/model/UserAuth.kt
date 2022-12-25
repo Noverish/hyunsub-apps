@@ -15,4 +15,7 @@ data class UserAuth(
 
 	/** API 목록 */
 	val apis: List<String> = emptyList(),
-)
+) {
+	val isAdmin: Boolean
+		get() = names.contains("admin")
+}

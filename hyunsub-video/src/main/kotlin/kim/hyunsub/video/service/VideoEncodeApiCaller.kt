@@ -1,7 +1,7 @@
 package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.EncodeApiCaller
-import kim.hyunsub.common.api.model.EncodeParams
+import kim.hyunsub.common.api.model.ApiEncodeParams
 import kim.hyunsub.common.config.AppProperties
 import kim.hyunsub.video.repository.entity.Video
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ class VideoEncodeApiCaller(
 	fun encode(video: Video, options: String? = null) {
 		val path = video.path
 
-		encodeApiCaller.encode(EncodeParams(
+		encodeApiCaller.encode(ApiEncodeParams(
 			input = path,
 			output = path,
 			options = options ?: "-vcodec libx264 -acodec copy",

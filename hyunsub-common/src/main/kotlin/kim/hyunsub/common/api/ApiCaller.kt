@@ -1,5 +1,6 @@
 package kim.hyunsub.common.api
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.*
 import kim.hyunsub.common.http.HttpClient
@@ -30,16 +31,20 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
 	}
 
-	fun renameBulk(params: RenameBulkParams) {
+	fun renameBulk(params: ApiRenameBulkParams) {
 		_post<ObjectNode>("/api/fs/rename/bulk", params)
 	}
 
-	fun moveBulk(params: MoveBulkParams) {
+	fun moveBulk(params: ApiMoveBulkParams) {
 		_post<ObjectNode>("/api/fs/move/bulk", params)
 	}
 
 	fun remove(path: String) {
 		_post<ObjectNode>("/api/fs/remove", mapOf("path" to path))
+	}
+
+	fun removeBulk(paths: List<String>) {
+		_post<ObjectNode>("/api/fs/remove-bulk", mapOf("paths" to paths))
 	}
 
 	fun walk(path: String): List<String> =
@@ -64,7 +69,7 @@ class ApiCaller(
 	fun exif(path: String): String =
 		_get("/api/image/exif", mapOf("path" to path))
 
-	fun imageConvert(params: PhotoConvertParams) {
+	fun imageConvert(params: ApiPhotoConvertParams) {
 		_post<ObjectNode>("/api/image/convert", params)
 	}
 
@@ -74,6 +79,9 @@ class ApiCaller(
 
 	fun uploadByUrl(url: String) =
 		_post<UploadResult>("/upload/url", mapOf("url" to url))
+
+	fun uploadSession(path: String): String =
+		_post<JsonNode>("/upload/session", mapOf("path" to path))["sessionKey"].textValue()
 
 	fun ffmpeg(params: FFmpegParams): FFmpegResult =
 		_post("/api/video/ffmpeg", params)
