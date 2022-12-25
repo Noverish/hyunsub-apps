@@ -1,5 +1,7 @@
 package kim.hyunsub.common.web.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class UserAuth(
 	/** 사용자 ID NO */
 	val idNo: String,
@@ -16,6 +18,7 @@ data class UserAuth(
 	/** API 목록 */
 	val apis: List<String> = emptyList(),
 ) {
+	@get:JsonIgnore
 	val isAdmin: Boolean
 		get() = names.contains("admin")
 }
