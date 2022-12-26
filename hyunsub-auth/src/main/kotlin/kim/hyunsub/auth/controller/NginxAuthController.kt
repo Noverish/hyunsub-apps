@@ -1,5 +1,7 @@
 package kim.hyunsub.auth.controller
 
+import com.fasterxml.jackson.core.JacksonException
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
@@ -80,6 +82,10 @@ class NginxAuthController(
 				val redirectUrl = "https://${appProperties.host}/login?url=$encodedUrl"
 				response.setHeader("X-Redirect-URL", redirectUrl)
 			}
+		} catch (e: JacksonException) {
+			log.info { "[Auth Failed] ${e.message}: ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
+			response.status = HttpStatus.UNAUTHORIZED.value()
+			response.setHeader("X-Auth-Failed", mapper.writeValueAsString(mapOf("msg" to e.message)))
 		}
 	}
 
