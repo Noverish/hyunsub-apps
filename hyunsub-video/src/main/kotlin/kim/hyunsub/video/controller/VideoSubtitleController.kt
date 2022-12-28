@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 
-@Authorized(authorities = ["admin"])
+@Authorized(["admin"])
 @RestController
 @RequestMapping("/api/v1/video/{videoId}/subtitle")
 class VideoSubtitleController(

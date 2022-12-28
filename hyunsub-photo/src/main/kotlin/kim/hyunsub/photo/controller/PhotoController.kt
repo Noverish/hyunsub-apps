@@ -68,7 +68,7 @@ class PhotoController(
 		return metadata.data
 	}
 
-	@Authorized(authorities = ["admin"])
+	@Authorized(["admin"])
 	@PutMapping("/{photoId}")
 	fun update(
 		@PathVariable photoId: Int,

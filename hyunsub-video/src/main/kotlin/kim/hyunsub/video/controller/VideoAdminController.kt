@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/admin")
-@Authorized(authorities = ["admin"])
+@Authorized(["admin"])
 class VideoAdminController(
 	private val videoScannerService: VideoScannerService,
 	private val videoRepository: VideoRepository,

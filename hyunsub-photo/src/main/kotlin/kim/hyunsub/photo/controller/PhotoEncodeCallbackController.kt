@@ -3,7 +3,6 @@ package kim.hyunsub.photo.controller
 import com.fasterxml.jackson.databind.ObjectMapper
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoRepository
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
-@Authorized(authorities = ["server_encode"])
 @RestController
 @RequestMapping("/api/v1/encode/callback")
 class PhotoEncodeCallbackController(

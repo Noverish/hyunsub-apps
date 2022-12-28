@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
-@Authorized(authorities = ["admin"])
+@Authorized(["admin"])
 @RestController
 @RequestMapping("/api/v1/encode")
 class VideoEncodeController(

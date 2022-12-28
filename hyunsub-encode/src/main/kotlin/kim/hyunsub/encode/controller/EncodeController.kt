@@ -1,21 +1,16 @@
 package kim.hyunsub.encode.controller
 
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.encode.model.EncodeParams
 import kim.hyunsub.encode.model.EncodeStatus
 import kim.hyunsub.encode.service.EncodeService
-import org.springframework.http.MediaType
 import org.springframework.http.codec.ServerSentEvent
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Sinks
-import java.time.Duration
-import java.time.LocalDateTime
 import javax.servlet.http.HttpServletResponse
 
-@Authorized(authorities = ["service_encode"])
 @RestController
 @RequestMapping("/api/v1/encode")
 class EncodeController(

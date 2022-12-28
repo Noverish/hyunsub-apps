@@ -37,7 +37,7 @@ class AlbumController(
 			.map { apiModelConverter.convertToPreview(it) }
 	}
 
-	@Authorized(authorities = ["admin"])
+	@Authorized(["admin"])
 	@PostMapping("")
 	fun create(@RequestBody params: RestApiAlbumCreateParams): RestApiAlbumPreview {
 		val dirPath = Path(PhotoConstants.basePath, params.name).toString()

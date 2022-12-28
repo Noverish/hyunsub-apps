@@ -41,7 +41,7 @@ class VideoController(
 		return videoService.loadVideo(video)
 	}
 
-	@Authorized(authorities = ["admin"])
+	@Authorized(["admin"])
 	@PostMapping("")
 	fun register(
 		user: UserAuth,
