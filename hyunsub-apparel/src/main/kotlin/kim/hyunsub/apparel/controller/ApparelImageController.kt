@@ -10,7 +10,6 @@ import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.multipart.MultipartFile
 
-@Authorized(authorities = ["service_apparel"])
 @RestController
 @RequestMapping("/api/v1/apparels/{apparelId}/images")
 class ApparelImageController(

@@ -11,7 +11,6 @@ import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*
 
-@Authorized(authorities = ["service_apparel"])
 @RestController
 @RequestMapping("/api/v1/brands")
 class ApparelBrandController(
