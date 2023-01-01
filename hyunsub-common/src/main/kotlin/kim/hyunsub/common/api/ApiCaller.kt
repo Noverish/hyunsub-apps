@@ -53,6 +53,9 @@ class ApiCaller(
 	fun walkDetail(path: String): List<FileStat> =
 		_get("/api/fs/walk/detail", mapOf("path" to path))
 
+	fun readdir(path: String): List<String> =
+		_get("/api/fs/readdir", mapOf("path" to path))
+
 	fun readdirDetail(path: String): List<FileStat> =
 		_get("/api/fs/readdir/detail", mapOf("path" to path))
 

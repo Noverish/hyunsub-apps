@@ -56,11 +56,11 @@ class HttpClient(private val restTemplate: RestTemplate) {
 		try {
 			val res = restTemplate.exchange(newUrl, method, entity, type)
 			stopWatch.stop()
-			log.debug { "[HTTP] $method $url -> ${res.statusCode.value()} ${stopWatch.totalTimeMillis}ms" }
+			log.debug { "[HTTP] $method $newUrl -> ${res.statusCode.value()} ${stopWatch.totalTimeMillis}ms" }
 			return res.body!!
 		} catch (e: HttpStatusCodeException) {
 			stopWatch.stop()
-			log.error { "[HTTP] $method $url -> ${e.statusCode.value()} ${stopWatch.totalTimeMillis}ms ${e.responseBodyAsString}" }
+			log.error { "[HTTP] $method $newUrl -> ${e.statusCode.value()} ${stopWatch.totalTimeMillis}ms ${e.responseBodyAsString}" }
 			throw e
 		}
 	}

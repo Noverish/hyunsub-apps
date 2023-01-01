@@ -6,3 +6,5 @@ include 'hyunsub-photo'
 include 'hyunsub-encode'
 include 'hyunsub-apparel'
 include 'hyunsub-drive'
+include 'hyunsub-comic'
+
