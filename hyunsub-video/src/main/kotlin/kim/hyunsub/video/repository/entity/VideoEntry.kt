@@ -14,7 +14,6 @@ import javax.persistence.Table
 @Table(name = "video_entry")
 data class VideoEntry(
 	@Id
-	@Column(columnDefinition = "CHAR(6)")
 	val id: String,
 
 	@Column(nullable = false)
@@ -29,7 +28,7 @@ data class VideoEntry(
 	@Column(nullable = false)
 	val regDt: LocalDateTime,
 
-	@Column(columnDefinition = "CHAR(6)")
+	@Column
 	val videoGroupId: String? = null,
 ) {
 	companion object {

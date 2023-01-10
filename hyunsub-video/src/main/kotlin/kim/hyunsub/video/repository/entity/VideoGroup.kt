@@ -12,7 +12,6 @@ import javax.persistence.Table
 @Table(name = "video_group")
 data class VideoGroup(
 	@Id
-	@Column(columnDefinition = "CHAR(6)")
 	val id: String,
 
 	@Column(nullable = false)

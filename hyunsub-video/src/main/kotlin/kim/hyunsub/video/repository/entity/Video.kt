@@ -3,6 +3,7 @@ package kim.hyunsub.video.repository.entity
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
+import org.hibernate.annotations.Type
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -14,7 +15,6 @@ import javax.persistence.Table
 @Table(name = "video")
 data class Video(
 	@Id
-	@Column(columnDefinition = "CHAR(6)")
 	val id: String,
 
 	@Column(nullable = false)
@@ -26,7 +26,7 @@ data class Video(
 	@Column(nullable = false)
 	val regDt: LocalDateTime,
 
-	@Column(columnDefinition = "CHAR(6)")
+	@Column(nullable = false)
 	val videoEntryId: String,
 
 	@Column

@@ -14,13 +14,12 @@ import javax.persistence.Table
 @Table(name = "video_subtitle")
 data class VideoSubtitle(
 	@Id
-	@Column(columnDefinition = "CHAR(6)")
 	val id: String,
 
 	@Column(nullable = false)
 	val path: String,
 
-	@Column(nullable = false, columnDefinition = "CHAR(6)")
+	@Column(nullable = false)
 	val videoId: String,
 ) {
 	companion object {

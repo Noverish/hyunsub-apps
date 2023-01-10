@@ -26,6 +26,7 @@ class VideoRenameService(
 		log.debug("[Rename] params={}", params)
 
 		val history = VideoRenameHistory(params)
+		log.debug("[Rename] history={}", history)
 		videoRenameHistoryRepository.save(history)
 
 		val video = videoRepository.findByIdOrNull(params.videoId)
@@ -133,8 +134,18 @@ class VideoRenameService(
 	}
 
 	fun replace(str: String, params: VideoRenameParams) =
-		if (params.isRegex)
-			str.replace(Regex(params.from), params.to)
-		else
-			str.replace(params.from, params.to)
+		str.split("/")
+			.reversed()
+			.mapIndexed { i, v ->
+				if (i == 0) {
+					if (params.isRegex)
+						v.replace(Regex(params.from), params.to)
+					else
+						v.replace(params.from, params.to)
+				} else {
+					v
+				}
+			}
+			.reversed()
+			.joinToString("/")
 }
