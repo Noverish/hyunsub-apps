@@ -23,6 +23,9 @@ class ApiCaller(
 		}
 	}
 
+	fun statBulk(paths: List<String>): List<FileStat> =
+		_post("/api/fs/stat", mapOf("paths" to paths))
+
 	fun mkdir(path: String) {
 		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
 	}

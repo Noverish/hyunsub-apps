@@ -22,7 +22,6 @@ class VideoController(
 	private val videoRepository: VideoRepository,
 	private val videoEntryService: VideoEntryService,
 	private val videoService: VideoService,
-	private val videoRegisterService: VideoRegisterService,
 ) {
 	companion object : Log
 
@@ -39,14 +38,5 @@ class VideoController(
 		}
 
 		return videoService.loadVideo(video)
-	}
-
-	@Authorized(["admin"])
-	@PostMapping("")
-	fun register(
-		user: UserAuth,
-		@RequestBody params: VideoRegisterParams,
-	): VideoRegisterResult {
-		return videoRegisterService.registerVideo(params)
 	}
 }
