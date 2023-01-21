@@ -1,5 +1,6 @@
 package kim.hyunsub.comic.model
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import java.time.LocalDateTime
 
 data class ApiComicEpisodeDetail(
@@ -9,4 +10,7 @@ data class ApiComicEpisodeDetail(
 	val length: Int,
 	val regDt: LocalDateTime,
 	val images: List<String>,
+
+	@field:JsonInclude(JsonInclude.Include.NON_NULL)
+	val history: Int?,
 )
