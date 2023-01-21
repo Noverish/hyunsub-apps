@@ -1,5 +1,6 @@
 package kim.hyunsub.comic.model
 
-data class ComicEpisodePreview(
+data class ApiComicPreview(
+	val id: String,
 	val title: String,
 )

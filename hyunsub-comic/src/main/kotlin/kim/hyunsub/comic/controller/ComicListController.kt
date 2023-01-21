@@ -1,12 +1,18 @@
 package kim.hyunsub.comic.controller
 
-import kim.hyunsub.comic.model.ComicDetail
-import kim.hyunsub.comic.model.ComicEpisodeDetail
-import kim.hyunsub.comic.model.ComicEpisodePreview
-import kim.hyunsub.comic.model.ComicPreview
+import kim.hyunsub.comic.config.ComicConstants
+import kim.hyunsub.comic.model.ApiComicDetail
+import kim.hyunsub.comic.model.ApiComicEpisodeDetail
+import kim.hyunsub.comic.model.ApiComicPreview
+import kim.hyunsub.comic.repository.ComicEpisodeRepository
+import kim.hyunsub.comic.repository.ComicRepository
+import kim.hyunsub.comic.repository.entity.ComicEpisodeId
+import kim.hyunsub.comic.service.ApiModelConverter
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import mu.KotlinLogging
-import org.springframework.util.Base64Utils
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -16,36 +22,45 @@ import kotlin.io.path.Path
 @RestController
 @RequestMapping("/api/v1/comics")
 class ComicListController(
+	private val comicRepository: ComicRepository,
+	private val comicEpisodeRepository: ComicEpisodeRepository,
+	private val apiModelConverter: ApiModelConverter,
 	private val apiCaller: ApiCaller,
 ) {
-	companion object {
-		const val BASE_PATH = "/Comics"
-	}
 	private val log = KotlinLogging.logger {  }
 
 	@GetMapping("")
-	fun comicPreviews(): List<ComicPreview> {
-		return apiCaller.readdir(BASE_PATH).map { ComicPreview(it) }
+	fun comicList(): List<ApiComicPreview> {
+		log.debug { "[Comic List]" }
+		return comicRepository.findAll()
+			.map { apiModelConverter.convert(it) }
 	}
 
-	@GetMapping("/{nameBase64}")
-	fun comicDetail(@PathVariable nameBase64: String): ComicDetail {
-		val name = String(Base64Utils.decodeFromUrlSafeString(nameBase64))
-		log.debug { "[Comic Detail] $name" }
-		return apiCaller.readdir(Path(BASE_PATH, name).toString())
-			.map { ComicEpisodePreview(it) }
-			.let { ComicDetail(it) }
+	@GetMapping("/{comicId}")
+	fun comicDetail(@PathVariable comicId: String): ApiComicDetail {
+		log.debug { "[Comic Detail] comicId=$comicId" }
+		val comic = comicRepository.findByIdOrNull(comicId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		val episodes = comicEpisodeRepository.findByComicId(comicId)
+
+		return apiModelConverter.convert(comic, episodes)
 	}
 
-	@GetMapping("/{nameBase64}/episodes/{episodeBase64}")
-	fun episodeDetail(
-		@PathVariable nameBase64: String,
-		@PathVariable episodeBase64: String,
-	): ComicEpisodeDetail {
-		val name = String(Base64Utils.decodeFromUrlSafeString(nameBase64))
-		val episode = String(Base64Utils.decodeFromUrlSafeString(episodeBase64))
-		log.debug { "[Episode Detail] $name" }
-		return apiCaller.readdir(Path(BASE_PATH, name, episode).toString())
-			.let { ComicEpisodeDetail(it) }
+	@GetMapping("/{comicId}/episodes/{order}")
+	fun comicEpisodeDetail(
+		@PathVariable comicId: String,
+		@PathVariable order: Int,
+	): ApiComicEpisodeDetail {
+		log.debug { "[Comic Episode Detail] comicId=$comicId, order=$order" }
+		val comic = comicRepository.findByIdOrNull(comicId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		val episode = comicEpisodeRepository.findByIdOrNull(ComicEpisodeId(comicId, order))
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		val folderPath = Path(ComicConstants.BASE_PATH, comic.title, episode.title).toString()
+		val images = apiCaller.readdir(folderPath)
+			.map { ComicConstants.FILE_SERVER + Path(folderPath, it).toString() }
+
+		return apiModelConverter.convert(episode, images)
 	}
 }
