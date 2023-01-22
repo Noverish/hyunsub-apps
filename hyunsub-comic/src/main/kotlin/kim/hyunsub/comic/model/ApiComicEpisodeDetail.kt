@@ -7,6 +7,7 @@ data class ApiComicEpisodeDetail(
 	val comicId: String,
 	val order: Int,
 	val title: String,
+	val episodeTitle: String,
 	val length: Int,
 	val regDt: LocalDateTime,
 	val images: List<String>,

@@ -71,10 +71,9 @@ class ComicListController(
 
 		val folderPath = Path(ComicConstants.BASE_PATH, comic.title, episode.title).toString()
 		val images = apiCaller.readdir(folderPath)
-			.map { ComicConstants.FILE_SERVER + Path(folderPath, it).toString() }
 
 		val history = comicHistoryRepository.findByIdOrNull(ComicHistoryId(userId, comicId, order))?.page
 
-		return apiModelConverter.convert(episode, images, history)
+		return apiModelConverter.convert(comic, episode, images, history)
 	}
 }

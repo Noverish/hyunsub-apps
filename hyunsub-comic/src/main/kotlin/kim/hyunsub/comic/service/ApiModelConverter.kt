@@ -36,11 +36,12 @@ class ApiModelConverter {
 			history = history,
 		)
 
-	fun convert(episode: ComicEpisode, images: List<String>, history: Int?) =
+	fun convert(comic: Comic, episode: ComicEpisode, images: List<String>, history: Int?) =
 		ApiComicEpisodeDetail(
 			comicId = episode.comicId,
 			order = episode.order,
-			title = episode.title.replace(Regex("^\\d+_"), ""),
+			title = comic.title,
+			episodeTitle = episode.title.replace(Regex("^\\d+_"), ""),
 			length = episode.length,
 			regDt = episode.regDt,
 			images = images,
