@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ComicEpisodeRepository : JpaRepository<ComicEpisode, ComicEpisodeId> {
 	fun findByComicId(comicId: String): List<ComicEpisode>
+	fun countByComicId(comicId: String): Int
 }

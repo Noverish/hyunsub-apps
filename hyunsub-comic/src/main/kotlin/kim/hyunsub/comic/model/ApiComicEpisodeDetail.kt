@@ -11,6 +11,7 @@ data class ApiComicEpisodeDetail(
 	val length: Int,
 	val regDt: LocalDateTime,
 	val images: List<String>,
+	val hasNextEpisode: Boolean,
 
 	@field:JsonInclude(JsonInclude.Include.NON_NULL)
 	val history: Int?,

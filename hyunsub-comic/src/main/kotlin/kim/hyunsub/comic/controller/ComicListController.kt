@@ -74,6 +74,9 @@ class ComicListController(
 
 		val history = comicHistoryRepository.findByIdOrNull(ComicHistoryId(userId, comicId, order))?.page
 
-		return apiModelConverter.convert(comic, episode, images, history)
+		val episodeNum = comicEpisodeRepository.countByComicId(comicId)
+		val hasNextEpisode = order < episodeNum - 1
+
+		return apiModelConverter.convert(comic, episode, images, hasNextEpisode, history)
 	}
 }

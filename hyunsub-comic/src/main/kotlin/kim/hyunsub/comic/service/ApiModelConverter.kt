@@ -36,7 +36,7 @@ class ApiModelConverter {
 			history = history,
 		)
 
-	fun convert(comic: Comic, episode: ComicEpisode, images: List<String>, history: Int?) =
+	fun convert(comic: Comic, episode: ComicEpisode, images: List<String>, hasNextEpisode: Boolean, history: Int?) =
 		ApiComicEpisodeDetail(
 			comicId = episode.comicId,
 			order = episode.order,
@@ -46,5 +46,6 @@ class ApiModelConverter {
 			regDt = episode.regDt,
 			images = images,
 			history = history,
+			hasNextEpisode = hasNextEpisode,
 		)
 }
