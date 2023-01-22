@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.repository.entity
 
+import org.hibernate.annotations.Type
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -12,7 +13,8 @@ data class PhotoMetadata(
 	@Id
 	val path: String,
 
-	@Column(nullable = false, columnDefinition = "TEXT")
+	@Type(type = "text")
+	@Column(nullable = false)
 	val data: String,
 
 	@Column(nullable = false)
