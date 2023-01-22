@@ -21,7 +21,7 @@ class ComicHistoryController(
 	private val comicHistoryRepository: ComicHistoryRepository,
 	private val comicEpisodeRepository: ComicEpisodeRepository,
 ) {
-	private val log = KotlinLogging.logger {  }
+	private val log = KotlinLogging.logger { }
 
 	@PutMapping("/comics/{comicId}/episodes/{order}/history")
 	fun setComicHistory(

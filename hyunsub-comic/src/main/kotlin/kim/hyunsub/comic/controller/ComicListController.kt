@@ -31,7 +31,7 @@ class ComicListController(
 	private val apiModelConverter: ApiModelConverter,
 	private val apiCaller: ApiCaller,
 ) {
-	private val log = KotlinLogging.logger {  }
+	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
 	fun comicList(): List<ApiComicPreview> {
