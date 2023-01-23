@@ -9,6 +9,8 @@ import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiRenameBulkParamData
 import kim.hyunsub.common.api.model.ApiRenameBulkParams
 import kim.hyunsub.common.web.annotation.Authorized
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -89,6 +91,10 @@ class ComicOrganizeController(
 		val renames = mutableListOf<ApiRenameBulkParamData>()
 
 		for (siblings in candidateMap.values) {
+			if (siblings.size == 1) {
+				throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR, siblings.toString())
+			}
+
 			var i = 0
 			val firstSibling = siblings.first()
 
