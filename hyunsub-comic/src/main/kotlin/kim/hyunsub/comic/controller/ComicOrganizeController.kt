@@ -156,81 +156,72 @@ class ComicOrganizeController(
 	fun split(@RequestBody params: ComicOrganizeSplitParams): ComicOrganizeSplitResult {
 		log.debug { "[Comic Organize Split] params=$params" }
 
-		val comicPath = Path(ComicConstants.BASE_PATH, params.title).toString()
-		val folders = apiCaller.readdir(comicPath).sorted()
-
 		val result = mutableListOf<String>()
 
-		for (folder in folders) {
-			if (params.folder != null && params.folder != folder) {
+		val folderPath = Path(ComicConstants.BASE_PATH, params.title, params.folder).toString()
+		val filePaths = apiCaller.readdir(folderPath).sorted()
+			.filter { !params.excludes.contains(it) }
+			.map { Path(folderPath, it).toString() }
+
+		val metadataList = apiCaller.imageMetadataBulk(ApiImageMetadataBulkParams(filePaths))
+		val candidates = mutableListOf<String>()
+
+		for ((i, filePath) in filePaths.withIndex()) {
+			val metadata = metadataList[i]
+
+			val ratio = metadata.width.toDouble() / metadata.height.toDouble()
+			if (ratio < 1 || 2 < ratio) {
 				continue
 			}
 
-			val folderPath = Path(comicPath, folder).toString()
-			val files = apiCaller.readdir(folderPath).sorted()
-			val filePaths = files.map { Path(folderPath, it).toString() }
-
-			val metadataList = apiCaller.imageMetadataBulk(ApiImageMetadataBulkParams(filePaths))
-			val candidates = mutableListOf<String>()
-
-			for ((i, file) in files.withIndex()) {
-				val filePath = Path(folderPath, file).toString()
-				val metadata = metadataList[i]
-
-				val ratio = metadata.width.toDouble() / metadata.height.toDouble()
-				if (ratio < 1 || 2 < ratio) {
-					continue
-				}
-
-				candidates.add(filePath)
-			}
-
-			val renames = mutableListOf<ApiRenameBulkParamData>()
-			val removes = mutableListOf<String>()
-
-			for (filePath in candidates) {
-				log.debug { "[Comic Organize Split] $filePath" }
-
-				if (!params.dryRun) {
-					apiCaller.imageMagick(
-						ApiImageMagickParams(
-							input = filePath,
-							output = filePath,
-							options = listOf("-crop", "2x1@")
-						)
-					)
-				}
-
-				val file = Path(filePath).name
-				renames.add(
-					ApiRenameBulkParamData(
-						from = file.replace(".jpg", "-0.jpg"),
-						to = file.replace(".jpg", "-2.jpg"),
-					)
-				)
-
-				removes.add(filePath)
-			}
-
-			if (!params.dryRun && candidates.isNotEmpty()) {
-				apiCaller.renameBulk(
-					ApiRenameBulkParams(
-						path = folderPath,
-						renames = renames,
-					)
-				)
-				apiCaller.removeBulk(removes)
-
-				if (candidates.any { it.contains("0000.jpg") }) {
-					apiCaller.rename(
-						from = Path(folderPath, "0000-1.jpg").toString(),
-						to = Path(folderPath, "9999.jpg").toString(),
-					)
-				}
-			}
-
-			result.addAll(candidates)
+			candidates.add(filePath)
 		}
+
+		val renames = mutableListOf<ApiRenameBulkParamData>()
+		val removes = mutableListOf<String>()
+
+		for (filePath in candidates) {
+			log.debug { "[Comic Organize Split] $filePath" }
+
+			if (!params.dryRun) {
+				apiCaller.imageMagick(
+					ApiImageMagickParams(
+						input = filePath,
+						output = filePath,
+						options = listOf("-crop", "2x1@")
+					)
+				)
+			}
+
+			val file = Path(filePath).name
+			renames.add(
+				ApiRenameBulkParamData(
+					from = file.replace(".jpg", "-0.jpg"),
+					to = file.replace(".jpg", "-2.jpg"),
+				)
+			)
+
+			removes.add(filePath)
+		}
+
+		if (!params.dryRun && candidates.isNotEmpty()) {
+			apiCaller.renameBulk(
+				ApiRenameBulkParams(
+					path = folderPath,
+					renames = renames,
+				)
+			)
+			apiCaller.removeBulk(removes)
+
+			if (candidates.any { it.contains("0000.jpg") }) {
+				apiCaller.rename(
+					from = Path(folderPath, "0000-1.jpg").toString(),
+					to = Path(folderPath, "9999.jpg").toString(),
+				)
+			}
+		}
+
+		result.addAll(candidates)
 
 		return ComicOrganizeSplitResult(result)
 	}
