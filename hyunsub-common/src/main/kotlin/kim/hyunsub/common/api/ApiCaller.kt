@@ -79,6 +79,12 @@ class ApiCaller(
 		_post<ObjectNode>("/api/image/convert", params)
 	}
 
+	fun imageMagick(params: ApiImageMagickParams) =
+		_post<ObjectNode>("/api/image/magick", params)
+
+	fun imageMetadataBulk(params: ApiImageMetadataBulkParams) =
+		_post<List<ApiImageMetadataResult>>("/api/image/metadata-bulk", params)
+
 	fun upload(path: String, data: ByteArray, override: Boolean = false) {
 		_post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
 	}

@@ -1,5 +1,5 @@
 package kim.hyunsub.comic.model
 
-data class ComicOrganizeFileResult(
+data class ComicOrganizeSplitResult(
 	val result: List<String>,
 )
