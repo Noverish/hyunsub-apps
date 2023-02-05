@@ -19,8 +19,8 @@ class LoginServiceTest : FreeSpec({
 	val userRepository = mockk<UserRepository>()
 	val sessionService = mockk<LoginFailureSessionService>()
 	val captchaService = mockk<CaptchaService>()
-	val tokenGenerator = mockk<TokenGenerator>()
-	val service = LoginService(userRepository, sessionService, captchaService, tokenGenerator)
+	val tokenService = mockk<TokenService>()
+	val service = LoginService(userRepository, sessionService, captchaService, tokenService)
 
 	val user = mockk<User>(relaxed = true)
 	val params = mockk<LoginParams>(relaxed = true)
@@ -30,7 +30,7 @@ class LoginServiceTest : FreeSpec({
 	val username = "kotest_username"
 	val password = "kotest_password"
 	val hashed = "\$2a\$12\$umWkbsinybLfpuEknH3IqufPEtv8hbUYJts6GN/fBAZZA.fIpp1aK"
-	val jwt = "kotest_jwt"
+	val token = "kotest_token"
 	val remoteAddr = "kotest_remote_addr"
 
 	beforeTest {
@@ -44,12 +44,12 @@ class LoginServiceTest : FreeSpec({
 		every { loginFailureSession.failCnt } returns 0
 		every { sessionService.getSession(remoteAddr) } returns loginFailureSession
 		every { sessionService.putSession(eq(remoteAddr), any()) } returns Unit
-		every { tokenGenerator.generateToken(idNo) } returns jwt
+		every { tokenService.issue(user) } returns token
 	}
 
 	"Success" {
 		val result = service.login(params)
-		result shouldBe LoginResult(idNo, jwt)
+		result shouldBe LoginResult(idNo, token)
 	}
 
 	"Not exist user" {

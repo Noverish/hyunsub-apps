@@ -1,19 +1,18 @@
 package kim.hyunsub.auth.controller
 
 import com.fasterxml.jackson.core.JacksonException
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
-import kim.hyunsub.auth.service.AuthorityService
-import kim.hyunsub.auth.service.JwtService
+import kim.hyunsub.auth.model.TokenPayload
+import kim.hyunsub.auth.service.TokenService
+import kim.hyunsub.auth.service.UserAuthService
 import kim.hyunsub.common.config.AppProperties
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.common.web.model.UserAuth
 import mu.KotlinLogging
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
@@ -33,9 +32,9 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/v1/nginx/auth")
 class NginxAuthController(
-	private val jwtService: JwtService,
-	private val authorityService: AuthorityService,
+	private val tokenService: TokenService,
 	private val appProperties: AppProperties,
+	private val userAuthService: UserAuthService,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -64,8 +63,8 @@ class NginxAuthController(
 				throw ErrorCodeException(ErrorCode.INVALID_URL, mapOf("url" to decodedUrl))
 			}
 
-			val payload = parseJwt(request)
-			val userAuth = authorityService.getUserAuth(payload.idNo)
+			val tokenPayload = parseToken(request)
+			val userAuth = userAuthService.getUserAuth(tokenPayload.idNo)
 
 			log.info { "[Auth Success] userAuth=$userAuth, ip=$originalIp, url=$decodedUrl, method=$originalMethod" }
 			response.status = HttpStatus.OK.value()
@@ -114,8 +113,8 @@ class NginxAuthController(
 				throw ErrorCodeException(ErrorCode.INVALID_URL, mapOf("url" to decodedUrl))
 			}
 
-			val payload = parseJwt(request)
-			val userAuth = authorityService.getUserAuth(payload.idNo)
+			val tokenPayload = parseToken(request)
+			val userAuth = userAuthService.getUserAuth(tokenPayload.idNo)
 
 			if (originalReferer.isNotEmpty() && originalReferer.endsWith("drive.hyunsub.kim/")) {
 				log.info { "[AuthFile Success] ip=$originalIp, url=$decodedUrl, method=$originalMethod, referer=$originalReferer, userAuth=$userAuth" }
@@ -147,12 +146,12 @@ class NginxAuthController(
 		}
 	}
 
-	private fun parseJwt(request: HttpServletRequest): UserAuth {
+	private fun parseToken(request: HttpServletRequest): TokenPayload {
 		val cookie = WebUtils.getCookie(request, WebConstants.TOKEN_COOKIE_NAME)
 			?: throw ErrorCodeException(ErrorCode.NOT_LOGIN)
 
 		try {
-			return jwtService.verify(cookie.value)
+			return tokenService.verify(cookie.value)
 		} catch (e: SignatureException) {
 			throw ErrorCodeException(ErrorCode.INVALID_JWT)
 		} catch (e: ExpiredJwtException) {

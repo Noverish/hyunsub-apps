@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.model.auth
+package kim.hyunsub.auth.model.dto
 
 data class ValidUrlParams(
 	val url: String,

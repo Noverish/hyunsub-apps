@@ -1,0 +1,5 @@
+dependencies {
+    implementation 'com.navercorp.fixturemonkey:fixture-monkey-starter:0.4.7'
+    implementation 'com.navercorp.fixturemonkey:fixture-monkey-kotlin:0.4.7'
+    implementation 'com.navercorp.fixturemonkey:fixture-monkey-javax-validation:0.4.7'
+}

@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.controller.auth
 
-import kim.hyunsub.auth.model.auth.ValidUrlParams
-import kim.hyunsub.auth.model.auth.ValidUrlResult
+import kim.hyunsub.auth.model.dto.ValidUrlParams
+import kim.hyunsub.auth.model.dto.ValidUrlResult
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

@@ -6,10 +6,16 @@ import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.stereotype.Service
 
 @Service
-class AuthorityService(
+class UserAuthService(
 	private val userAuthorityRepository: UserAuthorityRepository,
 	private val authorityRepository: AuthorityRepository,
 ) {
+	fun getAuthorities(idNo: String): List<String> =
+		userAuthorityRepository.findByUserIdNo(idNo)
+			.map { it.authorityId }
+			.let { authorityRepository.findAllById(it) }
+			.map { it.name }
+
 	fun getUserAuth(idNo: String): UserAuth {
 		val authorities = userAuthorityRepository.findByUserIdNo(idNo)
 			.map { it.authorityId }

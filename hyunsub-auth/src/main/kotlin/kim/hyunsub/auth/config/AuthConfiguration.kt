@@ -9,8 +9,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableConfigurationProperties(JwtProperties::class, CaptchaProperties::class)
-class ApplicationContext {
+@EnableConfigurationProperties(TokenProperties::class, CaptchaProperties::class)
+class AuthConfiguration {
 	// 쿠키에 서브도메인 기능을 넣기 위해서 필요함
 	@Bean
 	fun cookieProcessorCustomizer(): WebServerFactoryCustomizer<TomcatServletWebServerFactory> {

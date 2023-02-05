@@ -1,6 +1,6 @@
 package kim.hyunsub.auth.controller.admin
 
-import kim.hyunsub.auth.model.admin.ModifyUserAuthorityParams
+import kim.hyunsub.auth.model.dto.ModifyUserAuthorityParams
 import kim.hyunsub.auth.model.user.ApiUser
 import kim.hyunsub.auth.repository.UserAuthorityRepository
 import kim.hyunsub.auth.repository.UserRepository

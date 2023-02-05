@@ -13,7 +13,7 @@ class LoginService(
 	private val userRepository: UserRepository,
 	private val sessionService: LoginFailureSessionService,
 	private val captchaService: CaptchaService,
-	private val tokenGenerator: TokenGenerator,
+	private val tokenService: TokenService,
 ) {
 	companion object : Log
 
@@ -41,7 +41,8 @@ class LoginService(
 			}
 		}
 
-		val user = userRepository.findByUsername(params.username) ?: throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
+		val user = userRepository.findByUsername(params.username)
+			?: throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
 
 		val hashedPw = user.password
 		val correct = BCrypt.verifyer().verify(params.password.toCharArray(), hashedPw).verified
@@ -49,10 +50,10 @@ class LoginService(
 			throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
 		}
 
-		val jwt = tokenGenerator.generateToken(user.idNo)
+		val token = tokenService.issue(user)
 		return LoginResult(
 			idNo = user.idNo,
-			jwt = jwt,
+			token = token,
 		)
 	}
 }

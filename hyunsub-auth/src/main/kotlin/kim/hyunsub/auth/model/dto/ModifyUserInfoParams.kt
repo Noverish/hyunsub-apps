@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.model
+package kim.hyunsub.auth.model.dto
 
 data class ModifyUserInfoParams(
 	val username: String?,

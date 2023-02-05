@@ -1,14 +1,12 @@
 package kim.hyunsub.auth.controller
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.annotation.HyunsubCors
 import kim.hyunsub.auth.config.AuthConstants
-import kim.hyunsub.auth.model.ModifyUserInfoParams
-import kim.hyunsub.auth.model.ModifyUserInfoResult
 import kim.hyunsub.auth.model.MyPageUserInfo
+import kim.hyunsub.auth.model.dto.ModifyUserInfoParams
+import kim.hyunsub.auth.model.dto.ModifyUserInfoResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
-import kim.hyunsub.auth.service.AuthorityService
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
 import org.springframework.web.bind.annotation.*
@@ -18,7 +16,6 @@ import org.springframework.web.bind.annotation.*
 class UserController(
 	private val rsaKeyService: RsaKeyService,
 	private val userRepository: UserRepository,
-	private val authorityService: AuthorityService,
 ) {
 	companion object : Log
 
@@ -64,9 +61,4 @@ class UserController(
 			deviceNum = 0,
 		)
 	}
-
-	@HyunsubCors
-	@GetMapping("/authorities")
-	fun authorities(user: User): List<String> =
-		authorityService.getUserAuth(user.idNo).names
 }

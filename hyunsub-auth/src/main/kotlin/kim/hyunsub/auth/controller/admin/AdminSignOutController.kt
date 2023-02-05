@@ -1,7 +1,6 @@
 package kim.hyunsub.auth.controller.admin
 
-import kim.hyunsub.auth.model.signout.AdminSignOutParams
-import kim.hyunsub.auth.service.LogoutService
+import kim.hyunsub.auth.model.dto.AdminSignOutParams
 import kim.hyunsub.auth.service.SignOutService
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized

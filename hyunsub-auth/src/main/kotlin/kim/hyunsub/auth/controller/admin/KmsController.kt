@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.controller.admin
 
-import kim.hyunsub.auth.model.kms.KmsDecryptApiParams
-import kim.hyunsub.auth.model.kms.KmsEncryptApiParams
+import kim.hyunsub.auth.model.dto.KmsDecryptParams
+import kim.hyunsub.auth.model.dto.KmsEncryptParams
 import kim.hyunsub.common.kms.KmsEncryptor
 import kim.hyunsub.common.kms.KmsProperties
 import kim.hyunsub.common.log.Log
@@ -18,14 +18,14 @@ class KmsController(private val kmsProperties: KmsProperties) {
 	companion object : Log
 
 	@PostMapping("/encrypt")
-	fun encrypt(@RequestBody params: KmsEncryptApiParams): String {
+	fun encrypt(@RequestBody params: KmsEncryptParams): String {
 		val text = params.text
 		log.info("KMS Encrypt: {}", text)
 		return KmsEncryptor.encrypt(kmsProperties.profile, kmsProperties.keyId, text)
 	}
 
 	@PostMapping("/decrypt")
-	fun decrypt(@RequestBody params: KmsDecryptApiParams): String {
+	fun decrypt(@RequestBody params: KmsDecryptParams): String {
 		val cipher = params.cipher
 		log.info("KMS Decrypt: {}", cipher)
 		return KmsEncryptor.decrypt(kmsProperties.profile, kmsProperties.keyId, cipher)

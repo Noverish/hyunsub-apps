@@ -10,7 +10,7 @@ import javax.persistence.Table
 @Table(name = "user")
 data class User(
 	@Id
-	@Column(columnDefinition = "CHAR(5)")
+	@Column(length = 8)
 	val idNo: String,
 
 	@Column(nullable = false)

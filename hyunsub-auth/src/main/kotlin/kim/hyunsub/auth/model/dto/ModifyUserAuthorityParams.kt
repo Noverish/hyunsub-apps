@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.model.admin
+package kim.hyunsub.auth.model.dto
 
 data class ModifyUserAuthorityParams(
 	val idNo: String,

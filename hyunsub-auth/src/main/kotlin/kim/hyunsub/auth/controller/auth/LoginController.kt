@@ -3,21 +3,13 @@ package kim.hyunsub.auth.controller.auth
 import kim.hyunsub.auth.model.LoginApiParams
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
-import kim.hyunsub.auth.model.auth.ValidUrlParams
-import kim.hyunsub.auth.model.auth.ValidUrlResult
 import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.auth.service.LoginService
 import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.model.HyunsubHeader
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
-import java.net.URL
-import javax.servlet.http.HttpServletRequest
+import org.springframework.web.bind.annotation.*
 import javax.servlet.http.HttpServletResponse
 
 @IgnoreAuthorize
@@ -48,7 +40,7 @@ class LoginController(
 
 		val result = loginService.login(decryptedParams)
 
-		val cookie = cookieGenerator.generateLoginCookie(result.jwt)
+		val cookie = cookieGenerator.generateLoginCookie(result.token, params.remember)
 		response.addCookie(cookie)
 
 		return result

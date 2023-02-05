@@ -7,7 +7,7 @@ import javax.persistence.*
 @IdClass(UserAuthorityId::class)
 data class UserAuthority(
 	@Id
-	@Column(columnDefinition = "CHAR(5)")
+	@Column(length = 8)
 	val userIdNo: String,
 
 	@Id

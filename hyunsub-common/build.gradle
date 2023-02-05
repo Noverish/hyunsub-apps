@@ -1,5 +1,7 @@
 dependencies {
     implementation 'com.amazonaws:aws-java-sdk-kms:1.12.233'
+
+    testImplementation project(':hyunsub-test')
 }
 
 bootJar {

@@ -1,4 +1,4 @@
-package kim.hyunsub.auth.model
+package kim.hyunsub.auth.model.dto
 
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include

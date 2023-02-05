@@ -2,6 +2,7 @@
 .java-version
 logs/
 Hyunsub*ApplicationTest.kt
+.jqwik-database
 
 HELP.md
 .gradle

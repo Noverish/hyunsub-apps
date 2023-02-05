@@ -7,6 +7,7 @@ import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.stereotype.Service
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service
 class RegisterService(
 	private val userRepository: UserRepository,
 	private val captchaService: CaptchaService,
+	private val randomGenerator: RandomGenerator,
 ) {
 	companion object : Log
 
@@ -48,7 +50,7 @@ class RegisterService(
 
 	fun generateIdNo(): String {
 		while (true) {
-			val idNo = IdNoGenerator.generate()
+			val idNo = randomGenerator.generateRandomString(AuthConstants.ID_NO_LENGTH)
 			if (!userRepository.existsById(idNo)) {
 				return idNo
 			}
