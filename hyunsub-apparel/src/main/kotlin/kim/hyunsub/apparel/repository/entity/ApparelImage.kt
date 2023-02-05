@@ -8,10 +8,10 @@ import javax.persistence.*
 @Table(name = "apparel_image")
 data class ApparelImage(
 	@Id
-	@Column(columnDefinition = "CHAR(10)")
+	@Column(length = 10)
 	val id: String,
 
-	@Column(nullable = false, columnDefinition = "CHAR(8)")
+	@Column(nullable = false, length = 8)
 	val apparelId: String,
 
 	@Column(nullable = false)

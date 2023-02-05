@@ -9,7 +9,7 @@ import javax.persistence.Table
 @Table(name = "apparel_preview")
 data class ApparelPreview(
 	@Id
-	@Column(columnDefinition = "CHAR(8)")
+	@Column(length = 8)
 	val id: String,
 
 	@Column(nullable = false)
@@ -24,7 +24,7 @@ data class ApparelPreview(
 	@Column
 	val brand: String?,
 
-	@Column(columnDefinition = "CHAR(10)")
+	@Column(length = 10)
 	val imageId: String?,
 
 	@Column
