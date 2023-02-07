@@ -4,6 +4,7 @@ import kim.hyunsub.auth.annotation.HyunsubCors
 import kim.hyunsub.auth.model.LogoutResult
 import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -15,6 +16,7 @@ import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import javax.servlet.http.HttpServletResponse
 
+@IgnoreAuthorize
 @RestController
 @RequestMapping("")
 class LogoutController(
