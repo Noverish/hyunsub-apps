@@ -6,12 +6,6 @@ data class RestApiPageResult<T>(
 	val pageSize: Int,
 	val data: List<T>,
 ) {
-	val start: Int
-		get() = page * pageSize
-
-	val end: Int
-		get() = start + data.size - 1
-
 	companion object {
 		fun <T> empty() = RestApiPageResult<T>(
 			total = 0,

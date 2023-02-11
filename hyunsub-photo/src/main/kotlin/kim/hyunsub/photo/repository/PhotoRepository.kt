@@ -7,21 +7,8 @@ import org.springframework.data.jpa.repository.Query
 
 interface PhotoRepository: JpaRepository<Photo, Int> {
 	fun findByAlbumIdOrderByDate(albumId: Int, page: Pageable = Pageable.unpaged()): List<Photo>
+	@Query("SELECT id FROM Photo WHERE albumId = :albumId ORDER BY date")
+	fun findIdByAlbumIdOrderByDate(albumId: Int, page: Pageable = Pageable.unpaged()): List<Int>
 	fun findByPath(path: String): Photo?
 	fun countByAlbumId(albumId: Int): Int
-
-	@Query(
-		nativeQuery = true,
-		value = """
-			SELECT idx
-			FROM (
-			  SELECT `id`, (@row_number \:= @row_number + 1) AS idx
-			  FROM photo, (SELECT @row_number \:= -1) r
-			  WHERE album_id = :albumId
-			  ORDER BY `date`
-			) a
-			WHERE `id` = :photoId
-		""",
-	)
-	fun getIndexOfPhotoIdInAlbum(albumId: Int, photoId: Int): Int?
 }

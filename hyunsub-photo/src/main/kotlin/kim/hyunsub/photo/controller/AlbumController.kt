@@ -15,6 +15,7 @@ import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.service.ApiModelConverter
+import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
@@ -28,7 +29,7 @@ class AlbumController(
 	private val apiModelConverter: ApiModelConverter,
 	private val apiCaller: ApiCaller,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
 	fun list(): List<RestApiAlbumPreview> {
@@ -66,20 +67,24 @@ class AlbumController(
 		@RequestParam(required = false) p: Int?,
 		@RequestParam(required = false) photoId: Int?,
 	): RestApiPageResult<RestApiPhoto> {
-		albumRepository.findByIdOrNull(albumId)
+		log.debug { "[Album Photos] albumId=$albumId, p=$p, photoId=$photoId" }
+
+		val album = albumRepository.findByIdOrNull(albumId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		log.debug { "[Album Photos] album=$album" }
 
 		val total = photoRepository.countByAlbumId(albumId)
+		log.debug { "[Album Photos] total=$total" }
+
 		val page =
-			if (p != null && photoId == null) {
-				p
-			} else if (p == null && photoId != null) {
-				val idx = photoRepository.getIndexOfPhotoIdInAlbum(albumId, photoId)
-					?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-				idx / PhotoConstants.PHOTO_PAGE_SIZE
+			if (photoId != null) {
+				val ids = photoRepository.findIdByAlbumIdOrderByDate(albumId)
+				val index = ids.indexOf(photoId)
+				index / PhotoConstants.PHOTO_PAGE_SIZE
 			} else {
-				throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
+				p ?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER)
 			}
+		log.debug { "[Album Photos] page=$page" }
 
 		val pageRequest = PageRequest.of(page, PhotoConstants.PHOTO_PAGE_SIZE)
 		val photos = photoRepository.findByAlbumIdOrderByDate(albumId, pageRequest)
