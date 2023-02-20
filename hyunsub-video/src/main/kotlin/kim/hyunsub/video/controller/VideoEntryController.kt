@@ -7,7 +7,7 @@ import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.RestVideoEntry
+import kim.hyunsub.video.model.RestApiVideoEntry
 import kim.hyunsub.video.model.RestVideoEntryDetail
 import kim.hyunsub.video.model.VideoEntryCreateParams
 import kim.hyunsub.video.model.VideoSort
@@ -41,7 +41,7 @@ class VideoEntryController(
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
 		@RequestParam(required = false, defaultValue = "random") sort: VideoSort,
-	): RestApiPageResult<RestVideoEntry> {
+	): RestApiPageResult<RestApiVideoEntry> {
 		val availableCategories = videoCategoryService.getAvailableCategories(user)
 		if (availableCategories.none { it.name == category }) {
 			return RestApiPageResult.empty()
@@ -63,7 +63,7 @@ class VideoEntryController(
 			total = total,
 			page = p,
 			pageSize = ps,
-			data = sorted.map { apiModelConverter.convert(it) },
+			data = sorted.map { it.toDto() },
 		)
 	}
 
@@ -71,7 +71,7 @@ class VideoEntryController(
 	@PostMapping("")
 	fun create(
 		@RequestBody params: VideoEntryCreateParams,
-	): RestVideoEntry{
+	): RestApiVideoEntry{
 		val entry = VideoEntry(
 			id = VideoEntry.generateId(videoEntryRepository, randomGenerator),
 			name = params.name,
@@ -80,7 +80,7 @@ class VideoEntryController(
 			regDt = LocalDateTime.now()
 		)
 		videoEntryRepository.save(entry)
-		return apiModelConverter.convert(entry)
+		return entry.toDto()
 	}
 
 	@GetMapping("/{entryId}")

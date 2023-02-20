@@ -10,6 +10,8 @@ interface VideoEntryRepository: JpaRepository<VideoEntry, String> {
 	fun findByCategory(category: String, page: Pageable = Pageable.unpaged()): List<VideoEntry>
 	fun countByCategory(category: String): Int
 
+	fun findByCategoryOrderByRegDtDesc(category: String, page: Pageable = Pageable.unpaged()): List<VideoEntry>
+
 	fun findByVideoGroupId(videoGroupId: String): List<VideoEntry>
 	fun findByNameContaining(query: String): List<VideoEntry>
 

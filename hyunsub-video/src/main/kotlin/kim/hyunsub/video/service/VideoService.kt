@@ -1,6 +1,6 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.video.model.RestVideo
+import kim.hyunsub.video.model.RestApiVideo
 import kim.hyunsub.video.repository.VideoMetadataRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.Video
@@ -13,7 +13,7 @@ class VideoService(
 	private val videoMetadataRepository: VideoMetadataRepository,
 	private val apiModelConverter: ApiModelConverter,
 ) {
-	fun loadVideo(video: Video): RestVideo {
+	fun loadVideo(video: Video): RestApiVideo {
 		val subtitles = videoSubtitleRepository.findByVideoId(video.id)
 		val metadata = videoMetadataRepository.findByIdOrNull(video.path)
 		return apiModelConverter.convertVideo(video, subtitles, metadata)

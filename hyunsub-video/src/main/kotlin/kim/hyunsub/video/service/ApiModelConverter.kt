@@ -13,25 +13,11 @@ import kotlin.io.path.nameWithoutExtension
 class ApiModelConverter(
 	private val fileUrlConverter: FileUrlConverter,
 ) {
-	fun convert(entry: VideoEntry): RestVideoEntry {
-		val yearRegex = Regex(" \\(\\d{4}\\)")
-		val name = entry.name.replace(yearRegex, "")
-
-		val thumbnail = entry.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
-			?: "/img/placeholder.jpg"
-
-		return RestVideoEntry(
-			id = entry.id,
-			name = name,
-			thumbnail = thumbnail
-		)
-	}
-
-	fun convertVideo(video: Video, subtitles: List<VideoSubtitle>, metadata: VideoMetadata?): RestVideo {
+	fun convertVideo(video: Video, subtitles: List<VideoSubtitle>, metadata: VideoMetadata?): RestApiVideo {
 		val thumbnailUrl = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
 			?: "/img/placeholder.jpg"
 
-		return RestVideo(
+		return RestApiVideo(
 			videoId = video.id,
 			videoUrl = fileUrlConverter.pathToUrl(video.path),
 			thumbnailUrl = thumbnailUrl,
@@ -96,7 +82,7 @@ class ApiModelConverter(
 
 	fun convertVideoSearchResult(result: VideoSearchResult): RestVideoSearchResult {
 		val entries = result.entries.groupBy { it.category }
-			.mapValues { entry -> entry.value.map { convert(it) } }
+			.mapValues { entry -> entry.value.map { it.toDto() } }
 
 		return RestVideoSearchResult(
 			entries = entries

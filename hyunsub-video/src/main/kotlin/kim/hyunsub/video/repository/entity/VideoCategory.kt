@@ -1,5 +1,6 @@
 package kim.hyunsub.video.repository.entity
 
+import kim.hyunsub.video.model.RestApiVideoCategory
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -28,4 +29,6 @@ data class VideoCategory(
 
 	@Column(nullable = false)
 	val authority: String,
-)
+) {
+	fun toDto() = RestApiVideoCategory(this)
+}

@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service
 class VideoCategoryService(
 	private val videoCategoryRepository: VideoCategoryRepository,
 ) {
-	fun getAvailableCategories(user: UserAuth): List<VideoCategory> {
+	fun getAvailableCategories(userAuth: UserAuth): List<VideoCategory> {
 		return videoCategoryRepository.findAll()
-			.filter { it.authority.isEmpty() || user.names.contains(it.authority) }
+			.filter { it.authority.isEmpty() || userAuth.names.contains(it.authority) }
 	}
 }

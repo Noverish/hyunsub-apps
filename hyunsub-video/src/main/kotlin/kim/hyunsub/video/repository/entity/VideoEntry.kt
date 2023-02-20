@@ -1,6 +1,7 @@
 package kim.hyunsub.video.repository.entity
 
 import kim.hyunsub.common.random.RandomGenerator
+import kim.hyunsub.video.model.RestApiVideoEntry
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -42,4 +43,6 @@ data class VideoEntry(
 			throw RuntimeException("Failed to generate new VideoEntry id")
 		}
 	}
+
+	fun toDto() = RestApiVideoEntry(this)
 }

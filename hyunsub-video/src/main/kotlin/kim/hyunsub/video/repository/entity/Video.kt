@@ -1,6 +1,7 @@
 package kim.hyunsub.video.repository.entity
 
 import kim.hyunsub.common.random.RandomGenerator
+import kim.hyunsub.video.model.RestApiVideo
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
 import org.hibernate.annotations.Type
@@ -43,4 +44,6 @@ data class Video(
 			throw RuntimeException("Failed to generate new Video id")
 		}
 	}
+
+	fun toDto() = RestApiVideo(this)
 }

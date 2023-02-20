@@ -10,12 +10,11 @@ import org.springframework.stereotype.Service
 class VideoGroupService(
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
-	private val apiModelConverter: ApiModelConverter,
 ) {
 	fun loadVideoGroup(videoGroupId: String): RestVideoGroup? {
 		val videoGroup = videoGroupRepository.findByIdOrNull(videoGroupId) ?: return null
 		val entries = videoEntryRepository.findByVideoGroupId(videoGroupId)
-			.map { apiModelConverter.convert(it) }
+			.map { it.toDto() }
 			.sortedBy { it.name }
 		return RestVideoGroup(
 			name = videoGroup.name,

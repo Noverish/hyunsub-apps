@@ -15,4 +15,16 @@ class FileUrlConverter(
 
 	fun getNoncePath(nonce: String): String =
 		Path(apiProperties.nonceBase, nonce).toString()
+
+	companion object {
+		fun convertToUrl(path: String): String =
+			UriComponentsBuilder.newInstance()
+				.scheme("https")
+				.host(ApiConstants.host)
+				.path(path)
+				.toUriString()
+
+		fun thumbnailUrl(path: String?): String =
+			path?.let { convertToUrl(it) } ?: "/img/placeholder.jpg"
+	}
 }
