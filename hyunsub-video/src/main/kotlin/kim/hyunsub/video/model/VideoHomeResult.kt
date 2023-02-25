@@ -1,7 +1,7 @@
-package kim.hyunsub.video.model.dto
+package kim.hyunsub.video.model
 
-import kim.hyunsub.video.model.RestApiVideoCategory
-import kim.hyunsub.video.model.RestApiVideoEntry
+import kim.hyunsub.video.model.api.RestApiVideoCategory
+import kim.hyunsub.video.model.api.RestApiVideoEntry
 
 data class VideoHomeResult(
 	val recents: List<VideoHomeRecent>,

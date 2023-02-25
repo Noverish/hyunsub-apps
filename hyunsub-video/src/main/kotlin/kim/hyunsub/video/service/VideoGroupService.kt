@@ -1,6 +1,6 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.video.model.RestVideoGroup
+import kim.hyunsub.video.model.api.RestApiVideoGroupDetail
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoGroupRepository
 import org.springframework.data.repository.findByIdOrNull
@@ -11,12 +11,12 @@ class VideoGroupService(
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
 ) {
-	fun loadVideoGroup(videoGroupId: String): RestVideoGroup? {
+	fun loadVideoGroup(videoGroupId: String): RestApiVideoGroupDetail? {
 		val videoGroup = videoGroupRepository.findByIdOrNull(videoGroupId) ?: return null
 		val entries = videoEntryRepository.findByVideoGroupId(videoGroupId)
 			.map { it.toDto() }
 			.sortedBy { it.name }
-		return RestVideoGroup(
+		return RestApiVideoGroupDetail(
 			name = videoGroup.name,
 			entries = entries,
 		)

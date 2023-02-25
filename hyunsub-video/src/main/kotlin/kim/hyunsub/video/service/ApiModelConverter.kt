@@ -4,6 +4,10 @@ import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.util.getHumanReadableBitrate
 import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.video.model.*
+import kim.hyunsub.video.model.api.RestApiVideo
+import kim.hyunsub.video.model.api.RestApiVideoGroup
+import kim.hyunsub.video.model.api.RestApiVideoMetadata
+import kim.hyunsub.video.model.api.RestApiVideoSubtitle
 import kim.hyunsub.video.repository.entity.*
 import org.springframework.stereotype.Service
 import kotlin.io.path.Path
@@ -27,18 +31,7 @@ class ApiModelConverter(
 		)
 	}
 
-	fun convertToEpisode(video: Video): RestVideoEpisode {
-		val thumbnailUrl = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
-			?: "/img/placeholder.jpg"
-
-		return RestVideoEpisode(
-			videoId = video.id,
-			thumbnailUrl = thumbnailUrl,
-			title = Path(video.path).nameWithoutExtension,
-		)
-	}
-
-	fun convertVideoSubtitle(video: Video, subtitle: VideoSubtitle): RestVideoSubtitle {
+	fun convertVideoSubtitle(video: Video, subtitle: VideoSubtitle): RestApiVideoSubtitle {
 		val subtitleName = Path(subtitle.path).nameWithoutExtension
 		val videoName = Path(video.path).nameWithoutExtension
 
@@ -55,14 +48,14 @@ class ApiModelConverter(
 			.let { "${it.parent}/${it.nameWithoutExtension}.vtt" }
 			.let { fileUrlConverter.pathToUrl(it) }
 
-		return RestVideoSubtitle(
+		return RestApiVideoSubtitle(
 			url = url,
 			label = label,
 			srclang = code,
 		)
 	}
 
-	fun convertVideoMetadata(metadata: VideoMetadata): RestVideoMetadata {
+	fun convertVideoMetadata(metadata: VideoMetadata): RestApiVideoMetadata {
 		val duration = metadata.duration
 		val sec = duration % 60
 		val min = (duration / 60) % 60
@@ -72,7 +65,7 @@ class ApiModelConverter(
 		val bitrateStr = getHumanReadableBitrate(metadata.bitrate)
 		val resolution = "${metadata.width} x ${metadata.height}"
 
-		return RestVideoMetadata(
+		return RestApiVideoMetadata(
 			duration = durationStr,
 			size = sizeStr,
 			resolution = resolution,
@@ -89,8 +82,8 @@ class ApiModelConverter(
 		)
 	}
 
-	fun convert(group: VideoGroup): RestApiVideoGroupPreview {
-		return RestApiVideoGroupPreview(
+	fun convert(group: VideoGroup): RestApiVideoGroup {
+		return RestApiVideoGroup(
 			id = group.id,
 			name = group.name,
 		)

@@ -1,9 +1,8 @@
 package kim.hyunsub.video.repository.entity
 
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.video.model.RestApiVideoEntry
+import kim.hyunsub.video.model.api.RestApiVideoEntry
 import kim.hyunsub.video.repository.VideoEntryRepository
-import kim.hyunsub.video.repository.VideoRepository
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import javax.persistence.Column

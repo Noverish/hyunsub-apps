@@ -1,6 +1,6 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.video.model.RestApiVideo
+import kim.hyunsub.video.model.api.RestApiVideo
 import kim.hyunsub.video.repository.VideoMetadataRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.Video

@@ -1,4 +1,4 @@
-package kim.hyunsub.video.controller
+package kim.hyunsub.video.controller.callback
 
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.model.SimpleResponse

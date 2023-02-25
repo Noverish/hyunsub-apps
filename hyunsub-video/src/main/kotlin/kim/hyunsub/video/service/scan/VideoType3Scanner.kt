@@ -2,7 +2,7 @@ package kim.hyunsub.video.service.scan
 
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.video.model.ScanResult
+import kim.hyunsub.video.model.VideoScanResult
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
 import kim.hyunsub.video.repository.entity.VideoGroup
@@ -22,7 +22,7 @@ class VideoType3Scanner(
 	private val videos = mutableListOf<Video>()
 	private val videoSubtitles = mutableListOf<VideoSubtitle>()
 
-	override fun scan(path: String): ScanResult {
+	override fun scan(path: String): VideoScanResult {
 		videoGroups.clear()
 		videoEntries.clear()
 		videos.clear()
@@ -32,7 +32,7 @@ class VideoType3Scanner(
 			.filter { searcher.isDir(it) }
 			.forEach { scanDepth1(it) }
 
-		return ScanResult(videoGroups, videoEntries, videos, videoSubtitles)
+		return VideoScanResult(videoGroups, videoEntries, videos, videoSubtitles)
 	}
 
 	private fun scanDepth1(path: String) {

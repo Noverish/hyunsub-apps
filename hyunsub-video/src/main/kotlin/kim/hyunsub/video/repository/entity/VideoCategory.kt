@@ -1,6 +1,6 @@
 package kim.hyunsub.video.repository.entity
 
-import kim.hyunsub.video.model.RestApiVideoCategory
+import kim.hyunsub.video.model.api.RestApiVideoCategory
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id

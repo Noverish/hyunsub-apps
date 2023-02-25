@@ -1,4 +1,4 @@
-package kim.hyunsub.video.controller
+package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized

@@ -1,10 +1,9 @@
 package kim.hyunsub.video.repository.entity
 
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.video.model.RestApiVideo
-import kim.hyunsub.video.repository.VideoEntryRepository
+import kim.hyunsub.video.model.api.RestApiVideo
+import kim.hyunsub.video.model.api.RestApiVideoEpisode
 import kim.hyunsub.video.repository.VideoRepository
-import org.hibernate.annotations.Type
 import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -46,4 +45,6 @@ data class Video(
 	}
 
 	fun toDto() = RestApiVideo(this)
+
+	fun toEpisode() = RestApiVideoEpisode(this)
 }

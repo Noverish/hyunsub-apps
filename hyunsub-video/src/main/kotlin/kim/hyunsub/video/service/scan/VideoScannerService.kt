@@ -1,28 +1,16 @@
 package kim.hyunsub.video.service.scan
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.common.web.error.ErrorCode
-import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.video.model.RestScanParams
-import kim.hyunsub.video.model.ScanResult
-import kim.hyunsub.video.model.VideoRegisterParams
-import kim.hyunsub.video.model.VideoRegisterResult
+import kim.hyunsub.video.model.VideoScanParams
+import kim.hyunsub.video.model.VideoScanResult
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoGroupRepository
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
-import kim.hyunsub.video.repository.entity.Video
-import kim.hyunsub.video.repository.entity.VideoSubtitle
-import kim.hyunsub.video.service.VideoMetadataService
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
-import kotlin.io.path.Path
-import kotlin.io.path.name
-import kotlin.io.path.nameWithoutExtension
 
 @Service
 class VideoScannerService(
@@ -32,12 +20,11 @@ class VideoScannerService(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
-	private val videoMetadataService: VideoMetadataService,
 ) {
 	companion object : Log
 
 	@Transactional
-	fun scan(params: RestScanParams): ScanResult {
+	fun scan(params: VideoScanParams): VideoScanResult {
 		log.debug("Video Scan Params: {}", params)
 		val files = apiCaller.walkDetail(params.path)
 
@@ -81,7 +68,7 @@ class VideoScannerService(
 		log.debug("[Video Scan Delete] # of videoSubtitles: {}", videoSubtitleNum)
 	}
 
-	private fun insertData(result: ScanResult) {
+	private fun insertData(result: VideoScanResult) {
 		videoGroupRepository.saveAll(result.videoGroups)
 		videoEntryRepository.saveAll(result.videoEntries)
 		videoRepository.saveAll(result.videos)

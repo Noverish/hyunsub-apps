@@ -8,7 +8,7 @@ import io.mockk.mockk
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.jackson.JacksonConfiguration
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.video.model.ScanResult
+import kim.hyunsub.video.model.VideoScanResult
 import org.springframework.core.io.ClassPathResource
 import java.nio.file.Files
 import java.nio.file.Paths
@@ -32,7 +32,7 @@ class VideoType1ScannerTest: FreeSpec({
 		val result = scanner.scan("/root")
 
 		val resultJson = String(Files.readAllBytes(Paths.get(ClassPathResource("VideoType1Scanner_Result.json").uri)))
-		val expected = mapper.readValue<ScanResult>(resultJson)
+		val expected = mapper.readValue<VideoScanResult>(resultJson)
 
 		result shouldBe expected
 	}

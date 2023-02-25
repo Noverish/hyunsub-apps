@@ -1,4 +1,4 @@
-package kim.hyunsub.video.model
+package kim.hyunsub.video.model.api
 
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.video.repository.entity.VideoEntry

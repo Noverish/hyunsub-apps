@@ -5,7 +5,7 @@ import kim.hyunsub.video.repository.entity.VideoEntry
 import kim.hyunsub.video.repository.entity.VideoGroup
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 
-data class ScanResult(
+data class VideoScanResult(
 	val videoGroups: List<VideoGroup>,
 	val videoEntries: List<VideoEntry>,
 	val videos: List<Video>,

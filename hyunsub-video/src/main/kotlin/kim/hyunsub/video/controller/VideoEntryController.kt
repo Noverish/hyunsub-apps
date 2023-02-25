@@ -1,38 +1,27 @@
 package kim.hyunsub.video.controller
 
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
-import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.RestApiVideoEntry
-import kim.hyunsub.video.model.RestVideoEntryDetail
-import kim.hyunsub.video.model.VideoEntryCreateParams
+import kim.hyunsub.video.model.api.RestApiVideoEntry
+import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
 import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.repository.VideoEntryRepository
-import kim.hyunsub.video.repository.entity.VideoEntry
-import kim.hyunsub.video.service.ApiModelConverter
 import kim.hyunsub.video.service.VideoCategoryService
 import kim.hyunsub.video.service.VideoEntryService
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.*
-import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("/api/v1/entry")
+@RequestMapping("/api/v1/entries")
 class VideoEntryController(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoCategoryService: VideoCategoryService,
-	private val apiModelConverter: ApiModelConverter,
 	private val videoEntryService: VideoEntryService,
-	private val randomGenerator: RandomGenerator,
 ) {
-	companion object : Log
-
 	@GetMapping("")
 	fun list(
 		user: UserAuth,
@@ -67,28 +56,12 @@ class VideoEntryController(
 		)
 	}
 
-	@Authorized(["admin"])
-	@PostMapping("")
-	fun create(
-		@RequestBody params: VideoEntryCreateParams,
-	): RestApiVideoEntry{
-		val entry = VideoEntry(
-			id = VideoEntry.generateId(videoEntryRepository, randomGenerator),
-			name = params.name,
-			thumbnail = params.thumbnail,
-			category = params.category,
-			regDt = LocalDateTime.now()
-		)
-		videoEntryRepository.save(entry)
-		return entry.toDto()
-	}
-
 	@GetMapping("/{entryId}")
 	fun detail(
 		user: UserAuth,
 		@PathVariable entryId: String,
 		@RequestParam(required = false) videoId: String?,
-	): RestVideoEntryDetail {
+	): RestApiVideoEntryDetail {
 		val entry = videoEntryRepository.findByIdOrNull(entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
