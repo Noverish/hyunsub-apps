@@ -44,7 +44,5 @@ data class Video(
 		}
 	}
 
-	fun toDto() = RestApiVideo(this)
-
 	fun toEpisode() = RestApiVideoEpisode(this)
 }

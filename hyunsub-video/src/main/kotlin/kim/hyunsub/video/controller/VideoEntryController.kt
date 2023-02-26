@@ -69,6 +69,6 @@ class VideoEntryController(
 			throw ErrorCodeException(ErrorCode.NOT_FOUND)
 		}
 
-		return videoEntryService.load(entry, videoId)
+		return videoEntryService.load(entry, videoId, user.idNo)
 	}
 }

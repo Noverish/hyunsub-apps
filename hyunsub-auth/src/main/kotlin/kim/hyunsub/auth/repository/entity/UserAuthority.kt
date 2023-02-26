@@ -1,5 +1,6 @@
 package kim.hyunsub.auth.repository.entity
 
+import java.io.Serializable
 import javax.persistence.*
 
 @Entity
@@ -17,4 +18,4 @@ data class UserAuthority(
 data class UserAuthorityId(
 	val userIdNo: String = "",
 	val authorityId: Int = -1,
-) : java.io.Serializable
+) : Serializable

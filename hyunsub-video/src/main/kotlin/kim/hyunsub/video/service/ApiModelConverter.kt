@@ -17,17 +17,20 @@ import kotlin.io.path.nameWithoutExtension
 class ApiModelConverter(
 	private val fileUrlConverter: FileUrlConverter,
 ) {
-	fun convertVideo(video: Video, subtitles: List<VideoSubtitle>, metadata: VideoMetadata?): RestApiVideo {
-		val thumbnailUrl = video.thumbnail?.let { fileUrlConverter.pathToUrl(it) }
-			?: "/img/placeholder.jpg"
-
+	fun convertVideo(
+		video: Video,
+		subtitles: List<VideoSubtitle>,
+		metadata: VideoMetadata?,
+		history: VideoHistory?,
+	): RestApiVideo {
 		return RestApiVideo(
 			videoId = video.id,
-			videoUrl = fileUrlConverter.pathToUrl(video.path),
-			thumbnailUrl = thumbnailUrl,
+			videoUrl = FileUrlConverter.convertToUrl(video.path),
+			thumbnailUrl = FileUrlConverter.thumbnailUrl(video.thumbnail),
 			title = Path(video.path).nameWithoutExtension,
 			subtitles = subtitles.map { convertVideoSubtitle(video, it) },
 			metadata = metadata?.let { convertVideoMetadata(it) },
+			time = history?.time ?: 0,
 		)
 	}
 

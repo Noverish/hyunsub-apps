@@ -1,12 +1,5 @@
 package kim.hyunsub.video.model.api
 
-import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.video.model.api.RestApiVideoMetadata
-import kim.hyunsub.video.model.api.RestApiVideoSubtitle
-import kim.hyunsub.video.repository.entity.Video
-import kotlin.io.path.Path
-import kotlin.io.path.nameWithoutExtension
-
 data class RestApiVideo (
 	val videoId: String,
 	val videoUrl: String,
@@ -14,13 +7,5 @@ data class RestApiVideo (
 	val title: String,
 	val subtitles: List<RestApiVideoSubtitle>,
 	val metadata: RestApiVideoMetadata?,
-) {
-	constructor(entity: Video): this(
-		videoId = entity.id,
-		videoUrl = FileUrlConverter.convertToUrl(entity.path),
-		thumbnailUrl = FileUrlConverter.thumbnailUrl(entity.thumbnail),
-		title = Path(entity.path).nameWithoutExtension,
-		subtitles = emptyList(),
-		metadata = null,
-	)
-}
+	val time: Int,
+)

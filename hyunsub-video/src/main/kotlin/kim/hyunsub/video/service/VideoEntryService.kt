@@ -4,6 +4,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
+import kim.hyunsub.video.model.api.RestApiVideoEpisode
 import kim.hyunsub.video.model.api.RestApiVideoSeason
 import kim.hyunsub.video.repository.VideoCategoryRepository
 import kim.hyunsub.video.repository.VideoEntryRepository
@@ -26,7 +27,7 @@ class VideoEntryService(
 		return availableCategories.any { it.name == entry.category }
 	}
 
-	fun load(entry: VideoEntry, videoId: String?): RestApiVideoEntryDetail {
+	fun load(entry: VideoEntry, videoId: String?, userId: String): RestApiVideoEntryDetail {
 		val videos = videoRepository.findByVideoEntryId(entry.id)
 		if (videos.isEmpty()) {
 			throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
@@ -34,14 +35,11 @@ class VideoEntryService(
 
 		val video = chooseVideo(videos, videoId)
 
-		val seasons = if (videos.size > 1) {
-			videos.groupBy { it.videoSeason }
-				.map { (key, value) ->
-					RestApiVideoSeason(
-						name = key,
-						episodes = value.map { it.toEpisode() }.sortedBy { it.title },
-					)
-				}
+		val episodes = videoRepository.selectEpisode(entry.id, userId)
+
+		val seasons = if (episodes.size > 1) {
+			episodes.groupBy { it.videoSeason }
+				.map { (key, value) -> RestApiVideoSeason(key, value) }
 		} else {
 			null
 		}
@@ -54,7 +52,7 @@ class VideoEntryService(
 		return RestApiVideoEntryDetail(
 			category = category.toDto(),
 			entry = entry.toDto(),
-			video = videoService.loadVideo(video),
+			video = videoService.loadVideo(userId, video),
 			seasons = seasons,
 			group = group,
 		)
