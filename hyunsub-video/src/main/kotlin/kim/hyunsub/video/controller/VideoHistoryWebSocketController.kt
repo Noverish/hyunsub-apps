@@ -18,6 +18,10 @@ class VideoHistoryWebSocketController(
 
 	@MessageMapping("/video/history")
 	fun videoHistory(params: VideoHistoryCreateParams, accessor: SimpMessageHeaderAccessor) {
+		if (params.time == 0) {
+			return
+		}
+
 		val userAuth = accessor.userAuth
 
 		val history = VideoHistory(
