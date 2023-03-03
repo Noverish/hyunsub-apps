@@ -9,7 +9,7 @@ data class RestApiVideoCategory(
 	val listHtmlClass: String,
 	val itemCss: String,
 ) {
-	constructor(entity: VideoCategory): this(
+	constructor(entity: VideoCategory) : this(
 		name = entity.name,
 		displayName = entity.displayName,
 		iconHtmlClass = entity.iconHtmlClass,

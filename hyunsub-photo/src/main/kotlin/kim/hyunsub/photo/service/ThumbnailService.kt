@@ -33,18 +33,22 @@ class ThumbnailService(
 		val thumbnailPath = getThumbnailPath(targetPath)
 
 		if (isImage(originPath)) {
-			apiCaller.imageConvert(ApiPhotoConvertParams(
-				input = originPath,
-				output = thumbnailPath,
-				resize = "512x512>",
-				quality = 60,
-			))
+			apiCaller.imageConvert(
+				ApiPhotoConvertParams(
+					input = originPath,
+					output = thumbnailPath,
+					resize = "512x512>",
+					quality = 60,
+				)
+			)
 		} else if (isVideo(originPath)) {
-			apiCaller.videoThumbnail(VideoThumbnailParams(
-				input = originPath,
-				output = thumbnailPath,
-				time = 0.0,
-			))
+			apiCaller.videoThumbnail(
+				VideoThumbnailParams(
+					input = originPath,
+					output = thumbnailPath,
+					time = 0.0,
+				)
+			)
 		}
 
 		return thumbnailPath

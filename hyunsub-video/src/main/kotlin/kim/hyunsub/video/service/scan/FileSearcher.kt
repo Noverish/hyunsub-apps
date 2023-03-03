@@ -16,8 +16,8 @@ class FileSearcher(private val files: List<FileStat>) {
 			.toList()
 	}
 
-	fun readdir2(path: String): List<String>
-			= readdir(path).map { Path(path, it).toString() }
+	fun readdir2(path: String): List<String> =
+		readdir(path).map { Path(path, it).toString() }
 
 	fun isDir(path: String): Boolean = files.map { it.path }.any { it.startsWith(path) && it != path }
 

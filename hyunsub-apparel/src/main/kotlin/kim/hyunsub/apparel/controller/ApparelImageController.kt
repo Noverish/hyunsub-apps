@@ -4,7 +4,6 @@ import kim.hyunsub.apparel.model.RestApiApparelImage
 import kim.hyunsub.apparel.service.ApiModelConverter
 import kim.hyunsub.apparel.service.ApparelImageService
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.web.bind.annotation.*

@@ -7,8 +7,8 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
-import java.time.LocalDateTime
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 @Configuration
 class JacksonConfiguration {

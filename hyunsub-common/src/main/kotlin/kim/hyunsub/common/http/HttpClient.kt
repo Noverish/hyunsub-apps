@@ -1,6 +1,5 @@
 package kim.hyunsub.common.http
 
-import kim.hyunsub.common.log.Log
 import mu.KotlinLogging
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity

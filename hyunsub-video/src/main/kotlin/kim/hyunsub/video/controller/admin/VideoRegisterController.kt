@@ -6,10 +6,7 @@ import kim.hyunsub.video.model.VideoRegisterBulkParams
 import kim.hyunsub.video.model.VideoRegisterBulkResult
 import kim.hyunsub.video.model.VideoRegisterParams
 import kim.hyunsub.video.model.VideoRegisterResult
-import kim.hyunsub.video.repository.VideoRepository
-import kim.hyunsub.video.service.VideoEntryService
 import kim.hyunsub.video.service.VideoRegisterService
-import kim.hyunsub.video.service.VideoService
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody

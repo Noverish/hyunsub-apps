@@ -6,7 +6,6 @@ import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.apparel.service.ApiModelConverter
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.*

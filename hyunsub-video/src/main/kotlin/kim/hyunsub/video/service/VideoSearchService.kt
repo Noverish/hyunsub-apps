@@ -3,7 +3,6 @@ package kim.hyunsub.video.service
 import kim.hyunsub.video.model.VideoSearchResult
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
-import kim.hyunsub.video.repository.entity.VideoCategory
 import org.springframework.stereotype.Service
 
 @Service

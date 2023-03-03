@@ -14,11 +14,13 @@ class VideoEncodeApiCaller(
 	fun encode(video: Video, options: String? = null) {
 		val path = video.path
 
-		encodeApiCaller.encode(ApiEncodeParams(
-			input = path,
-			output = path,
-			options = options ?: "-vcodec libx264 -acodec copy",
-			callback = "https://${appProperties.host}/api/v1/encode/callback?videoId=${video.id}"
-		))
+		encodeApiCaller.encode(
+			ApiEncodeParams(
+				input = path,
+				output = path,
+				options = options ?: "-vcodec libx264 -acodec copy",
+				callback = "https://${appProperties.host}/api/v1/encode/callback?videoId=${video.id}"
+			)
+		)
 	}
 }

@@ -4,9 +4,9 @@ import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.model.api.RestApiVideoEntry
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
-import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.service.VideoCategoryService
 import kim.hyunsub.video.service.VideoEntryService
@@ -40,12 +40,12 @@ class VideoEntryController(
 
 		val randomSeed = seed ?: System.currentTimeMillis().toInt()
 
-		val sorted = when(sort) {
-			VideoSort.random -> videoEntryRepository.findByCategoryOrderByRand(category, randomSeed, PageRequest.of(p, ps))
-			VideoSort.abc -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
-			VideoSort.zyx -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
-			VideoSort.old -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "regDt"))
-			VideoSort.new -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "regDt"))
+		val sorted = when (sort) {
+			VideoSort.RANDOM -> videoEntryRepository.findByCategoryOrderByRand(category, randomSeed, PageRequest.of(p, ps))
+			VideoSort.ABC -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "name"))
+			VideoSort.ZYX -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "name"))
+			VideoSort.OLD -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.ASC, "regDt"))
+			VideoSort.NEW -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "regDt"))
 		}
 
 		return RestApiPageResult(

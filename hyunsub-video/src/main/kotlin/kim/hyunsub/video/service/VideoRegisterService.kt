@@ -4,7 +4,6 @@ import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
@@ -24,7 +23,6 @@ import kim.hyunsub.video.repository.entity.VideoMetadata
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException
 import java.net.URL
 import kotlin.io.path.Path
 import kotlin.io.path.extension

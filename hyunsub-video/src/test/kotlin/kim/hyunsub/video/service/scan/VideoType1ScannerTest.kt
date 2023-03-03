@@ -14,7 +14,7 @@ import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 
-class VideoType1ScannerTest: FreeSpec({
+class VideoType1ScannerTest : FreeSpec({
 	val category = "kotest_category"
 	val randomGenerator = mockk<RandomGenerator>()
 

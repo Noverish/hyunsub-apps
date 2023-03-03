@@ -29,10 +29,11 @@ class EncodeStatusService(
 		val duration = format["duration"].asDouble()
 
 		val percent =
-			if (status.isRunning)
+			if (status.isRunning) {
 				floor(status.status.progress.toDouble() / duration * 10000) / 100
-			else
+			} else {
 				100.0
+			}
 		val encodeStatus = EncodeStatus(encodeId, percent)
 		log.info { "[EncodeStatus] $encodeStatus" }
 		sink.tryEmitNext(encodeStatus)

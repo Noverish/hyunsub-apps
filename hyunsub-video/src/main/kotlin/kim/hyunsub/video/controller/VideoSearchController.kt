@@ -1,7 +1,6 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth

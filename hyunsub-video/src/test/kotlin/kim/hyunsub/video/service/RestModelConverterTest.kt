@@ -8,7 +8,7 @@ import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 
-class RestModelConverterTest: FreeSpec({
+class RestModelConverterTest : FreeSpec({
 	val fileUrlConverter = mockk<FileUrlConverter>()
 	val service = ApiModelConverter(fileUrlConverter)
 

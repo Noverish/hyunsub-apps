@@ -1,6 +1,5 @@
 package kim.hyunsub.comic.repository.entity
 
-import kim.hyunsub.comic.model.ApiComicEpisodePreview
 import java.io.Serializable
 import java.time.LocalDateTime
 import javax.persistence.*

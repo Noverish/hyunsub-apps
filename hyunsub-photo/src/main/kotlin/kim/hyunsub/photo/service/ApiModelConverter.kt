@@ -1,16 +1,13 @@
 package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.log.hashWithMD5
 import kim.hyunsub.common.util.getHumanReadableSize
-import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.RestApiAlbum
 import kim.hyunsub.photo.model.RestApiAlbumPreview
 import kim.hyunsub.photo.model.RestApiPhoto
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.Photo
 import org.springframework.stereotype.Service
-import java.nio.file.Paths
 
 @Service
 class ApiModelConverter(

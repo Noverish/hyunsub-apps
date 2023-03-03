@@ -15,9 +15,11 @@ class AuthConfiguration {
 	@Bean
 	fun cookieProcessorCustomizer(): WebServerFactoryCustomizer<TomcatServletWebServerFactory> {
 		return WebServerFactoryCustomizer { factory ->
-			factory.addContextCustomizers(TomcatContextCustomizer { context ->
-				context.cookieProcessor = LegacyCookieProcessor()
-			})
+			factory.addContextCustomizers(
+				TomcatContextCustomizer { context ->
+					context.cookieProcessor = LegacyCookieProcessor()
+				}
+			)
 		}
 	}
 }

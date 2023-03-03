@@ -10,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap
 class VideoMetadataCacheService(
 	private val apiCaller: ApiCaller,
 ) {
-	val log = KotlinLogging.logger {  }
+	val log = KotlinLogging.logger { }
 	val map = ConcurrentHashMap<String, JsonNode>()
 
 	fun getOrFetch(path: String): JsonNode {

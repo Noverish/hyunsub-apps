@@ -14,7 +14,7 @@ enum class FileType {
 
 	companion object {
 		fun fromPath(path: String): FileType {
-			return when(Path(path).extension.lowercase()) {
+			return when (Path(path).extension.lowercase()) {
 				"jpg", "jpeg", "png", "gif" -> IMAGE
 				"mp4" -> VIDEO
 				"mp3", "aac" -> AUDIO

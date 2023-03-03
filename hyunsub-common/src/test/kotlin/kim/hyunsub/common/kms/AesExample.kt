@@ -10,7 +10,7 @@ import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.IvParameterSpec
 
-class AesExample: FreeSpec({
+class AesExample : FreeSpec({
 	val algorithm = "AES/CBC/PKCS5Padding"
 	val plaintext = "Hello, World!"
 

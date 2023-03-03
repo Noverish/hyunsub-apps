@@ -9,4 +9,3 @@ class HyunsubComicApplication
 fun main(args: Array<String>) {
 	runApplication<HyunsubComicApplication>(*args)
 }
-

@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 class WebMvcConfiguration(
 	private val tokenService: TokenService,
 	private val userRepository: UserRepository,
-): WebMvcConfigurer {
+) : WebMvcConfigurer {
 	override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
 		resolvers.add(UserArgumentResolver(tokenService, userRepository))
 	}

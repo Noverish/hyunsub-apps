@@ -4,7 +4,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
-import io.jsonwebtoken.security.Keys
 import kim.hyunsub.auth.config.TokenProperties
 import kim.hyunsub.auth.model.TokenPayload
 import kim.hyunsub.auth.repository.entity.User

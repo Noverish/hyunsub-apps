@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
-interface VideoEntryRepository: JpaRepository<VideoEntry, String> {
+interface VideoEntryRepository : JpaRepository<VideoEntry, String> {
 	fun findByCategory(category: String, page: Pageable = Pageable.unpaged()): List<VideoEntry>
 	fun countByCategory(category: String): Int
 

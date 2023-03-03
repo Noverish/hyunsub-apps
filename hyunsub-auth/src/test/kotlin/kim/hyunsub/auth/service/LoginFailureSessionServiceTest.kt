@@ -8,7 +8,7 @@ import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest(classes = [RedisAutoConfiguration::class, SessionConfiguration::class, LoginFailureSessionService::class])
-class LoginFailureSessionServiceTest(val service: LoginFailureSessionService): FreeSpec({
+class LoginFailureSessionServiceTest(val service: LoginFailureSessionService) : FreeSpec({
 	val remoteAddr = "127.0.0.1"
 
 	"loginFailureSession" {

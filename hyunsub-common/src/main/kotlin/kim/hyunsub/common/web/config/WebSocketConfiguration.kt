@@ -3,7 +3,6 @@ package kim.hyunsub.common.web.config
 import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
-import kim.hyunsub.common.web.aop.AuthorityCheckAspect
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -11,7 +10,6 @@ import mu.KotlinLogging
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
-import org.springframework.http.server.ServletServerHttpRequest
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.web.socket.WebSocketHandler
 import org.springframework.web.socket.config.annotation.*
@@ -54,7 +52,6 @@ class WebSocketConfiguration : WebSocketMessageBrokerConfigurer {
 		}
 
 		override fun afterHandshake(req: ServerHttpRequest, res: ServerHttpResponse, handler: WebSocketHandler, exception: Exception?) {
-
 		}
 	}
 }

@@ -4,14 +4,11 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
-import kim.hyunsub.video.model.api.RestApiVideoEpisode
 import kim.hyunsub.video.model.api.RestApiVideoSeason
 import kim.hyunsub.video.repository.VideoCategoryRepository
-import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service

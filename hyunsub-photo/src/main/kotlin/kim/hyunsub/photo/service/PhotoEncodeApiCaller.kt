@@ -11,11 +11,13 @@ class PhotoEncodeApiCaller(
 	private val appProperties: AppProperties,
 ) {
 	fun encode(input: String, output: String, photoId: Int) {
-		encodeApiCaller.encode(ApiEncodeParams(
-			input = input,
-			output = output,
-			options = "-vcodec libx264 -acodec copy -map_metadata 0 -movflags use_metadata_tags",
-			callback = "https://${appProperties.host}/api/v1/encode/callback?photoId=$photoId",
-		))
+		encodeApiCaller.encode(
+			ApiEncodeParams(
+				input = input,
+				output = output,
+				options = "-vcodec libx264 -acodec copy -map_metadata 0 -movflags use_metadata_tags",
+				callback = "https://${appProperties.host}/api/v1/encode/callback?photoId=$photoId",
+			)
+		)
 	}
 }

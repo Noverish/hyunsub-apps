@@ -1,7 +1,6 @@
 package kim.hyunsub.photo.controller
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode

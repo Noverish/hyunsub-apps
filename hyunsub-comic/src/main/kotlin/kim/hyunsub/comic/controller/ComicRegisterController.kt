@@ -4,11 +4,9 @@ import kim.hyunsub.comic.config.ComicConstants
 import kim.hyunsub.comic.model.ComicRegisterParams
 import kim.hyunsub.comic.model.ComicRegisterResult
 import kim.hyunsub.comic.repository.ComicEpisodeRepository
-import kim.hyunsub.comic.repository.ComicHistoryRepository
 import kim.hyunsub.comic.repository.ComicRepository
 import kim.hyunsub.comic.repository.entity.Comic
 import kim.hyunsub.comic.repository.entity.ComicEpisode
-import kim.hyunsub.comic.service.ApiModelConverter
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.annotation.Authorized

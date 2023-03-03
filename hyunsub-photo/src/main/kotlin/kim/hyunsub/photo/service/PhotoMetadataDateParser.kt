@@ -76,7 +76,6 @@ class PhotoMetadataDateParser {
 					.withOffsetSameInstant(systemOffset)
 					.toLocalDateTime()
 			} catch (_: DateTimeParseException) {
-
 			}
 		}
 
@@ -92,7 +91,6 @@ class PhotoMetadataDateParser {
 					LocalDateTime.parse(str, format)
 				}
 			} catch (_: DateTimeParseException) {
-
 			}
 		}
 

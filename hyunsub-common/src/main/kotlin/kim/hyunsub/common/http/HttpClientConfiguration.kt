@@ -10,9 +10,9 @@ class HttpClientConfiguration {
 	@Bean
 	fun httpClient(builder: RestTemplateBuilder): HttpClient {
 		val restTemplate = builder
-				.setConnectTimeout(Duration.ofSeconds(1))
-				.setReadTimeout(Duration.ofSeconds(3))
-				.build()
+			.setConnectTimeout(Duration.ofSeconds(1))
+			.setReadTimeout(Duration.ofSeconds(3))
+			.build()
 		return HttpClient(restTemplate)
 	}
 }

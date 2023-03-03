@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.ContentNegotiationConfi
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-class CommonWebMvcConfiguration: WebMvcConfigurer {
+class CommonWebMvcConfiguration : WebMvcConfigurer {
 	override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
 		resolvers.add(UserAuthArgumentResolver())
 	}

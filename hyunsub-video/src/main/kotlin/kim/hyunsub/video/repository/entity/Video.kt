@@ -1,7 +1,6 @@
 package kim.hyunsub.video.repository.entity
 
 import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.video.model.api.RestApiVideo
 import kim.hyunsub.video.model.api.RestApiVideoEpisode
 import kim.hyunsub.video.repository.VideoRepository
 import org.springframework.data.repository.findByIdOrNull

@@ -14,7 +14,7 @@ import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 
-class RegisterServiceTest: FreeSpec({
+class RegisterServiceTest : FreeSpec({
 	val userRepository = mockk<UserRepository>()
 	val captchaService = mockk<CaptchaService>()
 	val randomGenerator = mockk<RandomGenerator>()

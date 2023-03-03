@@ -8,14 +8,10 @@ import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.video.model.VideoEncodeParams
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.service.VideoEncodeApiCaller
-import kim.hyunsub.video.service.VideoMetadataService
-import net.bytebuddy.build.Plugin.Factory.Simple
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Authorized(["admin"])

@@ -12,7 +12,7 @@ data class FileInfo(
 	val date: LocalDateTime,
 	val type: FileType,
 ) {
-	constructor(stat: FileStat): this(
+	constructor(stat: FileStat) : this(
 		name = Path(stat.path).name,
 		size = if (stat.isDir == true) "" else getHumanReadableSize(stat.size),
 		date = stat.mDate,

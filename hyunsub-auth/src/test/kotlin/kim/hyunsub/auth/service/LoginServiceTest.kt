@@ -69,7 +69,7 @@ class LoginServiceTest : FreeSpec({
 		every { sessionService.getSession(remoteAddr) } returns session
 		every { userRepository.findByUsername(username) } returns null
 
-		for (i in 1.. AuthConstants.FAIL_NUM_TO_CAPTCHA) {
+		for (i in 1..AuthConstants.FAIL_NUM_TO_CAPTCHA) {
 			val ex = shouldThrow<ErrorCodeException> { service.login(params) }
 			ex.errorCode shouldBe ErrorCode.NOT_EXIST_USER
 			(ex.payload as? LoginApiError)?.needCaptcha shouldBe (i == AuthConstants.FAIL_NUM_TO_CAPTCHA)

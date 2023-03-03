@@ -138,10 +138,11 @@ class VideoRenameService(
 			.reversed()
 			.mapIndexed { i, v ->
 				if (i == 0) {
-					if (params.isRegex)
+					if (params.isRegex) {
 						v.replace(Regex(params.from), params.to)
-					else
+					} else {
 						v.replace(params.from, params.to)
+					}
 				} else {
 					v
 				}

@@ -4,7 +4,7 @@ import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import java.time.LocalDateTime
 
-class PhotoMetadataDateParserTest: FreeSpec({
+class PhotoMetadataDateParserTest : FreeSpec({
 	val parser = PhotoMetadataDateParser()
 
 	"parse" {

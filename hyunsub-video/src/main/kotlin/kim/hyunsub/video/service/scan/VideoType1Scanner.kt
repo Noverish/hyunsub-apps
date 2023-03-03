@@ -92,5 +92,4 @@ class VideoType1Scanner(
 			}
 		videoSubtitles.addAll(subtitles)
 	}
-
 }
