@@ -1,20 +1,28 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.model.api.RestApiVideoEntry
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
+import kim.hyunsub.video.model.dto.VideoEntryCreateParams
+import kim.hyunsub.video.model.dto.VideoEntryUpdateParams
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.service.VideoCategoryService
 import kim.hyunsub.video.service.VideoEntryService
+import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -26,6 +34,8 @@ class VideoEntryController(
 	private val videoCategoryService: VideoCategoryService,
 	private val videoEntryService: VideoEntryService,
 ) {
+	private val log = KotlinLogging.logger { }
+
 	@GetMapping("")
 	fun list(
 		user: UserAuth,
@@ -74,5 +84,27 @@ class VideoEntryController(
 		}
 
 		return videoEntryService.load(entry, videoId, user.idNo)
+	}
+
+	@Authorized(["admin"])
+	@PostMapping("")
+	fun create(@RequestBody params: VideoEntryCreateParams): RestApiVideoEntry {
+		return videoEntryService.create(params).toDto()
+	}
+
+	@Authorized(["admin"])
+	@PutMapping("/{entryId}")
+	fun update(
+		@PathVariable entryId: String,
+		@RequestBody params: VideoEntryUpdateParams,
+	): RestApiVideoEntry {
+		log.debug { "[VideoEntryUpdate] entryId=$entryId, params=$params" }
+		return videoEntryService.update(entryId, params).toDto()
+	}
+
+	@Authorized(["admin"])
+	@DeleteMapping("/{entryId}")
+	fun delete(@PathVariable entryId: String): RestApiVideoEntry {
+		return videoEntryService.delete(entryId).toDto()
 	}
 }

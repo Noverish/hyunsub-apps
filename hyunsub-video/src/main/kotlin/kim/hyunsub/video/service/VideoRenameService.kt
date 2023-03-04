@@ -1,11 +1,11 @@
 package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.VideoRenameParams
 import kim.hyunsub.video.model.VideoRenameResult
+import kim.hyunsub.video.model.dto.VideoRenameBulkParams
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoMetadataRepository
 import kim.hyunsub.video.repository.VideoRenameHistoryRepository
@@ -14,8 +14,8 @@ import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
 import kim.hyunsub.video.repository.entity.VideoMetadata
-import kim.hyunsub.video.repository.entity.VideoRenameHistory
 import kim.hyunsub.video.repository.entity.VideoSubtitle
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -28,12 +28,28 @@ class VideoRenameService(
 	private val videoSubtitleRepository: VideoSubtitleRepository,
 	private val videoRenameHistoryRepository: VideoRenameHistoryRepository,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
-	fun rename(params: VideoRenameParams): VideoRenameResult {
+	fun renameBulk(params: VideoRenameBulkParams): List<VideoRenameResult> {
+		log.debug("[renameBulk] params={}", params)
+
+		return params.videoIds.map {
+			rename(
+				VideoRenameParams(
+					videoId = it,
+					from = params.from,
+					to = params.to,
+					isRegex = params.isRegex
+				),
+				renameEntry = false,
+			)
+		}
+	}
+
+	fun rename(params: VideoRenameParams, renameEntry: Boolean): VideoRenameResult {
 		log.debug("[Rename] params={}", params)
 
-		val history = VideoRenameHistory(params)
+		val history = params.toEntity()
 		log.debug("[Rename] history={}", history)
 		videoRenameHistoryRepository.save(history)
 

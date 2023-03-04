@@ -1,6 +1,5 @@
 package kim.hyunsub.video.repository.entity
 
-import kim.hyunsub.video.model.VideoRenameParams
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -30,11 +29,4 @@ data class VideoRenameHistory(
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now(),
-) {
-	constructor(params: VideoRenameParams) : this(
-		videoId = params.videoId,
-		from = params.from,
-		to = params.to,
-		isRegex = params.isRegex
-	)
-}
+)

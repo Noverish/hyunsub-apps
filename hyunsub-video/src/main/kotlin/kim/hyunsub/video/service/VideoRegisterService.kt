@@ -20,6 +20,7 @@ import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
 import kim.hyunsub.video.repository.entity.VideoGroup
 import kim.hyunsub.video.repository.entity.VideoMetadata
+import kim.hyunsub.video.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -117,7 +118,7 @@ class VideoRegisterService(
 				log.info("[Register Video] group={}", group)
 
 				VideoEntry(
-					id = VideoEntry.generateId(videoEntryRepository, randomGenerator),
+					id = videoEntryRepository.generateId(),
 					name = videoName,
 					thumbnail = thumbnailPath,
 					category = categoryFromParam.name,

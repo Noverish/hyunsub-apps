@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/group")
+@RequestMapping("/api/v1/groups")
 class VideoGroupController(
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoCategoryService: VideoCategoryService,

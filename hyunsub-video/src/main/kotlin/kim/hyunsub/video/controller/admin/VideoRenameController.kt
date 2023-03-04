@@ -3,6 +3,7 @@ package kim.hyunsub.video.controller.admin
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.video.model.VideoRenameParams
 import kim.hyunsub.video.model.VideoRenameResult
+import kim.hyunsub.video.model.dto.VideoRenameBulkParams
 import kim.hyunsub.video.service.VideoRenameService
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -17,6 +18,11 @@ class VideoRenameController(
 ) {
 	@PostMapping("")
 	fun rename(@RequestBody params: VideoRenameParams): VideoRenameResult {
-		return videoRenameService.rename(params)
+		return videoRenameService.rename(params, renameEntry = true)
+	}
+
+	@PostMapping("/bulk")
+	fun rename(@RequestBody params: VideoRenameBulkParams): List<VideoRenameResult> {
+		return videoRenameService.renameBulk(params)
 	}
 }
