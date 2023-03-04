@@ -10,7 +10,8 @@ enum class FileType {
 	AUDIO,
 	TEXT,
 	PDF,
-	ETC;
+	ETC,
+	;
 
 	companion object {
 		fun fromPath(path: String): FileType {

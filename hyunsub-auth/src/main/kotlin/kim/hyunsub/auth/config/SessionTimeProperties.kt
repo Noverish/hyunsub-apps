@@ -7,7 +7,7 @@ import java.time.Duration
 @ConstructorBinding
 @ConfigurationProperties("session")
 data class SessionTimeProperties(
-	val sessionTimeMap: Map<String, SessionTimeInfo>
+	val sessionTimeMap: Map<String, SessionTimeInfo>,
 ) {
 	fun getSessionTime(type: Class<*>): Duration =
 		sessionTimeMap.values.firstOrNull { it.type == type }?.time ?: Duration.ofHours(1)

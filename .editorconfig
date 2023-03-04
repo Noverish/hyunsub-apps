@@ -10,6 +10,7 @@ tab_width = 4
 
 [*.kt]
 indent_style = tab
+ij_kotlin_allow_trailing_comma = true
 
 [*.conf]
 indent_style = space

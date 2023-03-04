@@ -22,7 +22,7 @@ class RegisterController(
 	@PostMapping("")
 	fun register(
 		@RequestHeader(HyunsubHeader.X_ORIGINAL_IP) remoteAddr: String,
-		@RequestBody params: RegisterApiParams
+		@RequestBody params: RegisterApiParams,
 	): RegisterResult {
 		log.debug("register: params={}", params)
 		val decryptedParams = RegisterParams(

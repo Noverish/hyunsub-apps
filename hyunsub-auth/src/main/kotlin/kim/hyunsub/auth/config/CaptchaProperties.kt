@@ -6,5 +6,5 @@ import org.springframework.boot.context.properties.ConstructorBinding
 @ConstructorBinding
 @ConfigurationProperties("captcha")
 data class CaptchaProperties(
-	val secretKey: String
+	val secretKey: String,
 )

@@ -45,7 +45,7 @@ class DriveController(
 	@PostMapping("/move-bulk")
 	fun moveBulk(
 		userAuth: UserAuth,
-		@RequestBody params: ApiMoveBulkParams
+		@RequestBody params: ApiMoveBulkParams,
 	): SimpleResponse {
 		val newParams = params.copy(
 			from = drivePathService.getPath(userAuth, params.from),

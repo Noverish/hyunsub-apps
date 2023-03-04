@@ -22,7 +22,7 @@ class UserAuthArgumentResolver : HandlerMethodArgumentResolver {
 		parameter: MethodParameter,
 		mavContainer: ModelAndViewContainer?,
 		webRequest: NativeWebRequest,
-		binderFactory: WebDataBinderFactory?
+		binderFactory: WebDataBinderFactory?,
 	): Any {
 		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
 		val header = request.getHeader(WebConstants.USER_AUTH_HEADER)

@@ -6,5 +6,5 @@ annotation class Authorized(
 	/**
 	 * List of authorities for access API
 	 */
-	val authorities: Array<String> = []
+	val authorities: Array<String> = [],
 )

@@ -28,7 +28,7 @@ class UserArgumentResolver(
 		parameter: MethodParameter,
 		mavContainer: ModelAndViewContainer?,
 		webRequest: NativeWebRequest,
-		binderFactory: WebDataBinderFactory?
+		binderFactory: WebDataBinderFactory?,
 	): User {
 		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
 		val cookie = WebUtils.getCookie(request, WebConstants.TOKEN_COOKIE_NAME)
