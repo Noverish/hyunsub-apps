@@ -7,10 +7,10 @@ import kim.hyunsub.video.repository.entity.VideoHistory
 import mu.KotlinLogging
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
-import org.springframework.stereotype.Controller
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
-@Controller
+@RestController
 class VideoHistoryWebSocketController(
 	private val videoHistoryRepository: VideoHistoryRepository,
 ) {
