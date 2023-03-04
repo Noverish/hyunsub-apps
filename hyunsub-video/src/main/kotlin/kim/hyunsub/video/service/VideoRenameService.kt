@@ -18,6 +18,8 @@ import kim.hyunsub.video.repository.entity.VideoSubtitle
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import kotlin.io.path.Path
+import kotlin.io.path.name
 
 @Service
 class VideoRenameService(
@@ -49,17 +51,29 @@ class VideoRenameService(
 	fun rename(params: VideoRenameParams, renameEntry: Boolean): VideoRenameResult {
 		log.debug("[Rename] params={}", params)
 
-		val history = params.toEntity()
-		log.debug("[Rename] history={}", history)
-		videoRenameHistoryRepository.save(history)
-
 		val video = videoRepository.findByIdOrNull(params.videoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 		log.debug("[Rename] video={}", video)
 
-		val entry = videoEntryRepository.findByIdOrNull(video.videoEntryId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		log.debug("[Rename] entry={}", entry)
+		if (params.isRegex && !video.path.contains(Regex(params.from))) {
+			return VideoRenameResult.empty()
+		}
+		if (!params.isRegex && !video.path.contains(params.from)) {
+			return VideoRenameResult.empty()
+		}
+
+		val history = params.toEntity()
+		log.debug("[Rename] history={}", history)
+		videoRenameHistoryRepository.save(history)
+
+		val entry = if (renameEntry) {
+			val entry = videoEntryRepository.findByIdOrNull(video.videoEntryId)
+				?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			log.debug("[Rename] entry={}", entry)
+			renameEntry(entry, params)
+		} else {
+			null
+		}
 
 		val subtitles = videoSubtitleRepository.findByVideoId(video.id)
 		log.debug("[Rename] subtitles={}", subtitles)
@@ -68,7 +82,7 @@ class VideoRenameService(
 		log.debug("[Rename] metadata={}", metadata)
 
 		return VideoRenameResult(
-			entry = renameEntry(entry, params),
+			entry = entry,
 			video = renameVideo(video, params),
 			subtitles = subtitles.mapNotNull { renameSubtitle(it, params) },
 			metadata = metadata?.let { renameMetadata(it, params) }
@@ -80,8 +94,8 @@ class VideoRenameService(
 
 		val oldVideoPath = video.path
 		val newVideoPath = replace(video.path, params)
-		log.debug("[Rename] video.path: {} -> {}", oldVideoPath, newVideoPath)
 		if (oldVideoPath != newVideoPath) {
+			log.debug("[Rename] video.path: {} -> {}", oldVideoPath, newVideoPath)
 			apiCaller.rename(oldVideoPath, newVideoPath)
 			newVideo = newVideo.copy(path = newVideoPath)
 		}
@@ -89,8 +103,8 @@ class VideoRenameService(
 		val oldThumbnailPath = video.thumbnail
 		if (oldThumbnailPath != null) {
 			val newThumbnailPath = replace(oldThumbnailPath, params)
-			log.debug("[Rename] video.thumbnail: {} -> {}", oldThumbnailPath, newThumbnailPath)
 			if (oldThumbnailPath != newThumbnailPath) {
+				log.debug("[Rename] video.thumbnail: {} -> {}", oldThumbnailPath, newThumbnailPath)
 				apiCaller.rename(oldThumbnailPath, newThumbnailPath)
 				newVideo = newVideo.copy(thumbnail = newThumbnailPath)
 			}
@@ -109,16 +123,16 @@ class VideoRenameService(
 
 		val oldName = entry.name
 		val newName = replace(entry.name, params)
-		log.debug("[Rename] entry.name: {} -> {}", oldName, newName)
 		if (oldName != newName) {
+			log.debug("[Rename] entry.name: {} -> {}", oldName, newName)
 			newEntry = newEntry.copy(name = newName)
 		}
 
 		val oldThumbnailPath = entry.thumbnail
 		if (oldThumbnailPath != null) {
 			val newThumbnailPath = replace(oldThumbnailPath, params)
-			log.debug("[Rename] entry.thumbnail: {} -> {}", oldThumbnailPath, newThumbnailPath)
 			if (oldThumbnailPath != newThumbnailPath) {
+				log.debug("[Rename] entry.thumbnail: {} -> {}", oldThumbnailPath, newThumbnailPath)
 				newEntry = newEntry.copy(thumbnail = newThumbnailPath)
 			}
 		}
@@ -134,8 +148,8 @@ class VideoRenameService(
 	fun renameSubtitle(subtitle: VideoSubtitle, params: VideoRenameParams): VideoSubtitle? {
 		val oldPath = subtitle.path
 		val newPath = replace(subtitle.path, params)
-		log.debug("[Rename] subtitle.path: {} -> {}", oldPath, newPath)
 		if (oldPath != newPath) {
+			log.debug("[Rename] subtitle.path: {} -> {}", oldPath, newPath)
 			val newSubtitle = subtitle.copy(path = newPath)
 			videoSubtitleRepository.save(newSubtitle)
 			apiCaller.rename(oldPath, newPath)
@@ -147,8 +161,8 @@ class VideoRenameService(
 	fun renameMetadata(metadata: VideoMetadata, params: VideoRenameParams): VideoMetadata? {
 		val oldPath = metadata.path
 		val newPath = replace(metadata.path, params)
-		log.debug("[Rename] metadata.path: {} -> {}", oldPath, newPath)
 		if (oldPath != newPath) {
+			log.debug("[Rename] metadata.path: {} -> {}", oldPath, newPath)
 			val newMetadata = metadata.copy(path = newPath)
 			videoMetadataRepository.save(newMetadata)
 			videoMetadataRepository.delete(metadata)
@@ -157,20 +171,16 @@ class VideoRenameService(
 		return null
 	}
 
-	fun replace(str: String, params: VideoRenameParams) =
-		str.split("/")
-			.reversed()
-			.mapIndexed { i, v ->
-				if (i == 0) {
-					if (params.isRegex) {
-						v.replace(Regex(params.from), params.to)
-					} else {
-						v.replace(params.from, params.to)
-					}
-				} else {
-					v
-				}
-			}
-			.reversed()
-			.joinToString("/")
+	fun replace(str: String, params: VideoRenameParams): String {
+		val parent = Path(str).parent.toString()
+		val name = Path(str).name
+
+		val newName = if (params.isRegex) {
+			name.replace(Regex(params.from), params.to)
+		} else {
+			name.replace(params.from, params.to)
+		}
+
+		return Path(parent, newName).toString()
+	}
 }

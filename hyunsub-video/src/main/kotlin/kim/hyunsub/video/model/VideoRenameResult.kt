@@ -10,4 +10,8 @@ data class VideoRenameResult(
 	val video: Video?,
 	val subtitles: List<VideoSubtitle>,
 	val metadata: VideoMetadata?,
-)
+) {
+	companion object {
+		fun empty() = VideoRenameResult(null, null, emptyList(), null)
+	}
+}
