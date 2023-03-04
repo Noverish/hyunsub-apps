@@ -5,7 +5,11 @@ import io.kotest.matchers.shouldBe
 import io.mockk.mockk
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.video.model.VideoRenameParams
-import kim.hyunsub.video.repository.*
+import kim.hyunsub.video.repository.VideoEntryRepository
+import kim.hyunsub.video.repository.VideoMetadataRepository
+import kim.hyunsub.video.repository.VideoRenameHistoryRepository
+import kim.hyunsub.video.repository.VideoRepository
+import kim.hyunsub.video.repository.VideoSubtitleRepository
 
 class VideoRenameServiceTest : FreeSpec({
 	val apiCaller: ApiCaller = mockk()

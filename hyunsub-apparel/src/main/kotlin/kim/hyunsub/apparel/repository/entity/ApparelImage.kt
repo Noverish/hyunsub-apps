@@ -2,7 +2,10 @@ package kim.hyunsub.apparel.repository.entity
 
 import kim.hyunsub.common.random.RandomGenerator
 import java.time.LocalDateTime
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.Table
 
 @Entity
 @Table(name = "apparel_image")

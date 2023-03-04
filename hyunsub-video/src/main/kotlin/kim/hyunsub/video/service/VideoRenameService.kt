@@ -6,8 +6,16 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.VideoRenameParams
 import kim.hyunsub.video.model.VideoRenameResult
-import kim.hyunsub.video.repository.*
-import kim.hyunsub.video.repository.entity.*
+import kim.hyunsub.video.repository.VideoEntryRepository
+import kim.hyunsub.video.repository.VideoMetadataRepository
+import kim.hyunsub.video.repository.VideoRenameHistoryRepository
+import kim.hyunsub.video.repository.VideoRepository
+import kim.hyunsub.video.repository.VideoSubtitleRepository
+import kim.hyunsub.video.repository.entity.Video
+import kim.hyunsub.video.repository.entity.VideoEntry
+import kim.hyunsub.video.repository.entity.VideoMetadata
+import kim.hyunsub.video.repository.entity.VideoRenameHistory
+import kim.hyunsub.video.repository.entity.VideoSubtitle
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 

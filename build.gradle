@@ -39,7 +39,7 @@ allprojects {
     }
 
     ktlint {
-        disabledRules = ["no-wildcard-imports", "trailing-comma-on-call-site"]
+        disabledRules = ["trailing-comma-on-call-site"]
     }
 
     configurations {

@@ -2,7 +2,19 @@ package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.model.*
+import kim.hyunsub.common.api.model.ApiImageMagickParams
+import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
+import kim.hyunsub.common.api.model.ApiImageMetadataResult
+import kim.hyunsub.common.api.model.ApiMoveBulkParams
+import kim.hyunsub.common.api.model.ApiPhotoConvertParams
+import kim.hyunsub.common.api.model.ApiRenameBulkParams
+import kim.hyunsub.common.api.model.FFmpegParams
+import kim.hyunsub.common.api.model.FFmpegResult
+import kim.hyunsub.common.api.model.FFmpegStatus
+import kim.hyunsub.common.api.model.FileStat
+import kim.hyunsub.common.api.model.UploadResult
+import kim.hyunsub.common.api.model.VideoThumbnailParams
+import kim.hyunsub.common.api.model.VideoThumbnailResult
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders

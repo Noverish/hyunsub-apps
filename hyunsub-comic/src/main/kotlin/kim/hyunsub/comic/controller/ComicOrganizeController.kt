@@ -1,7 +1,12 @@
 package kim.hyunsub.comic.controller
 
 import kim.hyunsub.comic.config.ComicConstants
-import kim.hyunsub.comic.model.*
+import kim.hyunsub.comic.model.ComicOrganizeConsolidateParams
+import kim.hyunsub.comic.model.ComicOrganizeConsolidateResult
+import kim.hyunsub.comic.model.ComicOrganizeFileParams
+import kim.hyunsub.comic.model.ComicOrganizeFileResult
+import kim.hyunsub.comic.model.ComicOrganizeSplitParams
+import kim.hyunsub.comic.model.ComicOrganizeSplitResult
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiImageMagickParams
 import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams

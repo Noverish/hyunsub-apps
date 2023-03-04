@@ -9,7 +9,11 @@ import kim.hyunsub.auth.service.RsaKeyService
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.model.HyunsubHeader
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletResponse
 
 @IgnoreAuthorize

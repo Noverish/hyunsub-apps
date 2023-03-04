@@ -8,7 +8,12 @@ import kim.hyunsub.auth.repository.entity.UserAuthority
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @Authorized(["admin"])
 @RestController

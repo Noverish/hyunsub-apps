@@ -12,9 +12,10 @@ import org.springframework.http.server.ServerHttpRequest
 import org.springframework.http.server.ServerHttpResponse
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.web.socket.WebSocketHandler
-import org.springframework.web.socket.config.annotation.*
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer
 import org.springframework.web.socket.server.HandshakeInterceptor
-import java.lang.Exception
 
 @Configuration
 @EnableWebSocketMessageBroker
