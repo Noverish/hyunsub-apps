@@ -1,7 +1,7 @@
 package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.VideoThumbnailResult
+import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -30,7 +30,7 @@ class VideoAdminController(
 	}
 
 	@PostMapping("/video-thumbnail")
-	fun videoThumbnail(@RequestBody params: VideoThumbnailParams): VideoThumbnailResult {
+	fun videoThumbnail(@RequestBody params: VideoThumbnailParams): ApiSimpleResult {
 		val video = videoRepository.findByIdOrNull(params.videoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 

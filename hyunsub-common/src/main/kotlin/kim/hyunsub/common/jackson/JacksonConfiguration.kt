@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 @Configuration
 class JacksonConfiguration {
@@ -16,6 +17,8 @@ class JacksonConfiguration {
 	@Primary
 	fun objectMapper(): ObjectMapper {
 		val module = SimpleModule().apply {
+			addSerializer(OffsetDateTime::class.java, OffsetDateTimeSerializer())
+			addDeserializer(OffsetDateTime::class.java, OffsetDateTimeDeserializer())
 			addSerializer(LocalDateTime::class.java, LocalDateTimeSerializer())
 			addDeserializer(LocalDateTime::class.java, LocalDateTimeDeserializer())
 			addSerializer(LocalDate::class.java, LocalDateSerializer())

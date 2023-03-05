@@ -8,13 +8,13 @@ import kim.hyunsub.common.api.model.ApiImageMetadataResult
 import kim.hyunsub.common.api.model.ApiMoveBulkParams
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.ApiRenameBulkParams
+import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.api.model.FFmpegParams
 import kim.hyunsub.common.api.model.FFmpegResult
 import kim.hyunsub.common.api.model.FFmpegStatus
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.api.model.VideoThumbnailParams
-import kim.hyunsub.common.api.model.VideoThumbnailResult
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders
@@ -62,6 +62,9 @@ class ApiCaller(
 		_post<ObjectNode>("/api/fs/remove-bulk", mapOf("paths" to paths))
 	}
 
+	fun hash(path: String): ApiSimpleResult =
+		_get("/api/fs/hash", mapOf("path" to path))
+
 	fun walk(path: String): List<String> =
 		_get("/api/fs/walk", mapOf("path" to path))
 
@@ -81,7 +84,7 @@ class ApiCaller(
 	fun ffprobe(path: String): ObjectNode =
 		_get("/api/video/ffprobe", mapOf("path" to path))
 
-	fun videoThumbnail(params: VideoThumbnailParams): VideoThumbnailResult =
+	fun videoThumbnail(params: VideoThumbnailParams): ApiSimpleResult =
 		_post("/api/video/generate-thumbnail", params)
 
 	fun exif(path: String): String =

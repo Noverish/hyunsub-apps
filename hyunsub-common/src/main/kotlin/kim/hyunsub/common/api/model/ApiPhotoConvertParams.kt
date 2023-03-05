@@ -5,4 +5,6 @@ data class ApiPhotoConvertParams(
 	val output: String,
 	val resize: String?,
 	val quality: Int?,
+	val gravity: String? = null,
+	val extent: String? = null,
 )

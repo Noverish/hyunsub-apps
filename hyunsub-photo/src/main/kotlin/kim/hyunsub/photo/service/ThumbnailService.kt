@@ -4,7 +4,7 @@ import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
-import kim.hyunsub.common.log.hashWithMD5
+import kim.hyunsub.common.util.hashWithMD5
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.util.isImage
 import kim.hyunsub.photo.util.isVideo

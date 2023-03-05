@@ -1,5 +1,5 @@
 package kim.hyunsub.common.api.model
 
-data class VideoThumbnailResult(
+data class ApiSimpleResult(
 	val result: String,
 )
