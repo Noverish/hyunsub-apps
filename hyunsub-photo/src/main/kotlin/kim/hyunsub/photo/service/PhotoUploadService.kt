@@ -8,11 +8,13 @@ import kim.hyunsub.photo.model.dto.PhotoUploadParams
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoV2Repository
 import kim.hyunsub.photo.repository.entity.PhotoOwner
+import kim.hyunsub.photo.repository.entity.PhotoOwnerId
 import kim.hyunsub.photo.repository.entity.PhotoV2
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathUtils
 import mu.KotlinLogging
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.time.ZoneOffset
@@ -38,13 +40,17 @@ class PhotoUploadService(
 		// 이미 동일한 사진이 업로드 되어 있는 경우
 		val exist = photoV2Repository.findByHash(hash)
 		if (exist != null) {
-			val photoOwner = PhotoOwner(
-				userId = userId,
-				photoId = exist.id,
-				name = params.name,
-				regDt = LocalDateTime.now(),
-			)
-			photoOwnerRepository.save(photoOwner)
+			val existOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, exist.id))
+			if (existOwner == null) {
+				val photoOwner = PhotoOwner(
+					userId = userId,
+					photoId = exist.id,
+					name = params.name,
+					regDt = LocalDateTime.now(),
+				)
+				photoOwnerRepository.save(photoOwner)
+			}
+			apiCaller.remove(tmpPath)
 			return exist
 		}
 
