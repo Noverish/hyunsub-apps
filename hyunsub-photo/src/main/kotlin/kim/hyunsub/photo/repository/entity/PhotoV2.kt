@@ -1,9 +1,9 @@
 package kim.hyunsub.photo.repository.entity
 
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.util.decodeBase64
-import kim.hyunsub.common.util.toBase64
+import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
+import kim.hyunsub.common.util.toHex
 import kim.hyunsub.common.util.toLong
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.util.PhotoPathUtils
@@ -41,16 +41,16 @@ data class PhotoV2(
 ) {
 	companion object {
 		fun generateId(millis: Long, hash: String, i: Int = 0): String {
-			val base64 = millis.toByteArray().toBase64()
-			val subBase64 = base64.substring(3, 11)
-			val subHash = hash.substring(i, i + 8)
-			return "$subBase64$subHash"
+			val hex = millis.toByteArray().toHex()
+			val subHex = hex.substring(5)
+			val subHash = hash.substring(i, i + 5)
+			return "$subHex$subHash"
 		}
 
 		fun restoreMillis(id: String): Long {
-			val subBase64 = id.substring(0, 8)
-			val base64 = "AAA$subBase64="
-			return base64.decodeBase64().toLong()
+			val subHex = id.substring(0, 11)
+			val base64 = "00000$subHex"
+			return base64.decodeHex().toLong()
 		}
 	}
 
