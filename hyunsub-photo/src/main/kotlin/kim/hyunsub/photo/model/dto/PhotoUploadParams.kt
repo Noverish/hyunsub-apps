@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.model.dto
 
 data class PhotoUploadParams(
-	val path: String,
+	val nonce: String,
+	val name: String,
 )

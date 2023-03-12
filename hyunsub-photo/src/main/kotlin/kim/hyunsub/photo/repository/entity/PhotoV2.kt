@@ -1,9 +1,15 @@
 package kim.hyunsub.photo.repository.entity
 
+import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.util.decodeBase64
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toLong
+import kim.hyunsub.photo.model.api.RestApiPhotoPreview
+import kim.hyunsub.photo.util.PhotoPathUtils
+import java.time.Instant
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -31,9 +37,6 @@ data class PhotoV2(
 	val offset: Int,
 
 	@Column(nullable = false)
-	val original: String,
-
-	@Column(nullable = false)
 	val ext: String,
 ) {
 	companion object {
@@ -50,4 +53,22 @@ data class PhotoV2(
 			return base64.decodeBase64().toLong()
 		}
 	}
+
+	fun toPreview() = RestApiPhotoPreview(
+		id = id,
+		thumbnail = thumbnail,
+		date = date,
+	)
+
+	private val millis: Long
+		get() = restoreMillis(id)
+
+	private val date: OffsetDateTime
+		get() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.ofTotalSeconds(offset))
+
+	private val year: Int
+		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year
+
+	private val thumbnail: String
+		get() = FileUrlConverter.convertToUrl(PhotoPathUtils.thumbnail("$id.$ext", year))
 }

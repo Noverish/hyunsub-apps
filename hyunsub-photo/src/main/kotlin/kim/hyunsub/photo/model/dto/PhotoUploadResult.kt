@@ -1,19 +1,24 @@
 package kim.hyunsub.photo.model.dto
 
+import kim.hyunsub.photo.model.api.RestApiPhotoPreview
+
 data class PhotoUploadResult(
 	val success: Boolean,
-	val path: String? = null,
+	val nonce: String,
+	val preview: RestApiPhotoPreview? = null,
 	val errMsg: String? = null,
 ) {
 	companion object {
-		fun success(path: String) = PhotoUploadResult(
+		fun success(nonce: String, preview: RestApiPhotoPreview) = PhotoUploadResult(
 			success = true,
-			path = path,
+			nonce = nonce,
+			preview = preview,
 		)
 
-		fun failure(path: String, ex: Exception) = PhotoUploadResult(
+		fun failure(nonce: String, ex: Exception) = PhotoUploadResult(
 			success = false,
-			path = path,
+			nonce = nonce,
+			preview = null,
 			errMsg = ex.message,
 		)
 	}

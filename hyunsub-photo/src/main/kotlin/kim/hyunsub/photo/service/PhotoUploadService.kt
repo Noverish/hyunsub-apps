@@ -18,7 +18,6 @@ import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.io.path.Path
 import kotlin.io.path.extension
-import kotlin.io.path.name
 
 @Service
 class PhotoUploadService(
@@ -31,9 +30,9 @@ class PhotoUploadService(
 	private val mapper = jacksonObjectMapper()
 
 	fun upload(userId: String, params: PhotoUploadParams): PhotoV2 {
-		val path = PhotoPathUtils.tmp(params.path)
+		val tmpPath = PhotoPathUtils.tmp(params.nonce)
 
-		val hash = apiCaller.hash(path).result.decodeHex().toBase64()
+		val hash = apiCaller.hash(tmpPath).result.decodeHex().toBase64()
 		log.debug { "[PhotoUpload] hash=$hash" }
 
 		// 이미 동일한 사진이 업로드 되어 있는 경우
@@ -42,26 +41,27 @@ class PhotoUploadService(
 			val photoOwner = PhotoOwner(
 				userId = userId,
 				photoId = exist.id,
+				name = params.name,
 				regDt = LocalDateTime.now(),
 			)
 			photoOwnerRepository.save(photoOwner)
 			return exist
 		}
 
-		val exif = mapper.readTree(apiCaller.exif(path))[0]
+		val exif = mapper.readTree(apiCaller.exif(tmpPath))[0]
 		val date = PhotoDateParser.parse(exif)
 		log.debug { "[PhotoUpload] date=$date" }
 
 		val id = photoV2Repository.generateId(date, hash)
 		log.debug { "[PhotoUpload] id=$id" }
 
-		val ext = Path(path).extension
+		val ext = Path(params.name).extension
 		val year = date.withOffsetSameInstant(ZoneOffset.UTC).year
 		val newFile = "$id.$ext"
 		val newPath = PhotoPathUtils.original(newFile, year)
 		log.debug { "[PhotoUpload] newPath=$newPath" }
 
-		apiCaller.rename(path, newPath)
+		apiCaller.rename(tmpPath, newPath)
 
 		thumbnailServiceV2.generateThumbnail(newFile, year)
 
@@ -72,7 +72,6 @@ class PhotoUploadService(
 			height = exif["ImageHeight"].asInt(),
 			size = exif["FileSize"].asInt(),
 			offset = date.offset.totalSeconds,
-			original = Path(path).name,
 			ext = ext,
 		)
 		photoV2Repository.save(photo)
@@ -80,6 +79,7 @@ class PhotoUploadService(
 		val photoOwner = PhotoOwner(
 			userId = userId,
 			photoId = id,
+			name = params.name,
 			regDt = LocalDateTime.now(),
 		)
 		photoOwnerRepository.save(photoOwner)

@@ -29,8 +29,8 @@ class PhotoUploadControllerV2(
 	): PhotoUploadResult {
 		val userId = userAuth.idNo
 		log.debug { "[PhotoUpload] userId=$userId, params=$params" }
-		photoUploadService.upload(userId, params)
-		return PhotoUploadResult.success(params.path)
+		val preview = photoUploadService.upload(userId, params).toPreview()
+		return PhotoUploadResult.success(params.nonce, preview)
 	}
 
 	@MessageMapping("/v1/photo/upload/{nonce}/request")
@@ -43,10 +43,10 @@ class PhotoUploadControllerV2(
 		return try {
 			val userId = accessor.userAuth.idNo
 			log.debug { "[PhotoUpload] nonce=$nonce, userId=$userId, params=$params" }
-			photoUploadService.upload(userId, params)
-			PhotoUploadResult.success(params.path)
+			val preview = photoUploadService.upload(userId, params).toPreview()
+			PhotoUploadResult.success(params.nonce, preview)
 		} catch (ex: Exception) {
-			PhotoUploadResult.failure(params.path, ex)
+			PhotoUploadResult.failure(params.nonce, ex)
 		}
 	}
 }
