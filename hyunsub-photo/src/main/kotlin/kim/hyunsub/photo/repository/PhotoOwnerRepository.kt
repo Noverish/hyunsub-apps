@@ -20,4 +20,6 @@ interface PhotoOwnerRepository : JpaRepository<PhotoOwner, PhotoOwnerId> {
 	fun selectMyPhotos(userId: String, page: Pageable = Pageable.unpaged()): List<PhotoV2>
 
 	fun countByUserId(userId: String): Int
+
+	fun countByPhotoId(photoId: String): Int
 }

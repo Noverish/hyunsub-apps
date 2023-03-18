@@ -17,7 +17,6 @@ import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 
@@ -61,16 +60,6 @@ class PhotoUploadService(
 		val id = photoV2Repository.generateId(date, hash)
 		log.debug { "[PhotoUpload] id=$id" }
 
-		val ext = Path(params.name).extension
-		val year = date.withOffsetSameInstant(ZoneOffset.UTC).year
-		val newFile = "$id.$ext"
-		val newPath = PhotoPathUtils.original(newFile, year)
-		log.debug { "[PhotoUpload] newPath=$newPath" }
-
-		apiCaller.rename(tmpPath, newPath)
-
-		thumbnailServiceV2.generateThumbnail(newFile, year)
-
 		val photo = PhotoV2(
 			id = id,
 			hash = hash,
@@ -78,8 +67,16 @@ class PhotoUploadService(
 			height = exif["ImageHeight"].asInt(),
 			size = exif["FileSize"].asInt(),
 			offset = date.offset.totalSeconds,
-			ext = ext,
+			ext = Path(params.name).extension,
 		)
+
+		val originalPath = PhotoPathUtils.original(photo)
+		log.debug { "[PhotoUpload] originalPath=$originalPath" }
+
+		apiCaller.rename(tmpPath, originalPath)
+
+		thumbnailServiceV2.generateThumbnail(photo)
+
 		photoV2Repository.save(photo)
 
 		val photoOwner = PhotoOwner(

@@ -66,9 +66,12 @@ data class PhotoV2(
 	private val date: OffsetDateTime
 		get() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.ofTotalSeconds(offset))
 
-	private val year: Int
+	val year: Int
 		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year
 
 	private val thumbnail: String
-		get() = FileUrlConverter.convertToUrl(PhotoPathUtils.thumbnail("$id.$ext", year))
+		get() = FileUrlConverter.convertToUrl(PhotoPathUtils.thumbnail(this))
+
+	val fileName: String
+		get() = "$id.$ext"
 }
