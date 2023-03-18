@@ -2,6 +2,7 @@ package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
+import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.photo.util.PhotoPathUtils
 import kim.hyunsub.photo.util.isImage
 import kim.hyunsub.photo.util.isVideo
@@ -16,7 +17,14 @@ class ThumbnailServiceV2(
 		val thumbnail = PhotoPathUtils.thumbnail(file, year)
 
 		if (isVideo(file)) {
-			TODO()
+			apiCaller.videoThumbnail(
+				VideoThumbnailParams(
+					input = original,
+					output = thumbnail,
+					time = 0.0,
+				)
+			)
+			return
 		}
 
 		if (isImage(file)) {

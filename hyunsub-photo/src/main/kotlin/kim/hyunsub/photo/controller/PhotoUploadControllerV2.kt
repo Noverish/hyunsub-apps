@@ -46,6 +46,7 @@ class PhotoUploadControllerV2(
 			val preview = photoUploadService.upload(userId, params).toPreview()
 			PhotoUploadResult.success(params.nonce, preview)
 		} catch (ex: Exception) {
+			ex.printStackTrace()
 			PhotoUploadResult.failure(params.nonce, ex)
 		}
 	}
