@@ -55,7 +55,7 @@ class PhotoUploadService(
 		}
 
 		val exif = mapper.readTree(apiCaller.exif(tmpPath))[0]
-		val date = PhotoDateParser.parse(exif)
+		val date = PhotoDateParser.parse(exif, params.name)
 		log.debug { "[PhotoUpload] date=$date" }
 
 		val id = photoV2Repository.generateId(date, hash)

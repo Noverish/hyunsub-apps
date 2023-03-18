@@ -48,7 +48,6 @@ class PhotoDeleteService(
 			try {
 				apiCaller.remove(videoPath)
 			} catch (_: Exception) {
-
 			}
 		}
 

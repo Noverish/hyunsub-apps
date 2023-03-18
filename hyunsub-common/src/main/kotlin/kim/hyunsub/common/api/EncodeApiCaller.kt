@@ -10,7 +10,7 @@ class EncodeApiCaller(
 	private val url: String
 
 	init {
-	    val domainPrefix = if (environment.activeProfiles.contains("dev")) {
+		val domainPrefix = if (environment.activeProfiles.contains("dev")) {
 			"local-"
 		} else {
 			""

@@ -4,7 +4,7 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
-class EncodeStatusService{
+class EncodeStatusService {
 	val log = KotlinLogging.logger { }
 
 	fun updateStatus(msg: String) {

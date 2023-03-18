@@ -5,6 +5,7 @@ import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
 import kim.hyunsub.common.util.toLong
+import kim.hyunsub.photo.model.PhotoType
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.util.PhotoPathUtils
 import kim.hyunsub.photo.util.isVideo
@@ -59,6 +60,8 @@ data class PhotoV2(
 		id = id,
 		thumbnail = thumbnail,
 		date = date,
+		type = if (isVideo) PhotoType.VIDEO else PhotoType.PHOTO,
+		ext = ext,
 	)
 
 	private val millis: Long
