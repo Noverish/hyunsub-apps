@@ -2,6 +2,8 @@ package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import kim.hyunsub.common.api.model.ApiFFmpegParams
+import kim.hyunsub.common.api.model.ApiFFmpegResult
 import kim.hyunsub.common.api.model.ApiImageMagickParams
 import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
 import kim.hyunsub.common.api.model.ApiImageMetadataResult
@@ -9,9 +11,6 @@ import kim.hyunsub.common.api.model.ApiMoveBulkParams
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.ApiRenameBulkParams
 import kim.hyunsub.common.api.model.ApiSimpleResult
-import kim.hyunsub.common.api.model.FFmpegParams
-import kim.hyunsub.common.api.model.FFmpegResult
-import kim.hyunsub.common.api.model.FFmpegStatus
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.api.model.VideoThumbnailParams
@@ -110,11 +109,8 @@ class ApiCaller(
 	fun uploadSession(path: String): String =
 		_post<JsonNode>("/upload/session", mapOf("path" to path))["sessionKey"].textValue()
 
-	fun ffmpeg(params: FFmpegParams): FFmpegResult =
+	fun ffmpeg(params: ApiFFmpegParams): ApiFFmpegResult =
 		_post("/api/video/ffmpeg", params)
-
-	fun <T> ffmpegStatus(): FFmpegStatus<T> =
-		_get("/api/video/ffmpeg/status", emptyMap())
 
 	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
 		request(urlOrPath, HttpMethod.GET, queryParams, null)

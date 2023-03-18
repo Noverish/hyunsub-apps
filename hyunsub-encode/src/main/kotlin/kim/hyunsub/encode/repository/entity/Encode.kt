@@ -1,6 +1,6 @@
 package kim.hyunsub.encode.repository.entity
 
-import kim.hyunsub.common.log.hashWithMD5
+import kim.hyunsub.common.util.hashWithMD5
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity

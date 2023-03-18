@@ -5,8 +5,6 @@ import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.photo.repository.entity.PhotoV2
 import kim.hyunsub.photo.util.PhotoPathUtils
-import kim.hyunsub.photo.util.isImage
-import kim.hyunsub.photo.util.isVideo
 import org.springframework.stereotype.Service
 
 @Service
@@ -17,7 +15,7 @@ class ThumbnailServiceV2(
 		val original = PhotoPathUtils.original(photo)
 		val thumbnail = PhotoPathUtils.thumbnail(photo)
 
-		if (isVideo(photo.fileName)) {
+		if (photo.isVideo) {
 			apiCaller.videoThumbnail(
 				VideoThumbnailParams(
 					input = original,
@@ -25,10 +23,7 @@ class ThumbnailServiceV2(
 					time = 0.0,
 				)
 			)
-			return
-		}
-
-		if (isImage(photo.fileName)) {
+		} else {
 			apiCaller.imageConvert(
 				ApiPhotoConvertParams(
 					input = original,
@@ -39,9 +34,6 @@ class ThumbnailServiceV2(
 					extent = "256x256"
 				)
 			)
-			return
 		}
-
-		throw RuntimeException()
 	}
 }

@@ -1,4 +1,4 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.encode.model
 
 data class FFmpegStatus<T>(
 	val isRunning: Boolean,

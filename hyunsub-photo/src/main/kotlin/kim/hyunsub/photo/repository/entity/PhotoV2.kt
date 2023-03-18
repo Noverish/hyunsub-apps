@@ -7,6 +7,7 @@ import kim.hyunsub.common.util.toHex
 import kim.hyunsub.common.util.toLong
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.isVideo
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -74,4 +75,7 @@ data class PhotoV2(
 
 	val fileName: String
 		get() = "$id.$ext"
+
+	val isVideo: Boolean
+		get() = isVideo(fileName)
 }

@@ -1,12 +1,11 @@
 package kim.hyunsub.encode.service
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.FFmpegParams
-import kim.hyunsub.encode.model.EncodeParams
+import kim.hyunsub.common.api.model.ApiFFmpegParams
+import kim.hyunsub.common.api.model.EncodeParams
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.repository.entity.Encode
 import mu.KotlinLogging
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -28,40 +27,36 @@ class EncodeService(
 		log.info { "[pushToQueue] $encode" }
 		encodeRepository.saveAndFlush(encode)
 
-		startIfNotRunning()
+		startEncoding()
 	}
 
-	fun startIfNotRunning() {
-		val candidate = encodeRepository.findByEndDtIsNull().minByOrNull { it.regDt } ?: run {
+	fun startEncoding() {
+		if (encodeRepository.getNowEncoding() != null) {
+			log.info { "[encode] Already running" }
+			return
+		}
+
+		val candidate = encodeRepository.getCandidates().firstOrNull() ?: run {
 			log.info { "[encode] No candidate" }
 			return
 		}
 		log.info { "[encode] candidate=$candidate" }
 
-		if (candidate.startDt != null) {
-			log.info { "[encode] Already running" }
-			return
-		}
-
-		val encodeId = candidate.id
-		log.info { "[encode] Start encode: $encodeId" }
-
 		apiCaller.ffmpeg(
-			FFmpegParams(
+			ApiFFmpegParams(
 				input = candidate.input,
 				options = candidate.options,
 				output = candidate.encodeOutput,
-				data = encodeId,
 			)
 		)
 
 		encodeRepository.saveAndFlush(candidate.copy(startDt = LocalDateTime.now()))
 	}
 
-	fun handleFinish(encodeId: Int) {
-		val encode = encodeRepository.findByIdOrNull(encodeId) ?: run {
-			log.error { "[handleFinish] No such encodeId: $encodeId" }
-			startIfNotRunning()
+	fun handleFinish() {
+		val encode = encodeRepository.getNowEncoding() ?: run {
+			log.error { "[handleFinish] Nothing is currently being encoded" }
+			startEncoding()
 			return
 		}
 		log.info { "[handleFinish] $encode" }
@@ -81,6 +76,22 @@ class EncodeService(
 			?.let { apiCaller.get(it) }
 			?.let { log.info { "[handleFinish] callback result: $it" } }
 
-		startIfNotRunning()
+		startEncoding()
+	}
+
+	fun handleError(code: String) {
+		log.error { "[handleError] code=$code" }
+
+		val encode = encodeRepository.getNowEncoding() ?: run {
+			log.error { "[handleError] Nothing is currently being encoded" }
+			startEncoding()
+			return
+		}
+		log.info { "[handleError] $encode" }
+
+		val newEncode = encode.copy(endDt = LocalDateTime.now(), progress = -1)
+		encodeRepository.saveAndFlush(newEncode)
+
+		startEncoding()
 	}
 }

@@ -11,6 +11,7 @@ import kim.hyunsub.photo.util.PhotoPathUtils
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.lang.Exception
 
 @Service
 class PhotoDeleteService(
@@ -41,6 +42,15 @@ class PhotoDeleteService(
 
 		apiCaller.remove(originalPath)
 		apiCaller.remove(thumbnailPath)
+
+		if (photo.isVideo) {
+			val videoPath = PhotoPathUtils.video(photo)
+			try {
+				apiCaller.remove(videoPath)
+			} catch (_: Exception) {
+
+			}
+		}
 
 		photoRepository.deleteById(photoId)
 

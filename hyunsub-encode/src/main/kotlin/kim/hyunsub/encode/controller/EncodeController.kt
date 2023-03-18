@@ -1,10 +1,10 @@
 package kim.hyunsub.encode.controller
 
-import kim.hyunsub.common.log.Log
+import kim.hyunsub.common.api.model.EncodeParams
 import kim.hyunsub.common.web.model.SimpleResponse
-import kim.hyunsub.encode.model.EncodeParams
 import kim.hyunsub.encode.model.EncodeStatus
 import kim.hyunsub.encode.service.EncodeService
+import mu.KotlinLogging
 import org.springframework.http.codec.ServerSentEvent
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -21,7 +21,7 @@ class EncodeController(
 	private val encodeService: EncodeService,
 	private val sink: Sinks.Many<EncodeStatus>,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@PostMapping("")
 	fun encode(@RequestBody params: EncodeParams): SimpleResponse {

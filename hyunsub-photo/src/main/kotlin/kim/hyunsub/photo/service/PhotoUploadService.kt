@@ -23,6 +23,7 @@ import kotlin.io.path.extension
 @Service
 class PhotoUploadService(
 	private val apiCaller: ApiCaller,
+	private val encodeApiCaller: PhotoEncodeApiCaller,
 	private val photoV2Repository: PhotoV2Repository,
 	private val thumbnailServiceV2: ThumbnailServiceV2,
 	private val photoOwnerRepository: PhotoOwnerRepository,
@@ -76,6 +77,15 @@ class PhotoUploadService(
 		apiCaller.rename(tmpPath, originalPath)
 
 		thumbnailServiceV2.generateThumbnail(photo)
+
+		if (photo.isVideo) {
+			val videoPath = PhotoPathUtils.video(photo)
+			encodeApiCaller.encode(
+				input = originalPath,
+				output = videoPath,
+				photoId = id,
+			)
+		}
 
 		photoV2Repository.save(photo)
 

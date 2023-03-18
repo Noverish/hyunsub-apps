@@ -121,9 +121,9 @@ class PhotoUploadController(
 		log.debug("Upload Photo : {}", photo)
 		photoRepository.saveAndFlush(photo)
 
-		if (isVideoFile) {
-			photoEncodeApiCaller.encode(filePath, targetFilePath, photo.id)
-		}
+		// if (isVideoFile) {
+		// 	photoEncodeApiCaller.encode(filePath, targetFilePath, photo.id)
+		// }
 
 		return apiModelConverter.convert(photo)
 	}

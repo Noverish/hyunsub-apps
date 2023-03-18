@@ -7,4 +7,5 @@ object PhotoPathUtils {
 	fun tmp(nonce: String) = Path("/hyunsub/file/upload", nonce).toString()
 	fun original(photo: PhotoV2) = Path("/hyunsub/photo/original", photo.year.toString(), photo.fileName).toString()
 	fun thumbnail(photo: PhotoV2) = Path("/hyunsub/photo/thumbnail", photo.year.toString(), "${photo.id}.jpg").toString()
+	fun video(photo: PhotoV2) = Path("/hyunsub/photo/video", photo.year.toString(), "${photo.id}.mp4").toString()
 }

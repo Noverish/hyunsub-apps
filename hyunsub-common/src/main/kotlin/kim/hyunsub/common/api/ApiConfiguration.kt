@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.env.Environment
 import java.time.Duration
 
 @Configuration
@@ -30,7 +31,7 @@ class ApiConfiguration {
 	}
 
 	@Bean
-	fun encodeApiCaller(apiCaller: ApiCaller): EncodeApiCaller {
-		return EncodeApiCaller(apiCaller)
+	fun encodeApiCaller(apiCaller: ApiCaller, environment: Environment): EncodeApiCaller {
+		return EncodeApiCaller(apiCaller, environment)
 	}
 }

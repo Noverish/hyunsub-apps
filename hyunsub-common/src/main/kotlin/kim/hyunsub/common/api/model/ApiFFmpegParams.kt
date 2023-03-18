@@ -1,8 +1,7 @@
 package kim.hyunsub.common.api.model
 
-data class ApiEncodeParams(
+data class ApiFFmpegParams(
 	val input: String,
-	val options: String,
 	val output: String,
-	val callback: String?,
+	val options: String,
 )

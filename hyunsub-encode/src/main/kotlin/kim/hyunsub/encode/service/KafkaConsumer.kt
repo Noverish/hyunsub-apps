@@ -1,9 +1,5 @@
 package kim.hyunsub.encode.service
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kim.hyunsub.common.api.model.FFmpegStatus
-import mu.KotlinLogging
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
 
@@ -12,20 +8,17 @@ class KafkaConsumer(
 	private val encodeService: EncodeService,
 	private val encodeStatusService: EncodeStatusService,
 ) {
-	val log = KotlinLogging.logger { }
-	val mapper = jacksonObjectMapper()
-	val type = object : TypeReference<FFmpegStatus<Int>>() {}
+	@KafkaListener(topics = ["ffmpeg-out"])
+	fun onOut(msg: String) {
+		encodeStatusService.updateStatus(msg)
+	}
 
-	@KafkaListener(topics = ["encode"])
-	fun consume(msg: String) {
-		log.info { msg }
-		val status = mapper.readValue(msg, type)
-
-		if (!status.isRunning) {
-			val encodeId = status.data
-			encodeService.handleFinish(encodeId)
+	@KafkaListener(topics = ["ffmpeg-close"])
+	fun onClose(code: String) {
+		if (code == "0") {
+			encodeService.handleFinish()
 		} else {
-			encodeStatusService.updateStatus(status)
+			encodeService.handleError(code)
 		}
 	}
 }
