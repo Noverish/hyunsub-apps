@@ -3,6 +3,7 @@ package kim.hyunsub.photo.controller
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.model.dto.AlbumPhotoRegisterParams
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
@@ -24,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v2/albums/{albumId}/photos")
 class AlbumPhotoController(
 	private val albumRepository: AlbumV2Repository,
-	private val albumPhotoRepository: AlbumPhotoRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
+	private val albumPhotoRepository: AlbumPhotoRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -33,14 +34,14 @@ class AlbumPhotoController(
 	fun list(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-	): List<AlbumPhoto> {
+	): List<RestApiPhotoPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Album Photos] userId=$userId, albumId=$albumId" }
 
 		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		return albumPhotoRepository.findByAlbumId(albumId)
+		return albumPhotoRepository.findByAlbumId(albumId).map { it.toPreview() }
 	}
 
 	@PostMapping("")

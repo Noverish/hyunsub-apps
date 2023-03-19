@@ -2,8 +2,15 @@ package kim.hyunsub.photo.repository
 
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
+import kim.hyunsub.photo.repository.entity.PhotoV2
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Query
 
 interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
-	fun findByAlbumId(albumId: String): List<AlbumPhoto>
+	@Query("""
+		SELECT b FROM AlbumPhoto a
+		INNER JOIN PhotoV2 b ON b.id = a.photoId
+		WHERE a.albumId = :albumId
+	""")
+	fun findByAlbumId(albumId: String): List<PhotoV2>
 }
