@@ -6,6 +6,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.model.dto.AlbumPhotoRegisterParams
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
+import kim.hyunsub.photo.repository.AlbumV2Repository
 import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v2/albums/{albumId}/photos")
 class AlbumPhotoController(
+	private val albumRepository: AlbumV2Repository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
 ) {
@@ -55,6 +57,17 @@ class AlbumPhotoController(
 				log.debug { "[Register Album Photos] No such album: userId=$userId, albumId=$albumId" }
 				throw ErrorCodeException(ErrorCode.NOT_FOUND)
 			}
+
+		val album = albumRepository.findByIdOrNull(albumId)
+			?: run {
+				log.debug { "[Register Album Photos] No such album: albumId=$albumId" }
+				throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			}
+
+		if (album.thumbnailPhotoId == null) {
+			val newAlbum = album.copy(thumbnailPhotoId = params.photoIds.random())
+			albumRepository.save(newAlbum)
+		}
 
 		val albumPhotos = params.photoIds.map {
 			AlbumPhoto(
