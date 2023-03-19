@@ -79,7 +79,7 @@ class PhotoUploadService(
 		thumbnailServiceV2.generateThumbnail(photo)
 
 		if (photo.isVideo) {
-			val videoPath = PhotoPathUtils.video(photo)
+			val videoPath = PhotoPathUtils.video(id)
 			encodeApiCaller.encode(
 				input = originalPath,
 				output = videoPath,

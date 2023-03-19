@@ -15,5 +15,5 @@ fun PhotoV2Repository.generateId(date: OffsetDateTime, hash: String): String {
 			return id
 		}
 	}
-	throw RuntimeException()
+	throw RuntimeException("Failed to generate new id")
 }

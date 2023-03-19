@@ -32,5 +32,5 @@ fun VideoEntryRepository.generateId(): String {
 			return newId
 		}
 	}
-	throw RuntimeException("Failed to generate new VideoEntry id")
+	throw RuntimeException("Failed to generate new id")
 }

@@ -13,7 +13,7 @@ class ThumbnailServiceV2(
 ) {
 	fun generateThumbnail(photo: PhotoV2) {
 		val original = PhotoPathUtils.original(photo)
-		val thumbnail = PhotoPathUtils.thumbnail(photo)
+		val thumbnail = PhotoPathUtils.thumbnail(photo.id)
 
 		if (photo.isVideo) {
 			apiCaller.videoThumbnail(

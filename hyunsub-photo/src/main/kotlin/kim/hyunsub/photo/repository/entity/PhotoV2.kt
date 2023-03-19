@@ -54,6 +54,11 @@ data class PhotoV2(
 			val base64 = "00000$subHex"
 			return base64.decodeHex().toLong()
 		}
+
+		fun parseYear(id: String): Int {
+			val millis = restoreMillis(id)
+			return Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).year
+		}
 	}
 
 	fun toPreview() = RestApiPhotoPreview(
@@ -74,7 +79,7 @@ data class PhotoV2(
 		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year
 
 	private val thumbnail: String
-		get() = FileUrlConverter.convertToUrl(PhotoPathUtils.thumbnail(this))
+		get() = FileUrlConverter.convertToUrl(PhotoPathUtils.thumbnail(this.id))
 
 	val fileName: String
 		get() = "$id.$ext"
