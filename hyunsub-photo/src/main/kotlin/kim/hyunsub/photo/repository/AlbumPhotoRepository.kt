@@ -13,4 +13,8 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 		WHERE a.albumId = :albumId
 	""")
 	fun findByAlbumId(albumId: String): List<PhotoV2>
+
+	fun findByUserIdAndPhotoId(userId: String, photoId: String): List<AlbumPhoto>
+
+	fun countByAlbumId(albumId: String): Int
 }

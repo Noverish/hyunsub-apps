@@ -15,8 +15,8 @@ class PhotoEncodeApiCaller(
 			EncodeParams(
 				input = input,
 				output = output,
-				options = "-vcodec libx264 -crf 33 -acodec copy",
-				callback = "https://${appProperties.host}/api/v1/encode/callback?photoId=$photoId",
+				options = "-vcodec libx264 -crf 33 -acodec copy -y",
+				callback = "https://${appProperties.host.replace("local-", "")}/api/v1/encode/callback?photoId=$photoId",
 			)
 		)
 	}

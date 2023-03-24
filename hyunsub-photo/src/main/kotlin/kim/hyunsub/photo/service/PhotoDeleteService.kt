@@ -3,6 +3,7 @@ package kim.hyunsub.photo.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoV2Repository
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
@@ -17,25 +18,42 @@ class PhotoDeleteService(
 	private val apiCaller: ApiCaller,
 	private val photoRepository: PhotoV2Repository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
+	private val albumPhotoRepository: AlbumPhotoRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
 	fun delete(userId: String, photoId: String): PhotoV2 {
-		val photoOwnerId = PhotoOwnerId(userId, photoId)
-
-		photoOwnerRepository.findByIdOrNull(photoOwnerId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
+			?: kotlin.run {
+				log.debug { "[Delete Photo] No such photo owner: $userId, $photoId" }
+				throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			}
 
 		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+			?: kotlin.run {
+				log.error { "[Delete Photo] No such photo: $photoId" }
+				throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+			}
 
-		photoOwnerRepository.deleteById(photoOwnerId)
+		log.debug { "[Delete Photo] Delete photo owner: $photoOwner" }
+		photoOwnerRepository.delete(photoOwner)
+
+		val albumPhotos = albumPhotoRepository.findByUserIdAndPhotoId(userId, photoId)
+		log.debug { "[Delete Photo] Delete album photos: $albumPhotos" }
+		albumPhotoRepository.deleteAll(albumPhotos)
+
 		val numberOfOwner = photoOwnerRepository.countByPhotoId(photoId)
-		log.debug { "[Delete Photo] # of owner: $numberOfOwner" }
 		if (numberOfOwner > 0) {
 			return photo
 		}
 
+		log.debug { "[Delete Photo] Delete photo: $photo" }
+		deleteFile(photo)
+		return photo
+	}
+
+	private fun deleteFile(photo: PhotoV2) {
+		val photoId = photo.id
 		val originalPath = PhotoPathUtils.original(photo)
 		val thumbnailPath = PhotoPathUtils.thumbnail(photoId)
 
@@ -51,7 +69,5 @@ class PhotoDeleteService(
 		}
 
 		photoRepository.deleteById(photoId)
-
-		return photo
 	}
 }

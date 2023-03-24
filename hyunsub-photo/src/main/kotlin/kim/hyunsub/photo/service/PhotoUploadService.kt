@@ -5,8 +5,12 @@ import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.photo.model.dto.PhotoUploadParams
+import kim.hyunsub.photo.repository.AlbumPhotoRepository
+import kim.hyunsub.photo.repository.AlbumV2Repository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoV2Repository
+import kim.hyunsub.photo.repository.entity.AlbumPhoto
+import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.PhotoOwner
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
 import kim.hyunsub.photo.repository.entity.PhotoV2
@@ -27,39 +31,39 @@ class PhotoUploadService(
 	private val photoV2Repository: PhotoV2Repository,
 	private val thumbnailServiceV2: ThumbnailServiceV2,
 	private val photoOwnerRepository: PhotoOwnerRepository,
+	private val albumPhotoRepository: AlbumPhotoRepository,
+	private val albumRepository: AlbumV2Repository,
 ) {
 	private val log = KotlinLogging.logger { }
 	private val mapper = jacksonObjectMapper()
 
 	fun upload(userId: String, params: PhotoUploadParams): PhotoV2 {
+		val photo = getOrCreatePhoto(params)
+
+		getOrCreatePhotoOwner(userId, photo, params)
+
+		params.albumId?.let {
+			getOrCreateAlbumPhoto(userId, photo, it)
+		}
+
+		return photo
+	}
+
+	private fun getOrCreatePhoto(params: PhotoUploadParams): PhotoV2 {
 		val tmpPath = PhotoPathUtils.tmp(params.nonce)
 
 		val hash = apiCaller.hash(tmpPath).result.decodeHex().toBase64()
-		log.debug { "[PhotoUpload] hash=$hash" }
 
-		// 이미 동일한 사진이 업로드 되어 있는 경우
 		val exist = photoV2Repository.findByHash(hash)
 		if (exist != null) {
-			val existOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, exist.id))
-			if (existOwner == null) {
-				val photoOwner = PhotoOwner(
-					userId = userId,
-					photoId = exist.id,
-					name = params.name,
-					regDt = LocalDateTime.now(),
-				)
-				photoOwnerRepository.save(photoOwner)
-			}
+			log.debug { "[PhotoUpload] Already exist photo: $exist" }
 			apiCaller.remove(tmpPath)
 			return exist
 		}
 
 		val exif = mapper.readTree(apiCaller.exif(tmpPath))[0]
 		val date = PhotoDateParser.parse(exif, params.name)
-		log.debug { "[PhotoUpload] date=$date" }
-
 		val id = photoV2Repository.generateId(date, hash)
-		log.debug { "[PhotoUpload] id=$id" }
 
 		val photo = PhotoV2(
 			id = id,
@@ -71,13 +75,12 @@ class PhotoUploadService(
 			ext = Path(params.name).extension,
 		)
 
+		// move photo to original folder
 		val originalPath = PhotoPathUtils.original(photo)
-		log.debug { "[PhotoUpload] originalPath=$originalPath" }
-
 		apiCaller.rename(tmpPath, originalPath)
 
+		// generate thumbnail
 		thumbnailServiceV2.generateThumbnail(photo)
-
 		if (photo.isVideo) {
 			val videoPath = PhotoPathUtils.video(id)
 			encodeApiCaller.encode(
@@ -89,14 +92,46 @@ class PhotoUploadService(
 
 		photoV2Repository.save(photo)
 
+		return photo
+	}
+
+	private fun getOrCreatePhotoOwner(userId: String, photo: PhotoV2, params: PhotoUploadParams): PhotoOwner {
+		val exist = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photo.id))
+		if (exist != null) {
+			log.debug { "[PhotoUpload] Already exist photo owner: $exist" }
+			return exist
+		}
+
 		val photoOwner = PhotoOwner(
 			userId = userId,
-			photoId = id,
+			photoId = photo.id,
 			name = params.name,
 			regDt = LocalDateTime.now(),
 		)
 		photoOwnerRepository.save(photoOwner)
 
-		return photo
+		return photoOwner
+	}
+
+	private fun getOrCreateAlbumPhoto(userId: String, photo: PhotoV2, albumId: String): AlbumPhoto {
+		val exist = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photo.id))
+		if (exist != null) {
+			log.debug { "[PhotoUpload] Already exist album photo: $exist" }
+			return exist
+		}
+
+		val albumPhoto = AlbumPhoto(
+			albumId = albumId,
+			photoId = photo.id,
+			userId = userId,
+		)
+		albumPhotoRepository.save(albumPhoto)
+
+		val album = albumRepository.findByIdOrNull(albumId)
+		if (album != null && album.thumbnailPhotoId == null) {
+			albumRepository.save(album.copy(thumbnailPhotoId = photo.id))
+		}
+
+		return albumPhoto
 	}
 }
