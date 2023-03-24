@@ -8,6 +8,6 @@ class EncodeStatusService {
 	val log = KotlinLogging.logger { }
 
 	fun updateStatus(msg: String) {
-		log.debug { msg }
+		log.info { msg }
 	}
 }
