@@ -7,10 +7,12 @@ import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.photo.model.dto.PhotoUploadParams
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumV2Repository
+import kim.hyunsub.photo.repository.PhotoMetadataV2Repository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoV2Repository
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
+import kim.hyunsub.photo.repository.entity.PhotoMetadataV2
 import kim.hyunsub.photo.repository.entity.PhotoOwner
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
 import kim.hyunsub.photo.repository.entity.PhotoV2
@@ -33,6 +35,7 @@ class PhotoUploadService(
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
 	private val albumRepository: AlbumV2Repository,
+	private val photoMetadataRepository: PhotoMetadataV2Repository,
 ) {
 	private val log = KotlinLogging.logger { }
 	private val mapper = jacksonObjectMapper()
@@ -90,7 +93,11 @@ class PhotoUploadService(
 			)
 		}
 
+		// save photo
 		photoV2Repository.save(photo)
+
+		// save metadata
+		photoMetadataRepository.save(PhotoMetadataV2.from(id, exif))
 
 		return photo
 	}
