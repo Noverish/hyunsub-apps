@@ -65,7 +65,9 @@ class PhotoUploadService(
 		}
 
 		val exif = mapper.readTree(apiCaller.exif(tmpPath))[0]
-		val date = PhotoDateParser.parse(exif, params.name)
+		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
+		val date = parseResult.date
+		val dateType = parseResult.type
 		val id = photoV2Repository.generateId(date, hash)
 
 		val photo = PhotoV2(
@@ -76,6 +78,7 @@ class PhotoUploadService(
 			size = exif["FileSize"].asInt(),
 			offset = date.offset.totalSeconds,
 			ext = Path(params.name).extension,
+			dateType = dateType,
 		)
 
 		// move photo to original folder

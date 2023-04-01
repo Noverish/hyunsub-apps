@@ -5,6 +5,7 @@ import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
 import kim.hyunsub.common.util.toLong
+import kim.hyunsub.photo.model.PhotoDateType
 import kim.hyunsub.photo.model.PhotoType
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.util.PhotoPathUtils
@@ -14,6 +15,8 @@ import java.time.OffsetDateTime
 import java.time.ZoneOffset
 import javax.persistence.Column
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.Id
 import javax.persistence.Table
 
@@ -40,6 +43,10 @@ data class PhotoV2(
 
 	@Column(nullable = false)
 	val ext: String,
+
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	val dateType: PhotoDateType,
 ) {
 	companion object {
 		fun generateId(millis: Long, hash: String, i: Int = 0): String {

@@ -1,6 +1,7 @@
 package kim.hyunsub.photo.util
 
 import com.fasterxml.jackson.databind.JsonNode
+import kim.hyunsub.photo.model.PhotoDateType
 import mu.KotlinLogging
 import java.time.Instant
 import java.time.LocalDateTime
@@ -25,7 +26,7 @@ object PhotoDateParser {
 		"20\\d{12}" to "yyyyMMddHHmmss",
 	)
 
-	fun parse(exif: JsonNode, fileName: String): OffsetDateTime {
+	fun parse(exif: JsonNode, fileName: String, millis: Long): Result {
 		val mime = exif["MIMEType"].textValue() ?: throw RuntimeException("No MIMEType")
 
 		val dateFromExif = if (mime.startsWith("image")) {
@@ -37,22 +38,17 @@ object PhotoDateParser {
 		}
 
 		if (dateFromExif != null) {
-			return dateFromExif
+			return Result(dateFromExif, PhotoDateType.EXIF)
 		}
 
-		val dateFromName = parseFromFileName(fileName)?.atZone(ZoneId.systemDefault())?.toOffsetDateTime()
+		val dateFromName = parseFromFileName(fileName)
 		if (dateFromName != null) {
-			log.debug { "[Parse Photo Date] $fileName: Name - $dateFromName" }
-			return dateFromName
+			return Result(dateFromName, PhotoDateType.NAME)
 		}
 
-		val modifyDate = parseFromExifAsOdt(exif, fileName, "FileModifyDate")
-		if (modifyDate != null) {
-			return modifyDate
-		}
-
-		log.debug { "[Parse Photo Date] $fileName: Now" }
-		return OffsetDateTime.now()
+		val fileDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault())
+		log.debug { "[Parse Photo Date] $fileName: From File Date" }
+		return Result(fileDate, PhotoDateType.FILE)
 	}
 
 	private fun parseImage(exif: JsonNode, fileName: String): OffsetDateTime? {
@@ -116,19 +112,31 @@ object PhotoDateParser {
 		return null
 	}
 
-	private fun parseFromFileName(fileName: String): LocalDateTime? {
+	private fun parseFromFileName(fileName: String): OffsetDateTime? {
 		for ((regex, pattern) in nameFormatMap) {
 			val result = Regex(regex).find(fileName)?.value?.let {
 				LocalDateTime.parse(it, DateTimeFormatter.ofPattern(pattern))
+					.atZone(ZoneId.systemDefault())
+					.toOffsetDateTime()
 			}
 
 			if (result != null) {
+				log.debug { "[Parse Photo Date] $fileName: Name - $result" }
 				return result
 			}
 		}
 
-		return Regex("1\\d{12}").find(fileName)?.value?.toLong()?.let {
-			Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime()
-		}
+		return Regex("1\\d{12}").find(fileName)?.value?.toLong()
+			?.let {
+				Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+			}
+			?.apply {
+				log.debug { "[Parse Photo Date] $fileName: Name - $this" }
+			}
 	}
+
+	data class Result(
+		val date: OffsetDateTime,
+		val type: PhotoDateType,
+	)
 }
