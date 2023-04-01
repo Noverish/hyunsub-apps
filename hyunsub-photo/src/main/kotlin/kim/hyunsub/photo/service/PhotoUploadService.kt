@@ -22,7 +22,9 @@ import kim.hyunsub.photo.util.PhotoPathUtils
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 
@@ -116,6 +118,7 @@ class PhotoUploadService(
 			userId = userId,
 			photoId = photo.id,
 			name = params.name,
+			fileDt = LocalDateTime.ofInstant(Instant.ofEpochMilli(params.millis), ZoneId.systemDefault()),
 			regDt = LocalDateTime.now(),
 		)
 		photoOwnerRepository.save(photoOwner)
