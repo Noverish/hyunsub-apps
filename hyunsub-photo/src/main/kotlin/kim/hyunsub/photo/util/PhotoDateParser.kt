@@ -13,8 +13,9 @@ import java.time.format.DateTimeParseException
 
 object PhotoDateParser {
 	private val log = KotlinLogging.logger { }
-	private val odtFormat1 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSXXX")
-	private val odtFormat2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ssXXX")
+	private val odtFormat1 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSSXXX")
+	private val odtFormat2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSXXX")
+	private val odtFormat3 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ssXXX")
 	private val ldtFormat1 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSS")
 	private val ldtFormat2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss")
 	private val ldtFormat3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -75,7 +76,7 @@ object PhotoDateParser {
 			return null
 		}
 
-		for (format in listOf(odtFormat1, odtFormat2)) {
+		for (format in listOf(odtFormat1, odtFormat2, odtFormat3)) {
 			try {
 				val result = OffsetDateTime.parse(str, format)
 				log.debug { "[Parse Photo Date] $fileName: From $field - $str" }

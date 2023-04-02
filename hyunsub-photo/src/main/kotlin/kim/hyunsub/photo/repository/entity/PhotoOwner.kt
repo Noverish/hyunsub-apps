@@ -21,8 +21,8 @@ data class PhotoOwner(
 	@Column(nullable = false)
 	val name: String,
 
-	@Column
-	val fileDt: LocalDateTime?,
+	@Column(nullable = false)
+	val fileDt: LocalDateTime,
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime,

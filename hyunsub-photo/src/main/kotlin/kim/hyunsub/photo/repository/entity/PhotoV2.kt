@@ -79,7 +79,7 @@ data class PhotoV2(
 	private val millis: Long
 		get() = restoreMillis(id)
 
-	private val date: OffsetDateTime
+	val date: OffsetDateTime
 		get() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.ofTotalSeconds(offset))
 
 	val year: Int
