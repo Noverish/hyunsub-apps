@@ -66,6 +66,9 @@ data class PhotoV2(
 			val millis = restoreMillis(id)
 			return Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).year
 		}
+
+		fun parseDate(id: String, offset: Int): OffsetDateTime =
+			OffsetDateTime.ofInstant(Instant.ofEpochMilli(restoreMillis(id)), ZoneOffset.ofTotalSeconds(offset))
 	}
 
 	fun toPreview() = RestApiPhotoPreview(
@@ -80,7 +83,7 @@ data class PhotoV2(
 		get() = restoreMillis(id)
 
 	val date: OffsetDateTime
-		get() = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneOffset.ofTotalSeconds(offset))
+		get() = parseDate(id, offset)
 
 	val year: Int
 		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year

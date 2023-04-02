@@ -3,6 +3,7 @@ package kim.hyunsub.photo.controller
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.model.api.RestApiPhotoMetadata
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.model.dto.AlbumPhotoRegisterParams
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
@@ -42,6 +43,20 @@ class AlbumPhotoController(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		return albumPhotoRepository.findByAlbumId(albumId).map { it.toPreview() }
+	}
+
+	@GetMapping("/metadata")
+	fun metadataList(
+		userAuth: UserAuth,
+		@PathVariable albumId: String,
+	): List<RestApiPhotoMetadata> {
+		val userId = userAuth.idNo
+		log.debug { "[List Album Photos Metadata] userId=$userId, albumId=$albumId" }
+
+		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		return albumPhotoRepository.findPhotoDetailByAlbumId(albumId)
 	}
 
 	@PostMapping("")

@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.findByIdOrNull
 
 interface AlbumV2Repository : JpaRepository<AlbumV2, String> {
-	@Query("""
-		SELECT b FROM AlbumOwner a
-		INNER JOIN AlbumV2 b ON b.id = a.albumId
-		WHERE a.userId = :userId
-	""")
+	@Query(
+		"""
+			SELECT b FROM AlbumOwner a
+			INNER JOIN AlbumV2 b ON b.id = a.albumId
+			WHERE a.userId = :userId
+		"""
+	)
 	fun findByUserId(userId: String): List<AlbumV2>
 }
 
