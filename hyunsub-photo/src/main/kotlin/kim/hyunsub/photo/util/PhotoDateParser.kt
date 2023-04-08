@@ -54,13 +54,15 @@ object PhotoDateParser {
 
 	private fun parseImage(exif: JsonNode, fileName: String): OffsetDateTime? {
 		return parseFromExifAsOdt(exif, fileName, "SubSecDateTimeOriginal")
+			?: parseFromExifAsLdt(exif, fileName, "SubSecDateTimeOriginal")
+
 			?: parseFromExifAsOdt(exif, fileName, "DateTimeOriginal")
+			?: parseFromExifAsLdt(exif, fileName, "DateTimeOriginal")
+
 			?: parseFromExifAsOdt(exif, fileName, "GPSDateTime")
 			?: parseFromExifAsOdt(exif, fileName, "TimeStamp")
 			?: parseFromExifAsOdt(exif, fileName, "ModifyDate")
 
-			?: parseFromExifAsLdt(exif, fileName, "SubSecDateTimeOriginal")
-			?: parseFromExifAsLdt(exif, fileName, "DateTimeOriginal")
 			?: parseFromExifAsLdt(exif, fileName, "GPSDateTime")
 			?: parseFromExifAsLdt(exif, fileName, "TimeStamp")
 			?: parseFromExifAsLdt(exif, fileName, "ModifyDate")
