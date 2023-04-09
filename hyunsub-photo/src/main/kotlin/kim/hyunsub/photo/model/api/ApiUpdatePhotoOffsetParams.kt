@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.model.api
 
-data class ApiRescanPhotoDateParams(
+data class ApiUpdatePhotoOffsetParams(
 	val photoId: String,
+	val hour: Int,
 )

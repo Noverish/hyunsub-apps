@@ -71,6 +71,11 @@ object PhotoDateParser {
 
 	private fun parseVideo(exif: JsonNode, fileName: String): OffsetDateTime? {
 		return parseFromExifAsOdt(exif, fileName, "CreationDate")
+			?: run {
+				val offset = parseOffset(exif) ?: ZoneOffset.UTC
+				val odt = parseFromExifLdt(exif, fileName, "CreateDate")?.atOffset(ZoneOffset.UTC)
+				return odt?.withOffsetSameInstant(offset)
+			}
 	}
 
 	private fun parseFromExifAsOdt(exif: JsonNode, fileName: String, field: String): OffsetDateTime? {
@@ -91,23 +96,36 @@ object PhotoDateParser {
 		return null
 	}
 
+	private fun parseFromExifLdt(exif: JsonNode, fileName: String, field: String): LocalDateTime? {
+		val str = exif[field]?.textValue() ?: return null
+		if (str.startsWith("0000")) {
+			return null
+		}
+
+		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3)) {
+			try {
+				val result = LocalDateTime.parse(str, format)
+				log.debug { "[Parse Photo Date] $fileName: From $field - $str" }
+				return result
+			} catch (_: DateTimeParseException) {
+			}
+		}
+
+		return null
+	}
+
 	private fun parseFromExifAsLdt(exif: JsonNode, fileName: String, field: String): OffsetDateTime? {
 		val str = exif[field]?.textValue() ?: return null
 		if (str.startsWith("0000")) {
 			return null
 		}
 
-		val offsetStr = listOfNotNull(
-			exif["OffsetTime"]?.asText(),
-			exif["OffsetTimeOriginal"]?.asText(),
-			exif["OffsetTimeDigitized"]?.asText(),
-		).firstOrNull()
-		val offset = offsetStr?.let { ZoneOffset.of(it) } ?: ZoneId.systemDefault()
+		val offset = parseOffset(exif) ?: ZoneId.systemDefault()
 
 		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3)) {
 			try {
 				val result = LocalDateTime.parse(str, format).atZone(offset).toOffsetDateTime()
-				log.debug { "[Parse Photo Date] $fileName: From $field - $str $offsetStr" }
+				log.debug { "[Parse Photo Date] $fileName: From $field - $str $offset" }
 				return result
 			} catch (_: DateTimeParseException) {
 			}
@@ -137,6 +155,25 @@ object PhotoDateParser {
 			?.apply {
 				log.debug { "[Parse Photo Date] $fileName: Name - $this" }
 			}
+	}
+
+	private fun parseOffset(exif: JsonNode): ZoneOffset? {
+		val fields = listOf("OffsetTimeOriginal", "OffsetTime")
+		for (field in fields) {
+			val value = exif[field]?.asText() ?: continue
+			return ZoneOffset.of(value).apply {
+				log.debug { "[Parse Photo Date] Offset: $field - $this" }
+			}
+		}
+
+		val timeZone = exif["TimeZone"]?.asInt()
+		if (timeZone != null) {
+			return ZoneOffset.ofHours(timeZone / 60).apply {
+				log.debug { "[Parse Photo Date] Offset: TimeZone - $this" }
+			}
+		}
+
+		return null
 	}
 
 	data class Result(
