@@ -19,13 +19,29 @@ class ThumbnailServiceV2(
 		val thumbnail = PhotoPathUtils.thumbnail(photo.id)
 
 		if (isVideo(photo.fileName)) {
+			val tmp = "$thumbnail.jpg"
+
 			apiCaller.videoThumbnail(
 				VideoThumbnailParams(
 					input = original,
-					output = thumbnail,
+					output = tmp,
 					time = 0.0,
 				)
 			)
+
+			apiCaller.imageConvert(
+				ApiPhotoConvertParams(
+					input = tmp,
+					output = thumbnail,
+					resize = "256x256^",
+					quality = 60,
+					gravity = "center",
+					extent = "256x256"
+				)
+			)
+
+			apiCaller.remove(tmp)
+
 			return
 		}
 

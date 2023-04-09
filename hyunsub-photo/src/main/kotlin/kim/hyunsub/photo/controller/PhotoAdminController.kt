@@ -61,7 +61,7 @@ class PhotoAdminController(
 			}
 
 			val newId = photoRepository.generateId(result.date, photo.hash)
-			photoUpdateService.updateId(photo.id, newId)
+			photoUpdateService.updateId(photo, newId)
 
 			val str = "${photo.id} -> $newId: ${photo.date} -> ${result.date}"
 			log.debug { "[Rescan Photo Date] $str" }

@@ -20,7 +20,7 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 
 	@Query(
 		"""
-			SELECT new kim.hyunsub.photo.model.api.RestApiPhotoMetadata(a.photoId, d.offset, a.userId, b.name, b.fileDt, c.SubSecDateTimeOriginal, c.DateTimeOriginal, c.GPSDateTime, c.TimeStamp, c.ModifyDate, c.CreationDate, c.OffsetTime, c.OffsetTimeOriginal, c.OffsetTimeDigitized)
+			SELECT new kim.hyunsub.photo.model.api.RestApiPhotoMetadata(a.photoId, d.offset, d.dateType, a.userId, b.name, b.fileDt, c.SubSecDateTimeOriginal, c.DateTimeOriginal, c.GPSDateTime, c.TimeStamp, c.ModifyDate, c.CreationDate, c.OffsetTime, c.OffsetTimeOriginal, c.OffsetTimeDigitized)
 			FROM AlbumPhoto a
 			INNER JOIN PhotoOwner b ON b.photoId = a.photoId AND b.userId = a.userId
 			INNER JOIN PhotoMetadataV2 c ON c.photoId = a.photoId

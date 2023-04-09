@@ -22,6 +22,7 @@ object PhotoDateParser {
 	private val nameFormatMap = mapOf(
 		"20\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}" to "yyyy-MM-dd-HH-mm-ss",
 		"20\\d{6}_\\d{6}_\\d{3}" to "yyyyMMdd_HHmmss_SSS",
+		"20\\d{6}_\\d{9}" to "yyyyMMdd_HHmmssSSS",
 		"20\\d{6}_\\d{6}" to "yyyyMMdd_HHmmss",
 		"20\\d{6}-\\d{6}" to "yyyyMMdd-HHmmss",
 		"20\\d{12}" to "yyyyMMddHHmmss",

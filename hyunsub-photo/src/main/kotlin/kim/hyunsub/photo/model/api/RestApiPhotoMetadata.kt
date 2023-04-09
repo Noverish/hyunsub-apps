@@ -1,6 +1,7 @@
 package kim.hyunsub.photo.model.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import kim.hyunsub.photo.model.PhotoDateType
 import kim.hyunsub.photo.repository.entity.PhotoV2
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
@@ -9,6 +10,7 @@ data class RestApiPhotoMetadata(
 	val photoId: String,
 	@JsonIgnore
 	val offset: Int,
+	val dateType: PhotoDateType,
 	val userId: String,
 	val name: String,
 	val fileDt: LocalDateTime,

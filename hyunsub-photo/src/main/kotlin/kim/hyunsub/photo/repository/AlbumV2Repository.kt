@@ -12,9 +12,12 @@ interface AlbumV2Repository : JpaRepository<AlbumV2, String> {
 			SELECT b FROM AlbumOwner a
 			INNER JOIN AlbumV2 b ON b.id = a.albumId
 			WHERE a.userId = :userId
+			ORDER BY b.regDt DESC
 		"""
 	)
 	fun findByUserId(userId: String): List<AlbumV2>
+
+	fun findByThumbnailPhotoId(photoId: String): List<AlbumV2>
 }
 
 fun AlbumV2Repository.generateId(): String {
