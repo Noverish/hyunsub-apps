@@ -1,8 +1,10 @@
 package kim.hyunsub.photo.controller
 
+import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.RestApiAlbumCreateParams
 import kim.hyunsub.photo.model.api.RestApiAlbumPreview
 import kim.hyunsub.photo.model.api.RestApiAlbumV2
@@ -14,6 +16,7 @@ import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumV2
 import kim.hyunsub.photo.repository.generateId
 import mu.KotlinLogging
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -85,12 +88,20 @@ class AlbumControllerV2(
 				throw ErrorCodeException(ErrorCode.NOT_FOUND)
 			}
 
-		val photos = albumPhotoRepository.findByAlbumId(albumId).map { it.toPreview() }
+		val total = albumPhotoRepository.countByAlbumId(albumId)
+
+		val page = PageRequest.ofSize(PhotoConstants.PHOTO_PAGE_SIZE)
+		val photos = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toPreview() }
 
 		return RestApiAlbumV2(
 			id = album.id,
 			name = album.name,
-			photos = photos,
+			photos = RestApiPageResult(
+				total = total,
+				page = 0,
+				pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+				data = photos,
+			),
 		)
 	}
 }

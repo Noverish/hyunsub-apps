@@ -1,8 +1,10 @@
 package kim.hyunsub.photo.controller
 
+import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.RestApiPhotoMetadata
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.model.dto.AlbumPhotoRegisterParams
@@ -13,6 +15,7 @@ import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import mu.KotlinLogging
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -35,14 +39,25 @@ class AlbumPhotoController(
 	fun list(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-	): List<RestApiPhotoPreview> {
+		@RequestParam(defaultValue = "0") p: Int,
+	): RestApiPageResult<RestApiPhotoPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Album Photos] userId=$userId, albumId=$albumId" }
 
 		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		return albumPhotoRepository.findByAlbumId(albumId).map { it.toPreview() }
+		val total = albumPhotoRepository.countByAlbumId(albumId)
+
+		val page = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
+		val data = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toPreview() }
+
+		return RestApiPageResult(
+			total = total,
+			page = p,
+			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+			data = data,
+		)
 	}
 
 	@GetMapping("/metadata")

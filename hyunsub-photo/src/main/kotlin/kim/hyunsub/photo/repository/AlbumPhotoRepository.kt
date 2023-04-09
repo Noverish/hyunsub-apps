@@ -4,6 +4,7 @@ import kim.hyunsub.photo.model.api.RestApiPhotoMetadata
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.PhotoV2
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
@@ -16,7 +17,7 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 			WHERE a.albumId = :albumId
 		"""
 	)
-	fun findByAlbumId(albumId: String): List<PhotoV2>
+	fun findByAlbumId(albumId: String, page: Pageable = Pageable.unpaged()): List<PhotoV2>
 
 	@Query(
 		"""
