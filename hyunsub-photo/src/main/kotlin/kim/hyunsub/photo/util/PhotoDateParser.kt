@@ -10,6 +10,8 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
+import java.time.temporal.ChronoUnit
+import kotlin.math.roundToInt
 
 object PhotoDateParser {
 	private val log = KotlinLogging.logger { }
@@ -17,11 +19,14 @@ object PhotoDateParser {
 	private val odtFormat2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSXXX")
 	private val odtFormat3 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ssXXX")
 	private val ldtFormat1 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSSS")
-	private val ldtFormat2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss")
-	private val ldtFormat3 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+	private val ldtFormat2 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss.SSS")
+	private val ldtFormat3 = DateTimeFormatter.ofPattern("yyyy:MM:dd HH:mm:ss")
+	private val ldtFormat4 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+	private val ldtFormat5 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS")
 	private val nameFormatMap = mapOf(
 		"20\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}" to "yyyy-MM-dd-HH-mm-ss",
 		"20\\d{6}_\\d{6}_\\d{3}" to "yyyyMMdd_HHmmss_SSS",
+		"20\\d{6}_\\d{4}_\\d{2}_\\d{3}" to "yyyyMMdd_HHmm_ss_SSS",
 		"20\\d{6}_\\d{9}" to "yyyyMMdd_HHmmssSSS",
 		"20\\d{6}_\\d{6}" to "yyyyMMdd_HHmmss",
 		"20\\d{6}-\\d{6}" to "yyyyMMdd-HHmmss",
@@ -32,53 +37,54 @@ object PhotoDateParser {
 		val mime = exif["MIMEType"].textValue() ?: throw RuntimeException("No MIMEType")
 
 		val dateFromExif = if (mime.startsWith("image")) {
-			parseImage(exif, fileName)
+			parseImage(exif)
 		} else if (mime.startsWith("video")) {
-			parseVideo(exif, fileName)
+			parseVideo(exif)
 		} else {
 			throw RuntimeException("Unknown mime - $mime")
 		}
 
 		if (dateFromExif != null) {
-			return Result(dateFromExif, PhotoDateType.EXIF)
+			val date = dateFromExif.data
+			log.debug { "[Parse Photo Date] $fileName: $date from EXIF - ${dateFromExif.sourceFields}, ${dateFromExif.sourceValues}" }
+			return Result(date, PhotoDateType.EXIF)
 		}
 
 		val dateFromName = parseFromFileName(fileName)
 		if (dateFromName != null) {
-			return Result(dateFromName, PhotoDateType.NAME)
+			val date = dateFromName.data
+			log.debug { "[Parse Photo Date] $fileName: $date from NAME - ${dateFromName.sourceFields}, ${dateFromName.sourceValues}" }
+			return Result(date, PhotoDateType.NAME)
 		}
 
-		val fileDate = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault())
-		log.debug { "[Parse Photo Date] $fileName: From File Date" }
-		return Result(fileDate, PhotoDateType.FILE)
+		val date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault())
+		log.debug { "[Parse Photo Date] $fileName: $date from FILE - $millis" }
+		return Result(date, PhotoDateType.FILE)
 	}
 
-	private fun parseImage(exif: JsonNode, fileName: String): OffsetDateTime? {
-		return parseFromExifAsOdt(exif, fileName, "SubSecDateTimeOriginal")
-			?: parseFromExifAsLdt(exif, fileName, "SubSecDateTimeOriginal")
+	private fun parseImage(exif: JsonNode): ParseResult<OffsetDateTime>? {
+		return parseFromExifFromOdt(exif, "SubSecDateTimeOriginal")
+			?: parseScenario2(exif)
+			?: parseFromExifFromLdt(exif, "SubSecDateTimeOriginal")
 
-			?: parseFromExifAsOdt(exif, fileName, "DateTimeOriginal")
-			?: parseFromExifAsLdt(exif, fileName, "DateTimeOriginal")
+			?: parseFromExifFromOdt(exif, "DateTimeOriginal")
+			?: parseFromExifFromLdt(exif, "DateTimeOriginal")
 
-			?: parseFromExifAsOdt(exif, fileName, "GPSDateTime")
-			?: parseFromExifAsOdt(exif, fileName, "TimeStamp")
-			?: parseFromExifAsOdt(exif, fileName, "ModifyDate")
+			?: parseFromExifFromOdt(exif, "GPSDateTime")
+			?: parseFromExifFromOdt(exif, "TimeStamp")
+			?: parseFromExifFromOdt(exif, "ModifyDate")
 
-			?: parseFromExifAsLdt(exif, fileName, "GPSDateTime")
-			?: parseFromExifAsLdt(exif, fileName, "TimeStamp")
-			?: parseFromExifAsLdt(exif, fileName, "ModifyDate")
+			?: parseFromExifFromLdt(exif, "GPSDateTime")
+			?: parseFromExifFromLdt(exif, "TimeStamp")
+			?: parseFromExifFromLdt(exif, "ModifyDate")
 	}
 
-	private fun parseVideo(exif: JsonNode, fileName: String): OffsetDateTime? {
-		return parseFromExifAsOdt(exif, fileName, "CreationDate")
-			?: run {
-				val offset = parseOffset(exif) ?: ZoneOffset.UTC
-				val odt = parseFromExifLdt(exif, fileName, "CreateDate")?.atOffset(ZoneOffset.UTC)
-				return odt?.withOffsetSameInstant(offset)
-			}
+	private fun parseVideo(exif: JsonNode): ParseResult<OffsetDateTime>? {
+		return parseFromExifFromOdt(exif, "CreationDate")
+			?: parseScenario1(exif)
 	}
 
-	private fun parseFromExifAsOdt(exif: JsonNode, fileName: String, field: String): OffsetDateTime? {
+	private fun parseFromExifFromOdt(exif: JsonNode, field: String): ParseResult<OffsetDateTime>? {
 		val str = exif[field]?.textValue() ?: return null
 		if (str.startsWith("0000")) {
 			return null
@@ -86,9 +92,11 @@ object PhotoDateParser {
 
 		for (format in listOf(odtFormat1, odtFormat2, odtFormat3)) {
 			try {
-				val result = OffsetDateTime.parse(str, format)
-				log.debug { "[Parse Photo Date] $fileName: From $field - $str" }
-				return result
+				return ParseResult(
+					sourceFields = listOf(field),
+					sourceValues = listOf(str),
+					data = OffsetDateTime.parse(str, format),
+				)
 			} catch (_: DateTimeParseException) {
 			}
 		}
@@ -96,17 +104,23 @@ object PhotoDateParser {
 		return null
 	}
 
-	private fun parseFromExifLdt(exif: JsonNode, fileName: String, field: String): LocalDateTime? {
+	private fun parseFromExifFromLdt(exif: JsonNode, field: String): ParseResult<OffsetDateTime>? {
 		val str = exif[field]?.textValue() ?: return null
 		if (str.startsWith("0000")) {
 			return null
 		}
 
-		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3)) {
+		val offsetResult = parseOffset(exif)
+		val offset = offsetResult?.data ?: ZoneId.systemDefault()
+
+		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3, ldtFormat4, ldtFormat5)) {
 			try {
-				val result = LocalDateTime.parse(str, format)
-				log.debug { "[Parse Photo Date] $fileName: From $field - $str" }
-				return result
+				val data = LocalDateTime.parse(str, format).atZone(offset).toOffsetDateTime()
+				return ParseResult(
+					sourceFields = (offsetResult?.sourceFields ?: emptyList()) + listOf(field),
+					sourceValues = (offsetResult?.sourceValues ?: emptyList()) + listOf(str),
+					data = data,
+				)
 			} catch (_: DateTimeParseException) {
 			}
 		}
@@ -114,67 +128,120 @@ object PhotoDateParser {
 		return null
 	}
 
-	private fun parseFromExifAsLdt(exif: JsonNode, fileName: String, field: String): OffsetDateTime? {
-		val str = exif[field]?.textValue() ?: return null
-		if (str.startsWith("0000")) {
-			return null
-		}
-
-		val offset = parseOffset(exif) ?: ZoneId.systemDefault()
-
-		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3)) {
-			try {
-				val result = LocalDateTime.parse(str, format).atZone(offset).toOffsetDateTime()
-				log.debug { "[Parse Photo Date] $fileName: From $field - $str $offset" }
-				return result
-			} catch (_: DateTimeParseException) {
-			}
-		}
-
-		return null
-	}
-
-	private fun parseFromFileName(fileName: String): OffsetDateTime? {
+	private fun parseFromFileName(fileName: String): ParseResult<OffsetDateTime>? {
 		for ((regex, pattern) in nameFormatMap) {
-			val result = Regex(regex).find(fileName)?.value?.let {
-				LocalDateTime.parse(it, DateTimeFormatter.ofPattern(pattern))
-					.atZone(ZoneId.systemDefault())
-					.toOffsetDateTime()
-			}
+			val str = Regex(regex).find(fileName)?.value ?: continue
 
-			if (result != null) {
-				log.debug { "[Parse Photo Date] $fileName: Name - $result" }
-				return result
-			}
+			val data = LocalDateTime.parse(str, DateTimeFormatter.ofPattern(pattern))
+				.atZone(ZoneId.systemDefault())
+				.toOffsetDateTime()
+
+			return ParseResult(
+				sourceFields = listOf(pattern),
+				sourceValues = listOf(),
+				data = data
+			)
 		}
 
-		return Regex("1\\d{12}").find(fileName)?.value?.toLong()
-			?.let {
-				Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toOffsetDateTime()
-			}
-			?.apply {
-				log.debug { "[Parse Photo Date] $fileName: Name - $this" }
-			}
+		val str = Regex("1\\d{12}").find(fileName)?.value ?: return null
+		val data = Instant.ofEpochMilli(str.toLong()).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+
+		return ParseResult(
+			sourceFields = listOf("millis"),
+			sourceValues = listOf(str),
+			data = data
+		)
 	}
 
-	private fun parseOffset(exif: JsonNode): ZoneOffset? {
-		val fields = listOf("OffsetTimeOriginal", "OffsetTime")
-		for (field in fields) {
+	private fun parseOffset(exif: JsonNode): ParseResult<ZoneOffset>? {
+		val fields1 = listOf("OffsetTimeOriginal", "OffsetTime")
+		for (field in fields1) {
 			val value = exif[field]?.asText() ?: continue
-			return ZoneOffset.of(value).apply {
-				log.debug { "[Parse Photo Date] Offset: $field - $this" }
-			}
+			return ParseResult(
+				sourceFields = listOf(field),
+				sourceValues = listOf(value),
+				data = ZoneOffset.of(value),
+			)
 		}
 
-		val timeZone = exif["TimeZone"]?.asInt()
-		if (timeZone != null) {
-			return ZoneOffset.ofHours(timeZone / 60).apply {
-				log.debug { "[Parse Photo Date] Offset: TimeZone - $this" }
+		val fields2 = listOf("TimeZone")
+		for (field in fields2) {
+			val value = exif[field]?.asInt() ?: continue
+			return ParseResult(
+				sourceFields = listOf(field),
+				sourceValues = listOf(value.toString()),
+				data = ZoneOffset.ofHours(value / 60),
+			)
+		}
+
+		return null
+	}
+
+	private fun parseDateAsLdt(exif: JsonNode, field: String): LocalDateTime? {
+		val str = exif[field]?.textValue() ?: return null
+		if (str.startsWith("0000")) {
+			return null
+		}
+
+		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3, ldtFormat4)) {
+			try {
+				return LocalDateTime.parse(str, format)
+			} catch (_: DateTimeParseException) {
 			}
 		}
 
 		return null
 	}
+
+	private fun parseScenario1(exif: JsonNode): ParseResult<OffsetDateTime>? {
+		val offset = parseOffset(exif)
+		if (offset != null) {
+			return null
+		}
+
+		val odt = parseDateAsLdt(exif, "CreateDate")
+			?.atOffset(ZoneOffset.UTC)
+			?.atZoneSameInstant(ZoneId.systemDefault())
+			?.toOffsetDateTime()
+			?: return null
+
+		return ParseResult(
+			sourceFields = listOf("CreateDate"),
+			sourceValues = listOf(exif["CreateDate"].textValue()),
+			data = odt,
+		)
+	}
+
+	/**
+	 * DateTimeOriginal이 LocalDateTime 포맷이고
+	 * GPSDateTime이 UTC 포맷으로 존재할 때
+	 */
+	private fun parseScenario2(exif: JsonNode): ParseResult<OffsetDateTime>? {
+		val dateTimeOriginal = parseDateAsLdt(exif, "DateTimeOriginal") ?: return null
+		val gpsDateTime = parseFromExifFromOdt(exif, "GPSDateTime")?.data ?: return null
+		if (gpsDateTime.offset.totalSeconds != 0) {
+			return null
+		}
+
+		val gpsDateTimeLdt = gpsDateTime.toLocalDateTime()
+
+		val diffSeconds = ChronoUnit.SECONDS.between(gpsDateTimeLdt, dateTimeOriginal)
+		val diffHour = (diffSeconds.toDouble() / 3600).roundToInt()
+
+		val data = dateTimeOriginal.atOffset(ZoneOffset.ofHours(diffHour))
+
+		return ParseResult(
+			sourceFields = listOf("DateTimeOriginal", "GPSDateTime"),
+			sourceValues = listOf(exif["DateTimeOriginal"].textValue(), exif["GPSDateTime"].textValue()),
+			data = data,
+		)
+	}
+
+	data class ParseResult<T>(
+		val sourceFields: List<String>,
+		val sourceValues: List<String>,
+		val data: T,
+	)
 
 	data class Result(
 		val date: OffsetDateTime,
