@@ -86,7 +86,7 @@ object PhotoDateParser {
 
 	private fun parseFromExifFromOdt(exif: JsonNode, field: String): ParseResult<OffsetDateTime>? {
 		val str = exif[field]?.textValue() ?: return null
-		if (str.startsWith("0000")) {
+		if (str.startsWith("0000") || str.startsWith("1970")) {
 			return null
 		}
 
@@ -106,7 +106,7 @@ object PhotoDateParser {
 
 	private fun parseFromExifFromLdt(exif: JsonNode, field: String): ParseResult<OffsetDateTime>? {
 		val str = exif[field]?.textValue() ?: return null
-		if (str.startsWith("0000")) {
+		if (str.startsWith("0000") || str.startsWith("1970")) {
 			return null
 		}
 
@@ -179,7 +179,7 @@ object PhotoDateParser {
 
 	private fun parseDateAsLdt(exif: JsonNode, field: String): LocalDateTime? {
 		val str = exif[field]?.textValue() ?: return null
-		if (str.startsWith("0000")) {
+		if (str.startsWith("0000") || str.startsWith("1970")) {
 			return null
 		}
 
@@ -213,28 +213,31 @@ object PhotoDateParser {
 	}
 
 	/**
-	 * DateTimeOriginal이 LocalDateTime 포맷이고
-	 * GPSDateTime이 UTC 포맷으로 존재할 때
+	 * `SubSecDateTimeOriginal`이나 `DateTimeOriginal`이 LocalDateTime 포맷이고
+	 * `GPSDateTime`이 UTC 포맷으로 존재할 때
 	 */
 	private fun parseScenario2(exif: JsonNode): ParseResult<OffsetDateTime>? {
-		val dateTimeOriginal = parseDateAsLdt(exif, "DateTimeOriginal") ?: return null
 		val gpsDateTime = parseFromExifFromOdt(exif, "GPSDateTime")?.data ?: return null
 		if (gpsDateTime.offset.totalSeconds != 0) {
 			return null
 		}
-
 		val gpsDateTimeLdt = gpsDateTime.toLocalDateTime()
 
-		val diffSeconds = ChronoUnit.SECONDS.between(gpsDateTimeLdt, dateTimeOriginal)
-		val diffHour = (diffSeconds.toDouble() / 3600).roundToInt()
+		for (field in listOf("SubSecDateTimeOriginal", "DateTimeOriginal")) {
+			val dateTimeOriginal = parseDateAsLdt(exif, field) ?: continue
 
-		val data = dateTimeOriginal.atOffset(ZoneOffset.ofHours(diffHour))
+			val diffSeconds = ChronoUnit.SECONDS.between(gpsDateTimeLdt, dateTimeOriginal)
+			val diffHour = (diffSeconds.toDouble() / 3600).roundToInt()
+			val data = dateTimeOriginal.atOffset(ZoneOffset.ofHours(diffHour))
 
-		return ParseResult(
-			sourceFields = listOf("DateTimeOriginal", "GPSDateTime"),
-			sourceValues = listOf(exif["DateTimeOriginal"].textValue(), exif["GPSDateTime"].textValue()),
-			data = data,
-		)
+			return ParseResult(
+				sourceFields = listOf(field, "GPSDateTime"),
+				sourceValues = listOf(exif[field].textValue(), exif["GPSDateTime"].textValue()),
+				data = data,
+			)
+		}
+
+		return null
 	}
 
 	data class ParseResult<T>(

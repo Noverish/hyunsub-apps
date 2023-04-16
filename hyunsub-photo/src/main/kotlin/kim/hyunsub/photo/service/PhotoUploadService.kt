@@ -19,6 +19,8 @@ import kim.hyunsub.photo.repository.entity.PhotoV2
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.isImage
+import kim.hyunsub.photo.util.isVideo
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -27,12 +29,14 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import kotlin.io.path.Path
 import kotlin.io.path.extension
+import kotlin.io.path.nameWithoutExtension
+import kotlin.math.abs
 
 @Service
 class PhotoUploadService(
 	private val apiCaller: ApiCaller,
 	private val encodeApiCaller: PhotoEncodeApiCaller,
-	private val photoV2Repository: PhotoV2Repository,
+	private val photoRepository: PhotoV2Repository,
 	private val thumbnailServiceV2: ThumbnailServiceV2,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
@@ -45,11 +49,13 @@ class PhotoUploadService(
 	fun upload(userId: String, params: PhotoUploadParams): PhotoV2 {
 		val photo = getOrCreatePhoto(params)
 
-		getOrCreatePhotoOwner(userId, photo, params)
+		val photoOwner = getOrCreatePhotoOwner(userId, photo, params)
 
 		params.albumId?.let {
 			getOrCreateAlbumPhoto(userId, photo, it)
 		}
+
+		pairingPhoto(userId, photo, photoOwner)
 
 		return photo
 	}
@@ -59,7 +65,7 @@ class PhotoUploadService(
 
 		val hash = apiCaller.hash(tmpPath).result.decodeHex().toBase64()
 
-		val exist = photoV2Repository.findByHash(hash)
+		val exist = photoRepository.findByHash(hash)
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist photo: $exist" }
 			apiCaller.remove(tmpPath)
@@ -70,7 +76,7 @@ class PhotoUploadService(
 		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
 		val date = parseResult.date
 		val dateType = parseResult.type
-		val id = photoV2Repository.generateId(date, hash)
+		val id = photoRepository.generateId(date, hash)
 
 		val photo = PhotoV2(
 			id = id,
@@ -99,7 +105,7 @@ class PhotoUploadService(
 		}
 
 		// save photo
-		photoV2Repository.save(photo)
+		photoRepository.save(photo)
 
 		// save metadata
 		photoMetadataRepository.save(PhotoMetadataV2.from(id, exif))
@@ -146,5 +152,44 @@ class PhotoUploadService(
 		}
 
 		return albumPhoto
+	}
+
+	private fun pairingPhoto(userId: String, photo: PhotoV2, photoOwner: PhotoOwner) {
+		if (photo.pairPhotoId != null) {
+			log.debug { "[PhotoUpload Pairing] Photo is already paired: ${photo.id} - ${photo.pairPhotoId}" }
+			return
+		}
+
+		val nameWithoutExt = Path(photoOwner.name).nameWithoutExtension
+		val candidates = photoOwnerRepository.selectMyPhotoByName(userId, nameWithoutExt)
+
+		val candidates2 = when {
+			isVideo(photoOwner.name) -> candidates.filter { isImage(it.name) }
+			isImage(photoOwner.name) -> candidates.filter { isVideo(it.name) }
+			else -> run {
+				log.debug { "[PhotoUpload Pairing] Unsupported type of pair photo: ${photoOwner.name}" }
+				return
+			}
+		}
+
+		if (candidates2.size != 1) {
+			log.debug { "[PhotoUpload Pairing] Candidate size is not 1: $candidates2" }
+			return
+		}
+
+		val pairPhoto = photoRepository.findByIdOrNull(candidates2.first().photoId) ?: return
+		if (abs(photo.millis - pairPhoto.millis) > 3000) {
+			log.debug { "[PhotoUpload Pairing] Different date of pair photo: ${photo.date}, ${pairPhoto.date}" }
+			return
+		}
+
+		if (pairPhoto.pairPhotoId != null) {
+			log.debug { "[PhotoUpload Pairing] Candidate photo is already paired: ${pairPhoto.id} - ${pairPhoto.pairPhotoId}" }
+			return
+		}
+
+		log.debug { "[PhotoUpload Pairing] Successfully pairing photo: ${photo.id} - ${pairPhoto.id}" }
+		photoRepository.save(photo.copy(pairPhotoId = pairPhoto.id))
+		photoRepository.save(pairPhoto.copy(pairPhotoId = photo.id))
 	}
 }

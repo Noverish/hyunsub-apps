@@ -5,6 +5,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.RestApiPhotoPreview
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
+import kim.hyunsub.photo.repository.PhotoV2Repository
 import kim.hyunsub.photo.service.PhotoDeleteService
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v2/photos")
 class PhotoControllerV2(
+	private val photoRepository: PhotoV2Repository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val photoDeleteService: PhotoDeleteService,
 ) {
@@ -34,7 +36,7 @@ class PhotoControllerV2(
 		val total = photoOwnerRepository.countByUserId(userId)
 
 		val pageRequest = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
-		val data = photoOwnerRepository.selectMyPhotos(userId, pageRequest)
+		val data = photoRepository.selectMyPhotos(userId, pageRequest)
 			.map { it.toPreview() }
 
 		return RestApiPageResult(

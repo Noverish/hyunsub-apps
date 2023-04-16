@@ -47,6 +47,9 @@ data class PhotoV2(
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	val dateType: PhotoDateType,
+
+	@Column
+	val pairPhotoId: String? = null,
 ) {
 	companion object {
 		fun generateId(millis: Long, hash: String, i: Int = 0): String {
@@ -79,7 +82,7 @@ data class PhotoV2(
 		ext = ext,
 	)
 
-	private val millis: Long
+	val millis: Long
 		get() = restoreMillis(id)
 
 	val date: OffsetDateTime
