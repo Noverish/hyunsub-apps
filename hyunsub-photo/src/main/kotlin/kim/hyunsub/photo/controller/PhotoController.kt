@@ -1,92 +1,59 @@
 package kim.hyunsub.photo.controller
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.convertValue
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.util.convertToMap
-import kim.hyunsub.common.web.annotation.Authorized
-import kim.hyunsub.common.web.error.ErrorCode
-import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.photo.model.RestApiPhoto
-import kim.hyunsub.photo.repository.PhotoMetadataRepository
+import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.config.PhotoConstants
+import kim.hyunsub.photo.model.api.ApiPhotoPreview
+import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoRepository
-import kim.hyunsub.photo.repository.entity.Photo
-import kim.hyunsub.photo.repository.entity.PhotoMetadata
-import kim.hyunsub.photo.service.ApiModelConverter
-import org.springframework.data.repository.findByIdOrNull
+import kim.hyunsub.photo.service.PhotoDeleteService
+import mu.KotlinLogging
+import org.springframework.data.domain.PageRequest
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import java.time.LocalDateTime
 
 @RestController
-@RequestMapping("/api/v1/photos")
+@RequestMapping("/api/v2/photos")
 class PhotoController(
 	private val photoRepository: PhotoRepository,
-	private val photoMetadataRepository: PhotoMetadataRepository,
-	private val apiModelConverter: ApiModelConverter,
-	private val mapper: ObjectMapper,
-	private val apiCaller: ApiCaller,
+	private val photoOwnerRepository: PhotoOwnerRepository,
+	private val photoDeleteService: PhotoDeleteService,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
-	@GetMapping("/{photoId}")
-	fun detail(@PathVariable photoId: Int): RestApiPhoto {
-		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+	@GetMapping("")
+	fun list(
+		userAuth: UserAuth,
+		@RequestParam(required = false, defaultValue = "0") p: Int,
+	): RestApiPageResult<ApiPhotoPreview> {
+		val userId = userAuth.idNo
+		log.debug { "[List Photos] userId=$userId, p=$p" }
 
-		return apiModelConverter.convert(photo)
-	}
+		val total = photoOwnerRepository.countByUserId(userId)
 
-	@GetMapping("/{photoId}/exif")
-	fun exif(@PathVariable photoId: Int): String {
-		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		val pageRequest = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
+		val data = photoRepository.selectMyPhotos(userId, pageRequest)
+			.map { it.toPreview() }
 
-		val metadata = photoMetadataRepository.findByIdOrNull(photo.path)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-
-		return metadata.data
-	}
-
-	@PostMapping("/{photoId}/exif/reload")
-	fun reloadExif(@PathVariable photoId: Int): String {
-		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-
-		val exif = apiCaller.exif(photo.path)
-		val metadata = PhotoMetadata(
-			path = photo.path,
-			data = exif,
-			date = LocalDateTime.now(),
+		return RestApiPageResult(
+			total = total,
+			page = p,
+			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+			data = data,
 		)
-
-		photoMetadataRepository.saveAndFlush(metadata)
-
-		val newPhoto = photo.update(metadata)
-		photoRepository.saveAndFlush(newPhoto)
-
-		return metadata.data
 	}
 
-	@Authorized(["admin"])
-	@PutMapping("/{photoId}")
-	fun update(
-		@PathVariable photoId: Int,
-		@RequestBody body: Map<String, Any>,
-	): RestApiPhoto {
-		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-
-		val origin = mapper.convertToMap(photo)
-		val merged: Photo = mapper.convertValue(origin + body)
-		photoRepository.save(merged)
-
-		return apiModelConverter.convert(photo)
+	@DeleteMapping("/{photoId}")
+	fun delete(
+		userAuth: UserAuth,
+		@PathVariable photoId: String,
+	): ApiPhotoPreview {
+		val userId = userAuth.idNo
+		log.debug { "[Delete Photo] userId=$userId, photoId=$photoId" }
+		return photoDeleteService.delete(userId, photoId).toPreview()
 	}
 }

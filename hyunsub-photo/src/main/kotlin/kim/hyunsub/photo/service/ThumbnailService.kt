@@ -1,56 +1,62 @@
 package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
-import kim.hyunsub.common.util.hashWithMD5
-import kim.hyunsub.photo.config.PhotoConstants
+import kim.hyunsub.photo.repository.entity.Photo
+import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.isGif
 import kim.hyunsub.photo.util.isImage
 import kim.hyunsub.photo.util.isVideo
 import org.springframework.stereotype.Service
-import java.nio.file.Paths
 
 @Service
 class ThumbnailService(
-	private val fileUrlConverter: FileUrlConverter,
 	private val apiCaller: ApiCaller,
 ) {
-	fun getThumbnailPath(path: String) =
-		path.hashWithMD5()
-			.let { Paths.get(PhotoConstants.thumbnailDirPath, "$it.jpg").toString() }
+	fun generateThumbnail(photo: Photo) {
+		val original = PhotoPathUtils.original(photo)
+		val thumbnail = PhotoPathUtils.thumbnail(photo.id)
 
-	fun getThumbnailUrl(path: String?) =
-		path?.hashWithMD5()
-			?.let { Paths.get(PhotoConstants.thumbnailDirPath, "$it.jpg").toString() }
-			?.let { fileUrlConverter.pathToUrl(it) }
-			?: "/img/placeholder.jpg"
+		if (isVideo(photo.fileName)) {
+			val tmp = "$thumbnail.jpg"
 
-	fun generateThumbnail(path: String) =
-		generateThumbnail(path, path)
-
-	fun generateThumbnail(originPath: String, targetPath: String): String {
-		val thumbnailPath = getThumbnailPath(targetPath)
-
-		if (isImage(originPath)) {
-			apiCaller.imageConvert(
-				ApiPhotoConvertParams(
-					input = originPath,
-					output = thumbnailPath,
-					resize = "512x512>",
-					quality = 60,
-				)
-			)
-		} else if (isVideo(originPath)) {
 			apiCaller.videoThumbnail(
 				VideoThumbnailParams(
-					input = originPath,
-					output = thumbnailPath,
+					input = original,
+					output = tmp,
 					time = 0.0,
 				)
 			)
+
+			apiCaller.imageConvert(
+				ApiPhotoConvertParams(
+					input = tmp,
+					output = thumbnail,
+					resize = "256x256^",
+					quality = 60,
+					gravity = "center",
+					extent = "256x256"
+				)
+			)
+
+			apiCaller.remove(tmp)
+
+			return
 		}
 
-		return thumbnailPath
+		if (isImage(photo.fileName) || isGif(photo.fileName)) {
+			apiCaller.imageConvert(
+				ApiPhotoConvertParams(
+					input = original,
+					output = thumbnail,
+					resize = "256x256^",
+					quality = 60,
+					gravity = "center",
+					extent = "256x256"
+				)
+			)
+			return
+		}
 	}
 }

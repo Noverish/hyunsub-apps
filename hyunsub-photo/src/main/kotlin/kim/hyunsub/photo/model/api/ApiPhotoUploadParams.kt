@@ -1,6 +1,6 @@
-package kim.hyunsub.photo.model.dto
+package kim.hyunsub.photo.model.api
 
-data class PhotoUploadParams(
+data class ApiPhotoUploadParams(
 	val nonce: String,
 	val name: String,
 	val millis: Long,

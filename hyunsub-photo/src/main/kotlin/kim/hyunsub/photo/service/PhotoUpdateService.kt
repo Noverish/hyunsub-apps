@@ -7,11 +7,11 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.PhotoDateType
 import kim.hyunsub.photo.model.api.ApiRescanDateResult
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumV2Repository
-import kim.hyunsub.photo.repository.PhotoMetadataV2Repository
+import kim.hyunsub.photo.repository.AlbumRepository
+import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoV2Repository
-import kim.hyunsub.photo.repository.entity.PhotoV2
+import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathUtils
@@ -23,17 +23,17 @@ import javax.transaction.Transactional
 @Service
 class PhotoUpdateService(
 	private val apiCaller: ApiCaller,
-	private val photoRepository: PhotoV2Repository,
+	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val albumRepository: AlbumV2Repository,
-	private val photoMetadataRepository: PhotoMetadataV2Repository,
+	private val albumRepository: AlbumRepository,
+	private val photoMetadataRepository: PhotoMetadataRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 	private val mapper = jacksonObjectMapper()
 
 	@Transactional
-	fun updateId(photo: PhotoV2, newId: String) {
+	fun updateId(photo: Photo, newId: String) {
 		val oldId = photo.id
 		val newPhoto = photo.copy(id = newId)
 

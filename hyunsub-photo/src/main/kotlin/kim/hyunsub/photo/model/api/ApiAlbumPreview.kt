@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.model.api
 
-data class RestApiAlbumPreview(
+data class ApiAlbumPreview(
 	val id: String,
 	val name: String,
 	val thumbnail: String,

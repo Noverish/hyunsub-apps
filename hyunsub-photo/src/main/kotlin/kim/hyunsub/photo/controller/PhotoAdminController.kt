@@ -10,8 +10,8 @@ import kim.hyunsub.photo.model.api.ApiRescanPhotoDateResult
 import kim.hyunsub.photo.model.api.ApiUpdateAlbumOffsetParams
 import kim.hyunsub.photo.model.api.ApiUpdatePhotoOffsetParams
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumV2Repository
-import kim.hyunsub.photo.repository.PhotoV2Repository
+import kim.hyunsub.photo.repository.AlbumRepository
+import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.service.PhotoUpdateService
 import mu.KotlinLogging
@@ -25,10 +25,10 @@ import java.time.ZoneOffset
 @RestController
 @RequestMapping("/api/v1/admin")
 class PhotoAdminController(
-	private val photoRepository: PhotoV2Repository,
+	private val photoRepository: PhotoRepository,
 	private val photoUpdateService: PhotoUpdateService,
 	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val albumRepository: AlbumV2Repository,
+	private val albumRepository: AlbumRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 

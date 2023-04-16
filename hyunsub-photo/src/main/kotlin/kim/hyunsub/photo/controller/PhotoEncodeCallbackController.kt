@@ -1,7 +1,7 @@
 package kim.hyunsub.photo.controller
 
 import kim.hyunsub.common.web.model.SimpleResponse
-import kim.hyunsub.photo.repository.PhotoV2Repository
+import kim.hyunsub.photo.repository.PhotoRepository
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/encode/callback")
 class PhotoEncodeCallbackController(
-	private val photoRepository: PhotoV2Repository,
+	private val photoRepository: PhotoRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 

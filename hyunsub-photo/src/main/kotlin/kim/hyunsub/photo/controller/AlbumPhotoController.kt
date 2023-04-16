@@ -5,12 +5,12 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.config.PhotoConstants
-import kim.hyunsub.photo.model.api.RestApiPhotoMetadata
-import kim.hyunsub.photo.model.api.RestApiPhotoPreview
-import kim.hyunsub.photo.model.dto.AlbumPhotoRegisterParams
+import kim.hyunsub.photo.model.api.ApiAlbumPhotoRegisterParams
+import kim.hyunsub.photo.model.api.ApiPhotoMetadata
+import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumV2Repository
+import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v2/albums/{albumId}/photos")
 class AlbumPhotoController(
-	private val albumRepository: AlbumV2Repository,
+	private val albumRepository: AlbumRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
 ) {
@@ -40,7 +40,7 @@ class AlbumPhotoController(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
 		@RequestParam(defaultValue = "0") p: Int,
-	): RestApiPageResult<RestApiPhotoPreview> {
+	): RestApiPageResult<ApiPhotoPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Album Photos] userId=$userId, albumId=$albumId" }
 
@@ -64,7 +64,7 @@ class AlbumPhotoController(
 	fun metadataList(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-	): List<RestApiPhotoMetadata> {
+	): List<ApiPhotoMetadata> {
 		val userId = userAuth.idNo
 		log.debug { "[List Album Photos Metadata] userId=$userId, albumId=$albumId" }
 
@@ -78,7 +78,7 @@ class AlbumPhotoController(
 	fun register(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-		@RequestBody params: AlbumPhotoRegisterParams,
+		@RequestBody params: ApiAlbumPhotoRegisterParams,
 	): List<AlbumPhoto> {
 		val userId = userAuth.idNo
 		log.debug { "[Register Album Photos] userId=$userId, albumId=$albumId, params=$params" }

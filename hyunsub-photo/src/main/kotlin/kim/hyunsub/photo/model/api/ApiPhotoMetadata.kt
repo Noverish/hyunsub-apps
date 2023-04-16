@@ -2,11 +2,11 @@ package kim.hyunsub.photo.model.api
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import kim.hyunsub.photo.model.PhotoDateType
-import kim.hyunsub.photo.repository.entity.PhotoV2
+import kim.hyunsub.photo.repository.entity.Photo
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 
-data class RestApiPhotoMetadata(
+data class ApiPhotoMetadata(
 	val photoId: String,
 	@JsonIgnore
 	val offset: Int,
@@ -25,5 +25,5 @@ data class RestApiPhotoMetadata(
 	val offsetTimeDigitized: String?,
 ) {
 	val date: OffsetDateTime
-		get() = PhotoV2.parseDate(photoId, offset)
+		get() = Photo.parseDate(photoId, offset)
 }

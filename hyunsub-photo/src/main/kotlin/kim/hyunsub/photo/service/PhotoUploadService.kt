@@ -4,18 +4,18 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
-import kim.hyunsub.photo.model.dto.PhotoUploadParams
+import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumV2Repository
-import kim.hyunsub.photo.repository.PhotoMetadataV2Repository
+import kim.hyunsub.photo.repository.AlbumRepository
+import kim.hyunsub.photo.repository.PhotoMetadataRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoV2Repository
+import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
-import kim.hyunsub.photo.repository.entity.PhotoMetadataV2
+import kim.hyunsub.photo.repository.entity.Photo
+import kim.hyunsub.photo.repository.entity.PhotoMetadata
 import kim.hyunsub.photo.repository.entity.PhotoOwner
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
-import kim.hyunsub.photo.repository.entity.PhotoV2
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathUtils
@@ -36,17 +36,17 @@ import kotlin.math.abs
 class PhotoUploadService(
 	private val apiCaller: ApiCaller,
 	private val encodeApiCaller: PhotoEncodeApiCaller,
-	private val photoRepository: PhotoV2Repository,
-	private val thumbnailServiceV2: ThumbnailServiceV2,
+	private val photoRepository: PhotoRepository,
+	private val thumbnailService: ThumbnailService,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val albumRepository: AlbumV2Repository,
-	private val photoMetadataRepository: PhotoMetadataV2Repository,
+	private val albumRepository: AlbumRepository,
+	private val photoMetadataRepository: PhotoMetadataRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 	private val mapper = jacksonObjectMapper()
 
-	fun upload(userId: String, params: PhotoUploadParams): PhotoV2 {
+	fun upload(userId: String, params: ApiPhotoUploadParams): Photo {
 		val photo = getOrCreatePhoto(params)
 
 		val photoOwner = getOrCreatePhotoOwner(userId, photo, params)
@@ -60,7 +60,7 @@ class PhotoUploadService(
 		return photo
 	}
 
-	private fun getOrCreatePhoto(params: PhotoUploadParams): PhotoV2 {
+	private fun getOrCreatePhoto(params: ApiPhotoUploadParams): Photo {
 		val tmpPath = PhotoPathUtils.tmp(params.nonce)
 
 		val hash = apiCaller.hash(tmpPath).result.decodeHex().toBase64()
@@ -78,7 +78,7 @@ class PhotoUploadService(
 		val dateType = parseResult.type
 		val id = photoRepository.generateId(date, hash)
 
-		val photo = PhotoV2(
+		val photo = Photo(
 			id = id,
 			hash = hash,
 			width = exif["ImageWidth"].asInt(),
@@ -94,7 +94,7 @@ class PhotoUploadService(
 		apiCaller.rename(tmpPath, originalPath)
 
 		// generate thumbnail
-		thumbnailServiceV2.generateThumbnail(photo)
+		thumbnailService.generateThumbnail(photo)
 		if (photo.isVideo) {
 			val videoPath = PhotoPathUtils.video(id)
 			encodeApiCaller.encode(
@@ -108,12 +108,12 @@ class PhotoUploadService(
 		photoRepository.save(photo)
 
 		// save metadata
-		photoMetadataRepository.save(PhotoMetadataV2.from(id, exif))
+		photoMetadataRepository.save(PhotoMetadata.from(id, exif))
 
 		return photo
 	}
 
-	private fun getOrCreatePhotoOwner(userId: String, photo: PhotoV2, params: PhotoUploadParams): PhotoOwner {
+	private fun getOrCreatePhotoOwner(userId: String, photo: Photo, params: ApiPhotoUploadParams): PhotoOwner {
 		val exist = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photo.id))
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist photo owner: $exist" }
@@ -132,7 +132,7 @@ class PhotoUploadService(
 		return photoOwner
 	}
 
-	private fun getOrCreateAlbumPhoto(userId: String, photo: PhotoV2, albumId: String): AlbumPhoto {
+	private fun getOrCreateAlbumPhoto(userId: String, photo: Photo, albumId: String): AlbumPhoto {
 		val exist = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photo.id))
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist album photo: $exist" }
@@ -154,7 +154,7 @@ class PhotoUploadService(
 		return albumPhoto
 	}
 
-	private fun pairingPhoto(userId: String, photo: PhotoV2, photoOwner: PhotoOwner) {
+	private fun pairingPhoto(userId: String, photo: Photo, photoOwner: PhotoOwner) {
 		if (photo.pairPhotoId != null) {
 			log.debug { "[PhotoUpload Pairing] Photo is already paired: ${photo.id} - ${photo.pairPhotoId}" }
 			return

@@ -2,8 +2,8 @@ package kim.hyunsub.photo.model.api
 
 import kim.hyunsub.common.model.RestApiPageResult
 
-data class RestApiAlbumV2(
+data class ApiAlbum(
 	val id: String,
 	val name: String,
-	val photos: RestApiPageResult<RestApiPhotoPreview>,
+	val photos: RestApiPageResult<ApiPhotoPreview>,
 )

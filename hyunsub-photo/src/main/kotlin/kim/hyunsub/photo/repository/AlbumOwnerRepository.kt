@@ -4,6 +4,4 @@ import kim.hyunsub.photo.repository.entity.AlbumOwner
 import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import org.springframework.data.jpa.repository.JpaRepository
 
-interface AlbumOwnerRepository : JpaRepository<AlbumOwner, AlbumOwnerId> {
-	fun findByUserId(userId: String): List<AlbumOwner>
-}
+interface AlbumOwnerRepository : JpaRepository<AlbumOwner, AlbumOwnerId>

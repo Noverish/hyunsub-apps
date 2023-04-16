@@ -5,9 +5,9 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoV2Repository
+import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
-import kim.hyunsub.photo.repository.entity.PhotoV2
 import kim.hyunsub.photo.util.PhotoPathUtils
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -16,13 +16,13 @@ import org.springframework.stereotype.Service
 @Service
 class PhotoDeleteService(
 	private val apiCaller: ApiCaller,
-	private val photoRepository: PhotoV2Repository,
+	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
-	fun delete(userId: String, photoId: String): PhotoV2 {
+	fun delete(userId: String, photoId: String): Photo {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
 			?: kotlin.run {
 				log.debug { "[Delete Photo] No such photo owner: $userId, $photoId" }
@@ -52,7 +52,7 @@ class PhotoDeleteService(
 		return photo
 	}
 
-	private fun deleteFile(photo: PhotoV2) {
+	private fun deleteFile(photo: Photo) {
 		val photoId = photo.id
 		val originalPath = PhotoPathUtils.original(photo)
 		val thumbnailPath = PhotoPathUtils.thumbnail(photoId)

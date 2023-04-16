@@ -8,10 +8,10 @@ class PhotoV2Test : FreeSpec({
 		val millis = 1677996992451
 		val hash = "nPc4BlitYUzWqSO_uwWnHAbBWphC-Pv1FN2Heetzqnc="
 
-		val id = PhotoV2.generateId(millis, hash)
+		val id = Photo.generateId(millis, hash)
 		id shouldBe "186b06a27c3nPc4B"
 
-		val restored = PhotoV2.restoreMillis(id)
+		val restored = Photo.restoreMillis(id)
 		restored shouldBe millis
 	}
 })
