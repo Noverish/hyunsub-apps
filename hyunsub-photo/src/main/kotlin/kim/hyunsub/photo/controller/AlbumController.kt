@@ -14,6 +14,7 @@ import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
+import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -34,12 +36,24 @@ class AlbumController(
 	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
-	fun list(userAuth: UserAuth): List<ApiAlbumPreview> {
+	fun list(
+		userAuth: UserAuth,
+		@RequestParam(defaultValue = "0") p: Int,
+	): RestApiPageResult<ApiAlbumPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Albums] userId=$userId" }
 
-		return albumRepository.findByUserId(userId)
-			.map { it.toPreview() }
+		val total = albumOwnerRepository.countByUserId(userId)
+
+		val page = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
+		val data = albumRepository.findByUserId(userId, page).map { it.toPreview() }
+
+		return RestApiPageResult(
+			total = total,
+			page = p,
+			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+			data = data,
+		)
 	}
 
 	@PostMapping("")

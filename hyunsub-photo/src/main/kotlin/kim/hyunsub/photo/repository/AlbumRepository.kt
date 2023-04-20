@@ -2,6 +2,7 @@ package kim.hyunsub.photo.repository
 
 import kim.hyunsub.common.random.generateRandomString
 import kim.hyunsub.photo.repository.entity.Album
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.findByIdOrNull
@@ -15,7 +16,7 @@ interface AlbumRepository : JpaRepository<Album, String> {
 			ORDER BY b.regDt DESC
 		"""
 	)
-	fun findByUserId(userId: String): List<Album>
+	fun findByUserId(userId: String, page: Pageable = Pageable.unpaged()): List<Album>
 
 	@Query(
 		"""
