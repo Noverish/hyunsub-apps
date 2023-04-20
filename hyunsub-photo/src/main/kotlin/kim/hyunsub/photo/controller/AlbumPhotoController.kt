@@ -83,15 +83,9 @@ class AlbumPhotoController(
 		val userId = userAuth.idNo
 		log.debug { "[Register Album Photos] userId=$userId, albumId=$albumId, params=$params" }
 
-		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
+		val album = albumRepository.findByAlbumIdAndUserId(albumId, userId)
 			?: run {
 				log.debug { "[Register Album Photos] No such album: userId=$userId, albumId=$albumId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
-
-		val album = albumRepository.findByIdOrNull(albumId)
-			?: run {
-				log.debug { "[Register Album Photos] No such album: albumId=$albumId" }
 				throw ErrorCodeException(ErrorCode.NOT_FOUND)
 			}
 

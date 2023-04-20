@@ -17,6 +17,15 @@ interface AlbumRepository : JpaRepository<Album, String> {
 	)
 	fun findByUserId(userId: String): List<Album>
 
+	@Query(
+		"""
+			SELECT b FROM AlbumOwner a
+			INNER JOIN Album b ON b.id = a.albumId
+			WHERE a.albumId = :albumId AND a.userId = :userId
+		"""
+	)
+	fun findByAlbumIdAndUserId(albumId: String, userId: String): Album?
+
 	fun findByThumbnailPhotoId(photoId: String): List<Album>
 }
 

@@ -31,4 +31,6 @@ enum class ErrorCode(
 
 	NO_SUCH_FILE(3001, "No Such File"),
 	NO_SUCH_VIDEO_ENTRY(3002, "No Such Video Entry"),
+
+	NO_SUCH_PHOTO(4001, "No Such Photo"),
 }

@@ -31,6 +31,8 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 	)
 	fun findPhotoDetailByAlbumId(albumId: String): List<ApiPhotoMetadata>
 
+	fun findByAlbumIdAndPhotoId(albumId: String, photoId: String): List<AlbumPhoto>
+
 	fun findByUserIdAndPhotoId(userId: String, photoId: String): List<AlbumPhoto>
 
 	fun countByAlbumId(albumId: String): Int

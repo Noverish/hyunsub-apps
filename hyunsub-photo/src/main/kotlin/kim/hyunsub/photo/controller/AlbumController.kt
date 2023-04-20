@@ -8,16 +8,15 @@ import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiAlbum
 import kim.hyunsub.photo.model.api.ApiAlbumCreateParams
 import kim.hyunsub.photo.model.api.ApiAlbumPreview
+import kim.hyunsub.photo.model.api.ApiAlbumThumbnailParams
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
-import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -76,15 +75,9 @@ class AlbumController(
 		val userId = userAuth.idNo
 		log.debug { "[Detail Album] userId=$userId, albumId=$albumId" }
 
-		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
+		val album = albumRepository.findByAlbumIdAndUserId(albumId, userId)
 			?: run {
 				log.debug { "[Detail Album] No such album: userId=$userId, albumId=$albumId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
-
-		val album = albumRepository.findByIdOrNull(albumId)
-			?: run {
-				log.debug { "[Detail Album] No such album: albumId=$albumId" }
 				throw ErrorCodeException(ErrorCode.NOT_FOUND)
 			}
 
@@ -103,5 +96,34 @@ class AlbumController(
 				data = photos,
 			),
 		)
+	}
+
+	@PostMapping("/{albumId}/thumbnail")
+	fun registerThumbnail(
+		userAuth: UserAuth,
+		@PathVariable albumId: String,
+		@RequestBody params: ApiAlbumThumbnailParams,
+	) : ApiAlbumPreview {
+		val userId = userAuth.idNo
+		log.debug { "[Album Thumbnail] userId=$userId, albumId=$albumId, params=$params" }
+
+		val album = albumRepository.findByAlbumIdAndUserId(albumId, userId)
+			?: run {
+				log.debug { "[Album Thumbnail] No such album: userId=$userId, albumId=$albumId" }
+				throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			}
+
+		val photoId = params.photoId
+		albumPhotoRepository.findByAlbumIdAndPhotoId(albumId, photoId).firstOrNull()
+			?: run {
+				log.debug { "[Album Thumbnail] No such photo: albumId=$albumId, photoId=$photoId" }
+				throw ErrorCodeException(ErrorCode.NO_SUCH_PHOTO)
+			}
+
+		val newAlbum = album.copy(thumbnailPhotoId = photoId)
+
+		albumRepository.save(newAlbum)
+
+		return newAlbum.toPreview()
 	}
 }
