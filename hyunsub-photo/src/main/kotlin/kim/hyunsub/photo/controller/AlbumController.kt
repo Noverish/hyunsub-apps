@@ -14,10 +14,10 @@ import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
-import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -110,6 +110,25 @@ class AlbumController(
 				data = photos,
 			),
 		)
+	}
+
+	@DeleteMapping("/{albumId}")
+	fun delete(
+		userAuth: UserAuth,
+		@PathVariable albumId: String,
+	): ApiAlbumPreview {
+		val userId = userAuth.idNo
+		log.debug { "[Delete Album] userId=$userId, albumId=$albumId" }
+
+		val album = albumRepository.findByAlbumIdAndUserId(albumId, userId)
+			?: run {
+				log.debug { "[Detail Album] No such album: userId=$userId, albumId=$albumId" }
+				throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			}
+
+		albumRepository.deleteById(albumId)
+
+		return album.toPreview()
 	}
 
 	@PostMapping("/{albumId}/thumbnail")
