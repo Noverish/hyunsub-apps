@@ -39,7 +39,8 @@ class AlbumPhotoController(
 	fun list(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-		@RequestParam(defaultValue = "0") p: Int,
+		@RequestParam photoId: String?,
+		@RequestParam p: Int?,
 	): RestApiPageResult<ApiPhotoPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Album Photos] userId=$userId, albumId=$albumId" }
@@ -49,12 +50,17 @@ class AlbumPhotoController(
 
 		val total = albumPhotoRepository.countByAlbumId(albumId)
 
-		val page = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
-		val data = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toPreview() }
+		val page = when {
+			photoId != null -> albumPhotoRepository.indexOfPhoto(albumId, photoId) / PhotoConstants.PHOTO_PAGE_SIZE
+			else -> p ?: 0
+		}
+
+		val pageRequest = PageRequest.of(page, PhotoConstants.PHOTO_PAGE_SIZE)
+		val data = albumPhotoRepository.findByAlbumId(albumId, pageRequest).map { it.toPreview() }
 
 		return RestApiPageResult(
 			total = total,
-			page = p,
+			page = page,
 			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
 			data = data,
 		)

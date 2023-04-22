@@ -37,6 +37,14 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 
 	fun countByAlbumId(albumId: String): Int
 
+	@Query(
+		"""
+			SELECT COUNT(a) FROM AlbumPhoto a
+			WHERE a.albumId = :albumId AND a.photoId < :photoId
+		"""
+	)
+	fun indexOfPhoto(albumId: String, photoId: String): Int
+
 	@Modifying
 	@Query("UPDATE AlbumPhoto SET photoId = :to WHERE photoId = :from")
 	fun updatePhotoId(from: String, to: String): Int
