@@ -11,6 +11,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 import kotlin.math.roundToInt
 
 object PhotoDateParser {
@@ -25,6 +26,8 @@ object PhotoDateParser {
 	private val ldtFormat5 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SS")
 	private val nameFormatMap = mapOf(
 		"20\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}-\\d{2}" to "yyyy-MM-dd-HH-mm-ss",
+		"20\\d{2}-\\d{2}-\\d{2} \\d{2}.\\d{2}.\\d{2}" to "yyyy-MM-dd HH.mm.ss",
+		"20\\d{2}-\\d{2}-\\d{2}-\\d{6}" to "yyyy-MM-dd-HHmmss",
 		"20\\d{6}_\\d{6}_\\d{3}" to "yyyyMMdd_HHmmss_SSS",
 		"20\\d{6}_\\d{4}_\\d{2}_\\d{3}" to "yyyyMMdd_HHmm_ss_SSS",
 		"20\\d{6}_\\d{9}" to "yyyyMMdd_HHmmssSSS",
@@ -228,6 +231,10 @@ object PhotoDateParser {
 
 			val diffSeconds = ChronoUnit.SECONDS.between(gpsDateTimeLdt, dateTimeOriginal)
 			val diffHour = (diffSeconds.toDouble() / 3600).roundToInt()
+			if (abs(diffHour) > 18) {
+				return null
+			}
+
 			val data = dateTimeOriginal.atOffset(ZoneOffset.ofHours(diffHour))
 
 			return ParseResult(
