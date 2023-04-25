@@ -67,7 +67,7 @@ class VideoSubtitleController(
 
 		if (file != null) {
 			apiCaller.upload(subtitlePath, file.bytes, override)
-		} else if (path != null) {
+		} else if (path != null && path != subtitlePath) {
 			apiCaller.rename(path, subtitlePath, override)
 		}
 
