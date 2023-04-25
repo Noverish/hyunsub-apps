@@ -8,6 +8,7 @@ import org.springframework.http.HttpMethod
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.StopWatch
 import org.springframework.web.client.HttpStatusCodeException
+import org.springframework.web.client.ResourceAccessException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.util.UriComponentsBuilder
 
@@ -60,6 +61,10 @@ class HttpClient(private val restTemplate: RestTemplate) {
 		} catch (e: HttpStatusCodeException) {
 			stopWatch.stop()
 			log.error { "[HTTP] $method $newUrl $body -> ${e.statusCode.value()} ${stopWatch.totalTimeMillis}ms ${e.responseBodyAsString}" }
+			throw e
+		} catch (e: ResourceAccessException) {
+			stopWatch.stop()
+			log.error { "[HTTP] $method $newUrl $body -> ${stopWatch.totalTimeMillis}ms" }
 			throw e
 		}
 	}
