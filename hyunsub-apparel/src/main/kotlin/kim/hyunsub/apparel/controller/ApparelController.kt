@@ -7,7 +7,6 @@ import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.apparel.service.ApiModelConverter
 import kim.hyunsub.apparel.service.ApparelService
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -33,12 +32,10 @@ class ApparelController(
 	private val apparelImageRepository: ApparelImageRepository,
 	private val apiModelConverter: ApiModelConverter,
 ) {
-	companion object : Log
-
 	@GetMapping("")
 	fun list(
 		userAuth: UserAuth,
-		@RequestParam p: Int,
+		@RequestParam(defaultValue = "0") p: Int,
 	): RestApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
 

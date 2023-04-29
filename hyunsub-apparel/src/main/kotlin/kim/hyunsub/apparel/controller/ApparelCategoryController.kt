@@ -31,7 +31,7 @@ class ApparelCategoryController(
 	@GetMapping("/{category}/apparels")
 	fun categoryApparels(
 		userAuth: UserAuth,
-		@RequestParam p: Int,
+		@RequestParam(defaultValue = "0") p: Int,
 		@PathVariable category: String,
 	): RestApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo

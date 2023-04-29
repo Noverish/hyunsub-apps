@@ -31,7 +31,7 @@ class ApparelBrandController(
 	@GetMapping("/{brand}/apparels")
 	fun brandApparels(
 		userAuth: UserAuth,
-		@RequestParam p: Int,
+		@RequestParam(defaultValue = "0") p: Int,
 		@PathVariable brand: String,
 	): RestApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
