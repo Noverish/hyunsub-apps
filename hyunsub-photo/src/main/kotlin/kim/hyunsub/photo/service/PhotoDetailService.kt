@@ -4,8 +4,12 @@ import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.api.ApiPhoto
+import kim.hyunsub.photo.repository.AlbumOwnerRepository
+import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.entity.AlbumOwnerId
+import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -15,13 +19,15 @@ import org.springframework.stereotype.Service
 class PhotoDetailService(
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
+	private val albumOwnerRepository: AlbumOwnerRepository,
+	private val albumPhotoRepository: AlbumPhotoRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
 	fun detail(userId: String, photoId: String): ApiPhoto {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
 			?: run {
-				log.debug { "[Detail Photo] No such photo owner: $userId, $photoId" }
+				log.debug { "[Detail Photo] No such photo owner: userId=$userId, photoId=$photoId" }
 				throw ErrorCodeException(ErrorCode.NOT_FOUND)
 			}
 
@@ -40,5 +46,21 @@ class PhotoDetailService(
 			fileName = photoOwner.name,
 			dateType = photo.dateType,
 		)
+	}
+
+	fun detailInAlbum(userId: String, albumId: String, photoId: String): ApiPhoto {
+		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
+			?: run {
+				log.debug { "[Detail Photo] No such album owner: userId=$userId, albumId=$albumId" }
+				throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			}
+
+		val albumPhoto = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photoId))
+			?: run {
+				log.debug { "[Detail Photo] No such album photo: photoId=$photoId, albumId=$albumId" }
+				throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			}
+
+		return detail(albumPhoto.userId, photoId)
 	}
 }
