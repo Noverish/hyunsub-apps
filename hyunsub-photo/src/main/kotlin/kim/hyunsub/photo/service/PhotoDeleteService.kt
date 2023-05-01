@@ -24,13 +24,13 @@ class PhotoDeleteService(
 
 	fun delete(userId: String, photoId: String): Photo {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
-			?: kotlin.run {
+			?: run {
 				log.debug { "[Delete Photo] No such photo owner: $userId, $photoId" }
 				throw ErrorCodeException(ErrorCode.NOT_FOUND)
 			}
 
 		val photo = photoRepository.findByIdOrNull(photoId)
-			?: kotlin.run {
+			?: run {
 				log.error { "[Delete Photo] No such photo: $photoId" }
 				throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
 			}
