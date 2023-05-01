@@ -172,15 +172,23 @@ class VideoRenameService(
 	}
 
 	fun replace(str: String, params: VideoRenameParams): String {
-		val parent = Path(str).parent.toString()
-		val name = Path(str).name
+		if (str.startsWith("/")) {
+			val parent = Path(str).parent.toString()
+			val name = Path(str).name
 
-		val newName = if (params.isRegex) {
-			name.replace(Regex(params.from), params.to)
+			val newName = if (params.isRegex) {
+				name.replace(Regex(params.from), params.to)
+			} else {
+				name.replace(params.from, params.to)
+			}
+
+			return Path(parent, newName).toString()
 		} else {
-			name.replace(params.from, params.to)
+			return if (params.isRegex) {
+				str.replace(Regex(params.from), params.to)
+			} else {
+				str.replace(params.from, params.to)
+			}
 		}
-
-		return Path(parent, newName).toString()
 	}
 }
