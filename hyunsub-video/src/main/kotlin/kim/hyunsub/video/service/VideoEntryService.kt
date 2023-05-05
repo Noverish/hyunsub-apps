@@ -1,5 +1,8 @@
 package kim.hyunsub.video.service
 
+import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -17,7 +20,10 @@ import kim.hyunsub.video.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import java.net.URL
 import java.time.LocalDateTime
+import kotlin.io.path.Path
+import kotlin.io.path.extension
 
 @Service
 class VideoEntryService(
@@ -28,6 +34,8 @@ class VideoEntryService(
 	private val videoCategoryRepository: VideoCategoryRepository,
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
+	private val apiCaller: ApiCaller,
+	private val fileUrlConverter: FileUrlConverter,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -39,7 +47,7 @@ class VideoEntryService(
 	fun load(entry: VideoEntry, videoId: String?, userId: String): RestApiVideoEntryDetail {
 		val videos = videoRepository.findByVideoEntryId(entry.id)
 		if (videos.isEmpty()) {
-			throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+			throw ErrorCodeException(ErrorCode.EMPTY_VIDEO_ENTRY)
 		}
 
 		val video = chooseVideo(videos, videoId)
@@ -88,10 +96,37 @@ class VideoEntryService(
 				?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such videoGroupId")
 		}
 
+		val folderPath = "/TV_Programs/${params.name}"
+
+		apiCaller.mkdir(folderPath)
+
+		val thumbnail = params.thumbnailUrl?.let {
+			val thumbnailExt = Path(URL(it).path).extension.ifEmpty { "jpg" }
+			val thumbnailOriginalPath = "$folderPath/thumbnail.original.$thumbnailExt"
+
+			val nonce = apiCaller.uploadByUrl(it).nonce
+			val noncePath = fileUrlConverter.getNoncePath(nonce)
+
+			apiCaller.rename(noncePath, thumbnailOriginalPath)
+
+			val thumbnailPath = "$folderPath/thumbnail.jpg"
+
+			apiCaller.imageConvert(
+				ApiPhotoConvertParams(
+					input = thumbnailOriginalPath,
+					output = thumbnailPath,
+					resize = "512x512>",
+					quality = 60,
+				)
+			)
+
+			thumbnailPath
+		}
+
 		val entry = VideoEntry(
 			id = videoEntryRepository.generateId(),
 			name = params.name,
-			thumbnail = params.thumbnail,
+			thumbnail = thumbnail,
 			category = params.category,
 			regDt = LocalDateTime.now(),
 			videoGroupId = params.videoGroupId,
