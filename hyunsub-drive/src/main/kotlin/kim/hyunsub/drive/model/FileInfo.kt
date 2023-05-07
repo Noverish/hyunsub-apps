@@ -10,12 +10,12 @@ data class FileInfo(
 	val name: String,
 	val size: String,
 	val date: LocalDateTime,
-	val type: FileType,
+	val isDir: Boolean,
 ) {
 	constructor(stat: FileStat) : this(
 		name = Path(stat.path).name,
 		size = if (stat.isDir == true) "" else getHumanReadableSize(stat.size),
 		date = stat.mDate,
-		type = if (stat.isDir == true) FileType.FOLDER else FileType.fromPath(stat.path)
+		isDir = stat.isDir == true,
 	)
 }

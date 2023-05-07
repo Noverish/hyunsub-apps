@@ -7,7 +7,6 @@ import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.drive.model.DriveRemoveBulkParams
 import kim.hyunsub.drive.model.FileInfo
-import kim.hyunsub.drive.model.FileType
 import kim.hyunsub.drive.model.PathParam
 import kim.hyunsub.drive.service.DrivePathService
 import org.springframework.web.bind.annotation.PostMapping
@@ -29,7 +28,6 @@ class DriveController(
 		val path = drivePathService.getPath(userAuth, params.path)
 		return apiCaller.readdirDetail(path)
 			.map { FileInfo(it) }
-			.sortedBy { if (it.type == FileType.FOLDER) 0 else 1 }
 	}
 
 	@PostMapping("/rename-bulk")
