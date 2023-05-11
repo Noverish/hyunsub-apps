@@ -43,7 +43,7 @@ class VideoEntryController(
 		@RequestParam seed: Int?,
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
-		@RequestParam(required = false, defaultValue = "random") sort: VideoSort,
+		@RequestParam(required = false, defaultValue = "RANDOM") sort: VideoSort,
 	): RestApiPageResult<RestApiVideoEntry> {
 		val availableCategories = videoCategoryService.getAvailableCategories(user)
 		if (availableCategories.none { it.name == category }) {
