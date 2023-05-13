@@ -14,6 +14,8 @@ import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.api.model.VideoThumbnailParams
+import kim.hyunsub.common.api.model.YoutubeDownloadParams
+import kim.hyunsub.common.api.model.YoutubeDownloadResult
 import kim.hyunsub.common.api.model.YoutubeFormat
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
@@ -114,7 +116,10 @@ class ApiCaller(
 		_post("/api/video/ffmpeg", params)
 
 	fun youtubeFormats(url: String): List<YoutubeFormat> =
-		_get("/api/video/youtube-formats", mapOf("url" to url))
+		_get("/api/video/youtube/formats", mapOf("url" to url))
+
+	fun youtubeDownload(params: YoutubeDownloadParams): YoutubeDownloadResult =
+		_post("/api/video/youtube/download", params)
 
 	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
 		request(urlOrPath, HttpMethod.GET, queryParams, null)
