@@ -9,7 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 
 interface AlbumRepository : JpaRepository<Album, String> {
 	@Query(
-        """
+		"""
 			SELECT b FROM AlbumOwner a
 			INNER JOIN Album b ON b.id = a.albumId
 			WHERE a.userId = :userId

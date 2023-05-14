@@ -76,7 +76,7 @@ class AlbumPhotoController(
 		@PathVariable photoId: String,
 	): ApiPhoto {
 		val userId = userAuth.idNo
-		log.debug { "[Detail Photo] userId=$userId, albumId=${albumId} photoId=$photoId" }
+		log.debug { "[Detail Photo] userId=$userId, albumId=$albumId photoId=$photoId" }
 		return photoDetailService.detailInAlbum(userId, albumId, photoId)
 	}
 

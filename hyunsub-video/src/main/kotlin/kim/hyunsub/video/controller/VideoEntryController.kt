@@ -9,6 +9,7 @@ import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.model.api.RestApiVideoEntry
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
 import kim.hyunsub.video.model.dto.VideoEntryCreateParams
+import kim.hyunsub.video.model.dto.VideoEntryDeleteResult
 import kim.hyunsub.video.model.dto.VideoEntryUpdateParams
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.service.VideoCategoryService
@@ -104,7 +105,7 @@ class VideoEntryController(
 
 	@Authorized(["admin"])
 	@DeleteMapping("/{entryId}")
-	fun delete(@PathVariable entryId: String): RestApiVideoEntry {
-		return videoEntryService.delete(entryId).toDto()
+	fun delete(@PathVariable entryId: String): VideoEntryDeleteResult {
+		return videoEntryService.delete(entryId)
 	}
 }

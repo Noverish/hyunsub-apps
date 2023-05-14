@@ -1,14 +1,14 @@
 package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.VideoSubtitle
+import kim.hyunsub.video.repository.generateId
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,9 +26,8 @@ class VideoSubtitleController(
 	private val apiCaller: ApiCaller,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
-	private val randomGenerator: RandomGenerator,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@PostMapping("")
 	fun uploadSubtitle(
@@ -76,7 +75,7 @@ class VideoSubtitleController(
 		}
 
 		val videoSubtitle = VideoSubtitle(
-			id = VideoSubtitle.generateId(videoSubtitleRepository, randomGenerator),
+			id = videoSubtitleRepository.generateId(),
 			path = subtitlePath,
 			videoId = videoId,
 		)

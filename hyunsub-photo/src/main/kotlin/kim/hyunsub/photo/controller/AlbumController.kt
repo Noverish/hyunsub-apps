@@ -136,7 +136,7 @@ class AlbumController(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
 		@RequestBody params: ApiAlbumThumbnailParams,
-	) : ApiAlbumPreview {
+	): ApiAlbumPreview {
 		val userId = userAuth.idNo
 		log.debug { "[Album Thumbnail] userId=$userId, albumId=$albumId, params=$params" }
 

@@ -5,11 +5,8 @@ import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.video.model.VideoScanParams
-import kim.hyunsub.video.model.VideoScanResult
 import kim.hyunsub.video.model.VideoThumbnailParams
 import kim.hyunsub.video.repository.VideoRepository
-import kim.hyunsub.video.service.scan.VideoScannerService
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,15 +17,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/admin")
 class VideoAdminController(
-	private val videoScannerService: VideoScannerService,
 	private val videoRepository: VideoRepository,
 	private val apiCaller: ApiCaller,
 ) {
-	@PostMapping("/scan")
-	fun scan(@RequestBody params: VideoScanParams): VideoScanResult {
-		return videoScannerService.scan(params)
-	}
-
 	@PostMapping("/video-thumbnail")
 	fun videoThumbnail(@RequestBody params: VideoThumbnailParams): ApiSimpleResult {
 		val video = videoRepository.findByIdOrNull(params.videoId)

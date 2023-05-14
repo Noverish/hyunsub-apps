@@ -50,6 +50,7 @@ class ApiModelConverter(
 		val label = code
 			.replace("en", "English ")
 			.replace("ko", "Korean ")
+			.replace("ja", "Japanese ")
 			.trim()
 
 		val url = Path(subtitle.path)

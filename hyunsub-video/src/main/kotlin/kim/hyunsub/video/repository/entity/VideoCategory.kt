@@ -29,6 +29,9 @@ data class VideoCategory(
 
 	@Column(nullable = false)
 	val authority: String,
+
+	@Column(nullable = false)
+	val path: String,
 ) {
 	fun toDto() = RestApiVideoCategory(this)
 }

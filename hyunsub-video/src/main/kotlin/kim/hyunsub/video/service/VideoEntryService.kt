@@ -9,6 +9,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
 import kim.hyunsub.video.model.api.RestApiVideoSeason
 import kim.hyunsub.video.model.dto.VideoEntryCreateParams
+import kim.hyunsub.video.model.dto.VideoEntryDeleteResult
 import kim.hyunsub.video.model.dto.VideoEntryUpdateParams
 import kim.hyunsub.video.repository.VideoCategoryRepository
 import kim.hyunsub.video.repository.VideoEntryRepository
@@ -96,7 +97,10 @@ class VideoEntryService(
 				?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such videoGroupId")
 		}
 
-		val folderPath = "/TV_Programs/${params.name}"
+		val category = videoCategoryRepository.findByName(params.category)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such category: ${params.category}")
+
+		val folderPath = Path(category.path, params.name).toString()
 
 		apiCaller.mkdir(folderPath)
 
@@ -151,12 +155,15 @@ class VideoEntryService(
 		return newEntry
 	}
 
-	fun delete(entryId: String): VideoEntry {
+	fun delete(entryId: String): VideoEntryDeleteResult {
 		val entry = videoEntryRepository.findByIdOrNull(entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such entryId")
 
-		videoEntryRepository.deleteById(entryId)
+		val videos = videoRepository.findByVideoEntryId(entryId)
+			.map { videoService.delete(it) }
 
-		return entry
+		videoEntryRepository.delete(entry)
+
+		return VideoEntryDeleteResult(entry, videos)
 	}
 }

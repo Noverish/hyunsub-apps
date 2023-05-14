@@ -131,7 +131,7 @@ class VideoRegisterService(
 		log.info("[Register Video] videoEntry={}", videoEntry)
 
 		val video = Video(
-			id = Video.generateId(videoRepository, randomGenerator),
+			id = videoRepository.generateId(),
 			path = videoPath,
 			thumbnail = thumbnailPath,
 			regDt = videoDate,
@@ -154,7 +154,7 @@ class VideoRegisterService(
 	/**
 	 * @return thumbnailPath
 	 */
-	private fun generateThumbnail(videoPath: String): String {
+	fun generateThumbnail(videoPath: String): String {
 		val videoExt = Path(videoPath).extension
 		val thumbnailPath = videoPath.replace(Regex("$videoExt$"), "jpg")
 
@@ -238,7 +238,7 @@ class VideoRegisterService(
 
 			// DB에 저장
 			val video = Video(
-				id = Video.generateId(videoRepository, randomGenerator),
+				id = videoRepository.generateId(),
 				path = videoPath,
 				thumbnail = thumbnailPath,
 				regDt = stat.mDate,
