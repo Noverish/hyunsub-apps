@@ -33,10 +33,11 @@ class VideoScanService(
 	private val log = KotlinLogging.logger { }
 
 	fun scan(params: VideoScanParams): List<VideoScanResult> {
-		videoEntryRepository.findByIdOrNull(params.entryId)
+		val entry = videoEntryRepository.findByIdOrNull(params.entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val path = params.path
+		val path = entry.thumbnail?.let { Path(it).parent.toString() }
+			?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "thumbnail is not exist")
 
 		val list = apiCaller.readdirDetail(path)
 

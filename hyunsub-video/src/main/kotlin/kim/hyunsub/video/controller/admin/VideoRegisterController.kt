@@ -2,8 +2,6 @@ package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.VideoRegisterBulkParams
-import kim.hyunsub.video.model.VideoRegisterBulkResult
 import kim.hyunsub.video.model.VideoRegisterParams
 import kim.hyunsub.video.model.VideoRegisterResult
 import kim.hyunsub.video.service.VideoRegisterService
@@ -27,13 +25,5 @@ class VideoRegisterController(
 		@RequestBody params: VideoRegisterParams,
 	): VideoRegisterResult {
 		return videoRegisterService.registerVideo(params)
-	}
-
-	@PostMapping("/bulk")
-	fun registerBulk(
-		user: UserAuth,
-		@RequestBody params: VideoRegisterBulkParams,
-	): VideoRegisterBulkResult {
-		return videoRegisterService.registerVideoBulk(params)
 	}
 }

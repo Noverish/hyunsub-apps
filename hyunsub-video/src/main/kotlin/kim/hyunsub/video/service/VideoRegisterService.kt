@@ -8,8 +8,6 @@ import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.video.model.VideoRegisterBulkParams
-import kim.hyunsub.video.model.VideoRegisterBulkResult
 import kim.hyunsub.video.model.VideoRegisterParams
 import kim.hyunsub.video.model.VideoRegisterResult
 import kim.hyunsub.video.repository.VideoCategoryRepository
@@ -19,7 +17,6 @@ import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEntry
 import kim.hyunsub.video.repository.entity.VideoGroup
-import kim.hyunsub.video.repository.entity.VideoMetadata
 import kim.hyunsub.video.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -214,47 +211,5 @@ class VideoRegisterService(
 		)
 		videoGroupRepository.save(group)
 		return group
-	}
-
-	fun registerVideoBulk(params: VideoRegisterBulkParams): VideoRegisterBulkResult {
-		log.info { "[Register Video Bulk] params=$params" }
-		val videos = mutableListOf<Video>()
-		val metadatas = mutableListOf<VideoMetadata>()
-
-		// Entry 확인
-		val entry = videoEntryRepository.findByIdOrNull(params.entryId)
-			?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No such entry: ${params.entryId}")
-		log.info { "[Register Video Bulk] entry=$entry" }
-
-		for (videoPath in params.paths) {
-			// 비디오 파일이 존재하는지 확인
-			val stat = apiCaller.stat(videoPath)
-				?: continue
-			log.info { "[Register Video Bulk] stat=$stat" }
-
-			// 썸네일 생성
-			val thumbnailPath = generateThumbnail(videoPath)
-			log.info { "[Register Video Bulk] thumbnailPath=$thumbnailPath" }
-
-			// DB에 저장
-			val video = Video(
-				id = videoRepository.generateId(),
-				path = videoPath,
-				thumbnail = thumbnailPath,
-				regDt = stat.mDate,
-				videoEntryId = entry.id,
-				videoSeason = params.videoSeason,
-			)
-			log.info { "[Register Video Bulk] video=$video" }
-			videoRepository.save(video)
-			videos.add(video)
-
-			// 메타데이터 스캔
-			val metadata = videoMetadataService.scanAndSave(video.id)
-			log.info { "[Register Video Bulk] metadata=$metadata" }
-			metadatas.add(metadata)
-		}
-
-		return VideoRegisterBulkResult(entry, videos.toList(), metadatas.toList())
 	}
 }
