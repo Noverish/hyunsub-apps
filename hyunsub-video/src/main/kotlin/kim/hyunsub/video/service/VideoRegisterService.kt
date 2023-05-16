@@ -8,8 +8,8 @@ import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.video.model.VideoRegisterParams
-import kim.hyunsub.video.model.VideoRegisterResult
+import kim.hyunsub.video.model.dto.VideoRegisterParams
+import kim.hyunsub.video.model.dto.VideoRegisterResult
 import kim.hyunsub.video.repository.VideoCategoryRepository
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoGroupRepository

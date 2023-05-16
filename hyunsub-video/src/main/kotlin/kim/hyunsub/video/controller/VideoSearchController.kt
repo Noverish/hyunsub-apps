@@ -4,7 +4,7 @@ import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.RestVideoSearchResult
+import kim.hyunsub.video.model.api.RestApiVideoSearchResult
 import kim.hyunsub.video.service.ApiModelConverter
 import kim.hyunsub.video.service.VideoCategoryService
 import kim.hyunsub.video.service.VideoSearchService
@@ -25,7 +25,7 @@ class VideoSearchController(
 	fun search(
 		user: UserAuth,
 		q: String,
-	): RestVideoSearchResult {
+	): RestApiVideoSearchResult {
 		val categories = videoCategoryService.getAvailableCategories(user).map { it.name }
 		if (q.length < 2) {
 			throw ErrorCodeException(ErrorCode.SHORT_SEARCH_QUERY)

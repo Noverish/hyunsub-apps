@@ -2,8 +2,8 @@ package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.VideoRegisterParams
-import kim.hyunsub.video.model.VideoRegisterResult
+import kim.hyunsub.video.model.dto.VideoRegisterParams
+import kim.hyunsub.video.model.dto.VideoRegisterResult
 import kim.hyunsub.video.service.VideoRegisterService
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping

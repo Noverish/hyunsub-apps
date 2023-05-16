@@ -1,4 +1,4 @@
-package kim.hyunsub.video.model
+package kim.hyunsub.video.model.dto
 
 import kim.hyunsub.video.repository.entity.VideoEntry
 

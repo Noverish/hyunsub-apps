@@ -3,12 +3,12 @@ package kim.hyunsub.video.service
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.util.getHumanReadableBitrate
 import kim.hyunsub.common.util.getHumanReadableSize
-import kim.hyunsub.video.model.RestVideoSearchResult
-import kim.hyunsub.video.model.VideoSearchResult
 import kim.hyunsub.video.model.api.RestApiVideo
 import kim.hyunsub.video.model.api.RestApiVideoGroup
 import kim.hyunsub.video.model.api.RestApiVideoMetadata
+import kim.hyunsub.video.model.api.RestApiVideoSearchResult
 import kim.hyunsub.video.model.api.RestApiVideoSubtitle
+import kim.hyunsub.video.model.dto.VideoSearchResult
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoGroup
 import kim.hyunsub.video.repository.entity.VideoHistory
@@ -82,11 +82,11 @@ class ApiModelConverter(
 		)
 	}
 
-	fun convertVideoSearchResult(result: VideoSearchResult): RestVideoSearchResult {
+	fun convertVideoSearchResult(result: VideoSearchResult): RestApiVideoSearchResult {
 		val entries = result.entries.groupBy { it.category }
 			.mapValues { entry -> entry.value.map { it.toDto() } }
 
-		return RestVideoSearchResult(
+		return RestApiVideoSearchResult(
 			entries = entries
 		)
 	}

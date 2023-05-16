@@ -1,8 +1,8 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.VideoHomeRecent
-import kim.hyunsub.video.model.VideoHomeResult
+import kim.hyunsub.video.model.dto.VideoHomeRecent
+import kim.hyunsub.video.model.dto.VideoHomeResult
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.service.VideoCategoryService
 import org.springframework.data.domain.PageRequest

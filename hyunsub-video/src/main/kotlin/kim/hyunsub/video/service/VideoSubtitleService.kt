@@ -1,43 +1,29 @@
-package kim.hyunsub.video.controller.admin
+package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.video.model.dto.VideoSubtitleParams
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 import kim.hyunsub.video.repository.generateId
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
+import org.springframework.stereotype.Service
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 
-@Authorized(["admin"])
-@RestController
-@RequestMapping("/api/v1/video/{videoId}/subtitle")
-class VideoSubtitleController(
+@Service
+class VideoSubtitleService(
 	private val apiCaller: ApiCaller,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
-	@PostMapping("")
-	fun uploadSubtitle(
-		@PathVariable videoId: String,
-		lang: String,
-		@RequestParam(required = false) file: MultipartFile?,
-		@RequestParam(required = false) path: String?,
-		@RequestParam(required = false) override: Boolean = false,
-	): VideoSubtitle {
-		log.debug("[Upload Video Subtitle] videoId={}, lang={}, override={}, path={}, file={}", videoId, lang, override, path, file?.originalFilename)
+	fun uploadSubtitle(videoId: String, params: VideoSubtitleParams): VideoSubtitle {
+		val (lang, file, path, override) = params
 
 		val video = videoRepository.findByIdOrNull(videoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)

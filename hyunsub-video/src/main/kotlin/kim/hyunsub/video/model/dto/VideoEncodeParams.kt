@@ -1,6 +1,5 @@
-package kim.hyunsub.video.model
+package kim.hyunsub.video.model.dto
 
 data class VideoEncodeParams(
-	val videoId: String,
 	val options: String?,
 )

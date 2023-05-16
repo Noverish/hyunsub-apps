@@ -9,6 +9,7 @@ import org.springframework.data.repository.findByIdOrNull
 
 interface VideoSubtitleRepository : JpaRepository<VideoSubtitle, String> {
 	fun findByVideoId(videoId: String): List<VideoSubtitle>
+	fun findByVideoIdIn(videoIds: List<String>): List<VideoSubtitle>
 
 	@Modifying
 	@Query("DELETE FROM VideoSubtitle v WHERE v.videoId IN (:videoIds)")

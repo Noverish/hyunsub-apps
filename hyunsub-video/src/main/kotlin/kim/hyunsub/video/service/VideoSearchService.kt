@@ -1,6 +1,6 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.video.model.VideoSearchResult
+import kim.hyunsub.video.model.dto.VideoSearchResult
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
 import org.springframework.stereotype.Service

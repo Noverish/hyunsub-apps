@@ -4,8 +4,7 @@ import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.video.model.dto.VideoScanParams
-import kim.hyunsub.video.model.dto.VideoScanResult
+import kim.hyunsub.video.model.dto.EntryScanResult
 import kim.hyunsub.video.repository.VideoEntryRepository
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
@@ -22,7 +21,7 @@ import kotlin.io.path.name
 import kotlin.io.path.nameWithoutExtension
 
 @Service
-class VideoScanService(
+class EntryScanService(
 	private val apiCaller: ApiCaller,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
@@ -32,8 +31,8 @@ class VideoScanService(
 ) {
 	private val log = KotlinLogging.logger { }
 
-	fun scan(params: VideoScanParams): List<VideoScanResult> {
-		val entry = videoEntryRepository.findByIdOrNull(params.entryId)
+	fun scan(entryId: String): List<EntryScanResult> {
+		val entry = videoEntryRepository.findByIdOrNull(entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val path = entry.thumbnail?.let { Path(it).parent.toString() }
@@ -41,36 +40,36 @@ class VideoScanService(
 
 		val list = apiCaller.readdirDetail(path)
 
-		val result = mutableListOf<VideoScanResult>()
+		val result = mutableListOf<EntryScanResult>()
 
 		val files = list.filter { it.isDir != true }
 
-		result.addAll(scan(params, files, null))
+		result.addAll(scan(entryId, files, null))
 
 		list.filter { it.isDir == true }
-			.forEach { result.addAll(scanDir(params, it)) }
+			.forEach { result.addAll(scanDir(entryId, it)) }
 
 		return result
 	}
 
-	fun scanDir(params: VideoScanParams, stat: FileStat): List<VideoScanResult> {
+	fun scanDir(entryId: String, stat: FileStat): List<EntryScanResult> {
 		val season = Path(stat.path).name
 		val files = apiCaller.readdirDetail(stat.path)
-		return scan(params, files, season)
+		return scan(entryId, files, season)
 	}
 
-	private fun scan(params: VideoScanParams, files: List<FileStat>, season: String?): List<VideoScanResult> {
-		val registeredVideos = season?.let { videoRepository.findByVideoEntryIdAndVideoSeason(params.entryId, season) }
-			?: videoRepository.findNoSeasonVideos(params.entryId)
+	private fun scan(entryId: String, files: List<FileStat>, season: String?): List<EntryScanResult> {
+		val registeredVideos = season?.let { videoRepository.findByVideoEntryIdAndVideoSeason(entryId, season) }
+			?: videoRepository.findNoSeasonVideos(entryId)
 
 		val registeredVideoPaths = registeredVideos.map { it.path }
 
 		return files.filter { isVideo(it.path) }
 			.filter { it.path !in registeredVideoPaths }
-			.map { registerVideo(it, params.entryId, files, season) }
+			.map { registerVideo(it, entryId, files, season) }
 	}
 
-	fun registerVideo(videoFile: FileStat, entryId: String, files: List<FileStat>, season: String?): VideoScanResult {
+	fun registerVideo(videoFile: FileStat, entryId: String, files: List<FileStat>, season: String?): EntryScanResult {
 		val videoName = Path(videoFile.path).nameWithoutExtension
 
 		val thumbnailPath = videoRegisterService.generateThumbnail(videoFile.path)
@@ -101,6 +100,6 @@ class VideoScanService(
 
 		val metadata = videoMetadataService.scanAndSave(video.id)
 
-		return VideoScanResult(video, metadata, subtitles)
+		return EntryScanResult(video, metadata, subtitles)
 	}
 }
