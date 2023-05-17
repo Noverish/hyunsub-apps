@@ -1,5 +1,7 @@
 package kim.hyunsub.video.service
 
+import kim.hyunsub.common.web.error.ErrorCode
+import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.api.RestApiVideo
 import kim.hyunsub.video.model.dto.VideoDeleteResult
 import kim.hyunsub.video.repository.VideoHistoryRepository
@@ -19,6 +21,12 @@ class VideoService(
 	private val videoRepository: VideoRepository,
 	private val apiModelConverter: ApiModelConverter,
 ) {
+	fun loadVideo(userId: String, videoId: String): RestApiVideo {
+		val video = videoRepository.findByIdOrNull(videoId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		return loadVideo(userId, video)
+	}
+
 	fun loadVideo(userId: String, video: Video): RestApiVideo {
 		val subtitles = videoSubtitleRepository.findByVideoId(video.id)
 		val metadata = videoMetadataRepository.findByIdOrNull(video.path)
