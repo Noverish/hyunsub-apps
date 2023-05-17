@@ -16,7 +16,7 @@ import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.api.model.YoutubeDownloadParams
 import kim.hyunsub.common.api.model.YoutubeDownloadResult
-import kim.hyunsub.common.api.model.YoutubeFormat
+import kim.hyunsub.common.api.model.YoutubeMetadata
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders
@@ -115,8 +115,8 @@ class ApiCaller(
 	fun ffmpeg(params: ApiFFmpegParams): ApiFFmpegResult =
 		_post("/api/video/ffmpeg", params)
 
-	fun youtubeFormats(url: String): List<YoutubeFormat> =
-		_get("/api/video/youtube/formats", mapOf("url" to url))
+	fun youtubeMetadata(url: String): YoutubeMetadata =
+		_get("/api/video/youtube/metadata", mapOf("url" to url))
 
 	fun youtubeDownload(params: YoutubeDownloadParams): YoutubeDownloadResult =
 		_post("/api/video/youtube/download", params)

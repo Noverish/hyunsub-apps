@@ -3,7 +3,7 @@ package kim.hyunsub.drive.controller
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.YoutubeDownloadParams
 import kim.hyunsub.common.api.model.YoutubeDownloadResult
-import kim.hyunsub.common.api.model.YoutubeFormat
+import kim.hyunsub.common.api.model.YoutubeMetadata
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.drive.service.DrivePathService
 import org.springframework.web.bind.annotation.GetMapping
@@ -18,9 +18,9 @@ class DriveYoutubeController(
 	private val apiCaller: ApiCaller,
 	private val drivePathService: DrivePathService,
 ) {
-	@GetMapping("/formats")
-	fun formats(userAuth: UserAuth, url: String): List<YoutubeFormat> {
-		return apiCaller.youtubeFormats(url)
+	@GetMapping("/metadata")
+	fun formats(userAuth: UserAuth, url: String): YoutubeMetadata {
+		return apiCaller.youtubeMetadata(url)
 	}
 
 	@PostMapping("/download")
