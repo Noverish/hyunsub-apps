@@ -1,6 +1,5 @@
 package kim.hyunsub.common.api
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.api.model.ApiFFmpegParams
 import kim.hyunsub.common.api.model.ApiFFmpegResult
@@ -108,9 +107,6 @@ class ApiCaller(
 
 	fun uploadByUrl(url: String) =
 		_post<UploadResult>("/upload/url", mapOf("url" to url))
-
-	fun uploadSession(path: String): String =
-		_post<JsonNode>("/upload/session", mapOf("path" to path))["sessionKey"].textValue()
 
 	fun ffmpeg(params: ApiFFmpegParams): ApiFFmpegResult =
 		_post("/api/video/ffmpeg", params)

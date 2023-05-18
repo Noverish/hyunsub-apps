@@ -62,16 +62,6 @@ class DriveController(
 		return SimpleResponse()
 	}
 
-	@PostMapping("/upload-session")
-	fun uploadSession(
-		userAuth: UserAuth,
-		@RequestBody params: PathParam,
-	): Map<String, String> {
-		val path = drivePathService.getPath(userAuth, params.path)
-		val sessionKey = apiCaller.uploadSession(path)
-		return mapOf("sessionKey" to sessionKey)
-	}
-
 	@PostMapping("/remove-bulk")
 	fun remove(
 		userAuth: UserAuth,
