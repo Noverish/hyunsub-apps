@@ -4,7 +4,6 @@ import kim.hyunsub.apparel.model.RestApiApparelPreview
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.apparel.service.ApiModelConverter
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
@@ -21,8 +20,6 @@ class ApparelBrandController(
 	private val apparelPreviewRepository: ApparelPreviewRepository,
 	private val apiModelConverter: ApiModelConverter,
 ) {
-	companion object : Log
-
 	@GetMapping("")
 	fun brands(userAuth: UserAuth): List<String> {
 		return apparelRepository.findBrands(userAuth.idNo).filterNotNull().sorted()

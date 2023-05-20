@@ -108,7 +108,7 @@ class VideoEntryService(
 			val thumbnailOriginalPath = "$folderPath/thumbnail.original.$thumbnailExt"
 
 			val nonce = apiCaller.uploadByUrl(it).nonce
-			val noncePath = FileUrlConverter.getNoncePath(nonce)
+			val noncePath = FileUrlConverter.noncePath(nonce)
 
 			apiCaller.rename(noncePath, thumbnailOriginalPath)
 

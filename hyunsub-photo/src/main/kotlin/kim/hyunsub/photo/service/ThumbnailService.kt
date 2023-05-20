@@ -5,7 +5,7 @@ import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.photo.repository.entity.Photo
-import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isGif
 import kim.hyunsub.photo.util.isImage
 import kim.hyunsub.photo.util.isVideo
@@ -17,8 +17,8 @@ class ThumbnailService(
 	private val fsVideoClient: FsVideoClient,
 ) {
 	fun generateThumbnail(photo: Photo) {
-		val original = PhotoPathUtils.original(photo)
-		val thumbnail = PhotoPathUtils.thumbnail(photo.id)
+		val original = PhotoPathConverter.original(photo)
+		val thumbnail = PhotoPathConverter.thumbnail(photo.id)
 
 		if (isVideo(photo.fileName)) {
 			val tmp = "$thumbnail.jpg"

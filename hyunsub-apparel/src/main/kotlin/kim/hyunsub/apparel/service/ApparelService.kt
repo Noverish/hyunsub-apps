@@ -1,76 +1,126 @@
 package kim.hyunsub.apparel.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.module.kotlin.convertValue
+import kim.hyunsub.apparel.model.RestApiApparelDetail
+import kim.hyunsub.apparel.model.dto.ApparelUpsertImageParams
+import kim.hyunsub.apparel.model.dto.ApparelUpsertParams
+import kim.hyunsub.apparel.model.toDto
+import kim.hyunsub.apparel.model.toEntity
 import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
-import kim.hyunsub.apparel.repository.entity.Apparel
-import kim.hyunsub.common.log.Log
-import kim.hyunsub.common.random.RandomGenerator
-import kim.hyunsub.common.util.convertToMap
+import kim.hyunsub.apparel.repository.entity.ApparelImage
+import kim.hyunsub.apparel.repository.generateId
+import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
 class ApparelService(
 	private val apparelRepository: ApparelRepository,
 	private val apparelImageRepository: ApparelImageRepository,
-	private val randomGenerator: RandomGenerator,
 	private val apparelImageService: ApparelImageService,
-	private val mapper: ObjectMapper,
+	private val apiCaller: ApiCaller,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
-	fun create(userId: String, body: Map<String, Any?>): Apparel {
-		val id = Apparel.generateId(randomGenerator)
+	fun create(userId: String, params: ApparelUpsertParams): RestApiApparelDetail {
+		log.debug { "[Apparel Create] userId=$userId, params=$params" }
 
-		val map = buildMap {
-			this += body.mapValues { if (it.value == "") null else it.value }
-			this["id"] = id
-			this["userId"] = userId
+		val apparelId = apparelRepository.generateId()
+
+		val images = params.uploads.map { processUploadedImage(it, userId, apparelId) }
+		images.forEach { log.debug { "[Apparel Create] newImage=$it" } }
+
+		val apparel = params.apparel.toEntity(
+			id = apparelId,
+			userId = userId,
+			imageId = images.firstOrNull()?.id,
+		)
+		log.debug { "[Apparel Create] apparel=$apparel" }
+
+		apparelRepository.save(apparel)
+		apparelImageRepository.saveAll(images)
+
+		return RestApiApparelDetail(
+			apparel = apparel.toDto(),
+			images = images.map { it.toDto(userId) }
+		)
+	}
+
+	fun update(userId: String, apparelId: String, params: ApparelUpsertParams): RestApiApparelDetail {
+		log.debug { "[Apparel Update] userId=$userId, apparelId=$apparelId, params=$params" }
+
+		val old = apparelRepository.findByIdAndUserId(apparelId, userId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		log.debug { "[Apparel Update] oldApparel=$old" }
+
+		val deleteIds = params.deletes
+		if (deleteIds.isNotEmpty()) {
+			val deleteImages = apparelImageRepository.findAllById(deleteIds)
+			apparelImageService.deleteBulk(userId, deleteImages)
 		}
 
-		log.debug("[Apparel Create] map={}", map)
-		val apparel = mapper.convertValue<Apparel>(map)
+		val newImages = params.uploads.map { processUploadedImage(it, userId, apparelId) }
+		newImages.forEach { log.debug { "[Apparel Update] newImage=$it" } }
+
+		val apparel = params.apparel.toEntity(
+			id = apparelId,
+			userId = userId,
+			imageId = old.imageId
+				.takeIf { it != null && !deleteIds.contains(it) }
+				?: newImages.firstOrNull()?.id,
+		)
+		log.debug { "[Apparel Update] apparel=$apparel" }
+
 		apparelRepository.save(apparel)
-		log.debug("[Create Apparel] apparel={}", apparel)
-
-		return apparel
-	}
-
-	fun update(userId: String, apparelId: String, params: Map<String, Any?>): Apparel {
-		log.debug("[Apparel Update] userId={}, apparelId={}, params={}", userId, apparelId, params)
-
-		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		log.debug("[Apparel Update] apparel={}", apparel)
-
-		val map = mapper.convertToMap(apparel) + params
-		log.debug("[Apparel Update] map={}", map)
-
-		val newApparel = mapper.convertValue<Apparel>(map)
-		log.debug("[Apparel Update] newApparel={}", newApparel)
-
-		apparelRepository.save(newApparel)
-		return newApparel
-	}
-
-	fun delete(userId: String, apparelId: String) {
-		log.debug("[Apparel Delete] userId={}, apparelId={}", userId, apparelId)
-
-		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		log.debug("[Apparel Delete] apparel={}", apparel)
+		apparelImageRepository.saveAll(newImages)
 
 		val images = apparelImageRepository.findByApparelId(apparelId)
-		log.debug("[Apparel Delete] images={}", images)
 
-		images.forEach {
-			apparelImageRepository.delete(it)
-			apparelImageService.deleteFile(userId, it)
-		}
+		return RestApiApparelDetail(
+			apparel = apparel.toDto(),
+			images = images.map { it.toDto(userId) }
+		)
+	}
 
+	private fun processUploadedImage(it: ApparelUpsertImageParams, userId: String, apparelId: String): ApparelImage {
+		val noncePath = FileUrlConverter.noncePath(it.nonce)
+		val ext = it.ext.lowercase()
+		val imageId = apparelImageRepository.generateId()
+		val fileName = "$imageId.$ext"
+		val path = ApparelPathConverter.imagePath(userId, apparelId, fileName)
+
+		apiCaller.imageConvert(
+			ApiPhotoConvertParams(
+				input = noncePath,
+				output = path,
+				resize = "1024x1024>",
+				quality = 60,
+			)
+		)
+
+		return ApparelImage(
+			id = imageId,
+			apparelId = apparelId,
+			ext = ext,
+		)
+	}
+
+	fun delete(userId: String, apparelId: String): RestApiApparelDetail {
+		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		val images = apparelImageRepository.findByApparelId(apparelId)
+
+		apparelImageService.deleteBulk(userId, images)
 		apparelRepository.delete(apparel)
+
+		return RestApiApparelDetail(
+			apparel = apparel.toDto(),
+			images = images.map { it.toDto(userId) }
+		)
 	}
 }

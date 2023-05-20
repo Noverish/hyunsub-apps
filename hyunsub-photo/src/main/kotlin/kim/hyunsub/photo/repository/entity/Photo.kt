@@ -8,7 +8,7 @@ import kim.hyunsub.common.util.toLong
 import kim.hyunsub.photo.model.PhotoDateType
 import kim.hyunsub.photo.model.PhotoType
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
-import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isVideo
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -92,7 +92,7 @@ data class Photo(
 		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year
 
 	private val thumbnail: String
-		get() = FileUrlConverter.convertToUrl(PhotoPathUtils.thumbnail(this.id))
+		get() = FileUrlConverter.convertToUrl(PhotoPathConverter.thumbnail(this.id))
 
 	val fileName: String
 		get() = "$id.$ext"

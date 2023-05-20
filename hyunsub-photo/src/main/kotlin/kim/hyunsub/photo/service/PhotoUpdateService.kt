@@ -14,7 +14,7 @@ import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
-import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.PhotoPathConverter
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -37,17 +37,17 @@ class PhotoUpdateService(
 		val oldId = photo.id
 		val newPhoto = photo.copy(id = newId)
 
-		val oldOriginalPath = PhotoPathUtils.original(photo)
-		val newOriginalPath = PhotoPathUtils.original(newPhoto)
+		val oldOriginalPath = PhotoPathConverter.original(photo)
+		val newOriginalPath = PhotoPathConverter.original(newPhoto)
 		apiCaller.rename(oldOriginalPath, newOriginalPath)
 
-		val oldThumbnailPath = PhotoPathUtils.thumbnail(oldId)
-		val newThumbnailPath = PhotoPathUtils.thumbnail(newId)
+		val oldThumbnailPath = PhotoPathConverter.thumbnail(oldId)
+		val newThumbnailPath = PhotoPathConverter.thumbnail(newId)
 		apiCaller.rename(oldThumbnailPath, newThumbnailPath)
 
 		if (photo.isVideo) {
-			val oldVideoPath = PhotoPathUtils.video(oldId)
-			val newVideoPath = PhotoPathUtils.video(newId)
+			val oldVideoPath = PhotoPathConverter.video(oldId)
+			val newVideoPath = PhotoPathConverter.video(newId)
 			apiCaller.rename(oldVideoPath, newVideoPath)
 		}
 

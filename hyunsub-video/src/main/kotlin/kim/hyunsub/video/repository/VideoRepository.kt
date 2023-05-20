@@ -6,7 +6,6 @@ import kim.hyunsub.video.repository.entity.VideoEpisode
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.findByIdOrNull
 
 interface VideoRepository : JpaRepository<Video, String> {
 	fun findByVideoEntryIdIn(videoEntryIds: List<String>): List<Video>
@@ -40,9 +39,9 @@ interface VideoRepository : JpaRepository<Video, String> {
 
 fun VideoRepository.generateId(): String {
 	for (i in 0 until 3) {
-		val newId = generateRandomString(6)
-		if (this.findByIdOrNull(newId) == null) {
-			return newId
+		val id = generateRandomString(6)
+		if (!existsById(id)) {
+			return id
 		}
 	}
 	throw RuntimeException("Failed to generate new id")

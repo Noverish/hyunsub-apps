@@ -1,6 +1,5 @@
 package kim.hyunsub.apparel.repository.entity
 
-import kim.hyunsub.common.random.RandomGenerator
 import java.time.LocalDate
 import java.time.LocalDateTime
 import javax.persistence.Column
@@ -62,8 +61,4 @@ data class Apparel(
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now(),
-) {
-	companion object {
-		fun generateId(generator: RandomGenerator) = generator.generateRandomId(8)
-	}
-}
+)

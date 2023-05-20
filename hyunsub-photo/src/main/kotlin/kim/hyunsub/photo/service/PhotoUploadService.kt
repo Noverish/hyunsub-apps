@@ -2,6 +2,7 @@ package kim.hyunsub.photo.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
@@ -18,7 +19,7 @@ import kim.hyunsub.photo.repository.entity.PhotoOwner
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
 import kim.hyunsub.photo.repository.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
-import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isImage
 import kim.hyunsub.photo.util.isVideo
 import mu.KotlinLogging
@@ -61,7 +62,7 @@ class PhotoUploadService(
 	}
 
 	private fun getOrCreatePhoto(params: ApiPhotoUploadParams): Photo {
-		val tmpPath = PhotoPathUtils.tmp(params.nonce)
+		val tmpPath = FileUrlConverter.noncePath(params.nonce)
 
 		val hash = apiCaller.hash(tmpPath).result.decodeHex().toBase64()
 
@@ -90,13 +91,13 @@ class PhotoUploadService(
 		)
 
 		// move photo to original folder
-		val originalPath = PhotoPathUtils.original(photo)
+		val originalPath = PhotoPathConverter.original(photo)
 		apiCaller.rename(tmpPath, originalPath)
 
 		// generate thumbnail
 		thumbnailService.generateThumbnail(photo)
 		if (photo.isVideo) {
-			val videoPath = PhotoPathUtils.video(id)
+			val videoPath = PhotoPathConverter.video(id)
 			encodeApiCaller.encode(
 				input = originalPath,
 				output = videoPath,

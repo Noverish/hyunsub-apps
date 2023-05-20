@@ -184,7 +184,7 @@ class VideoRegisterService(
 		log.info("[Register Video] Download thumbnail from web: thumbnailOriginalPath={}", thumbnailOriginalPath)
 
 		val nonce = apiCaller.uploadByUrl(url).nonce
-		val noncePath = FileUrlConverter.getNoncePath(nonce)
+		val noncePath = FileUrlConverter.noncePath(nonce)
 		log.info("[Register Video] Download thumbnail from web: noncePath={}", noncePath)
 
 		apiCaller.rename(noncePath, thumbnailOriginalPath)

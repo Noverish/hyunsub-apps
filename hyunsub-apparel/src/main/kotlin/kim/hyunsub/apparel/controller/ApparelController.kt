@@ -1,7 +1,9 @@
 package kim.hyunsub.apparel.controller
 
-import kim.hyunsub.apparel.model.RestApiApparel
+import kim.hyunsub.apparel.model.RestApiApparelDetail
 import kim.hyunsub.apparel.model.RestApiApparelPreview
+import kim.hyunsub.apparel.model.dto.ApparelUpsertParams
+import kim.hyunsub.apparel.model.toDto
 import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
@@ -10,7 +12,6 @@ import kim.hyunsub.apparel.service.ApparelService
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -52,7 +53,7 @@ class ApparelController(
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable apparelId: String,
-	): RestApiApparel {
+	): RestApiApparelDetail {
 		val userId = userAuth.idNo
 
 		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
@@ -60,37 +61,34 @@ class ApparelController(
 
 		val images = apparelImageRepository.findByApparelId(apparelId)
 
-		return apiModelConverter.convert(userId, apparel, images)
+		return RestApiApparelDetail(
+			apparel = apparel.toDto(),
+			images = images.map { it.toDto(userId) }
+		)
 	}
 
 	@PostMapping("")
 	fun create(
 		userAuth: UserAuth,
-		@RequestBody body: Map<String, Any?>,
-	): RestApiApparel {
-		val userId = userAuth.idNo
-		val apparel = apparelService.create(userId, body)
-		return apiModelConverter.convert(userId, apparel, emptyList())
+		@RequestBody params: ApparelUpsertParams,
+	): RestApiApparelDetail {
+		return apparelService.create(userAuth.idNo, params)
 	}
 
 	@PutMapping("/{apparelId}")
 	fun update(
 		userAuth: UserAuth,
 		@PathVariable apparelId: String,
-		@RequestBody body: Map<String, Any?>,
-	): RestApiApparel {
-		val userId = userAuth.idNo
-		val apparel = apparelService.update(userId, apparelId, body)
-		val images = apparelImageRepository.findByApparelId(apparelId)
-		return apiModelConverter.convert(userId, apparel, images)
+		@RequestBody params: ApparelUpsertParams,
+	): RestApiApparelDetail {
+		return apparelService.update(userAuth.idNo, apparelId, params)
 	}
 
 	@DeleteMapping("/{apparelId}")
 	fun delete(
 		userAuth: UserAuth,
 		@PathVariable apparelId: String,
-	): SimpleResponse {
-		apparelService.delete(userAuth.idNo, apparelId)
-		return SimpleResponse()
+	): RestApiApparelDetail {
+		return apparelService.delete(userAuth.idNo, apparelId)
 	}
 }

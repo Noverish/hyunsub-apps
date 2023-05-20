@@ -6,7 +6,7 @@ import java.nio.charset.StandardCharsets
 import kotlin.io.path.Path
 
 object FileUrlConverter {
-	fun getNoncePath(nonce: String): String =
+	fun noncePath(nonce: String): String =
 		Path(ApiConstants.nonceBase, nonce).toString()
 
 	fun convertToUrl(path: String): String {

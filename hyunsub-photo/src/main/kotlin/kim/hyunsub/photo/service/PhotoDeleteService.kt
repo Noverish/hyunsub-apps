@@ -8,7 +8,7 @@ import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
-import kim.hyunsub.photo.util.PhotoPathUtils
+import kim.hyunsub.photo.util.PhotoPathConverter
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -54,14 +54,14 @@ class PhotoDeleteService(
 
 	private fun deleteFile(photo: Photo) {
 		val photoId = photo.id
-		val originalPath = PhotoPathUtils.original(photo)
-		val thumbnailPath = PhotoPathUtils.thumbnail(photoId)
+		val originalPath = PhotoPathConverter.original(photo)
+		val thumbnailPath = PhotoPathConverter.thumbnail(photoId)
 
 		apiCaller.remove(originalPath)
 		apiCaller.remove(thumbnailPath)
 
 		if (photo.isVideo) {
-			val videoPath = PhotoPathUtils.video(photoId)
+			val videoPath = PhotoPathConverter.video(photoId)
 			try {
 				apiCaller.remove(videoPath)
 			} catch (_: Exception) {

@@ -5,7 +5,6 @@ import kim.hyunsub.photo.repository.entity.Album
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.findByIdOrNull
 
 interface AlbumRepository : JpaRepository<Album, String> {
 	@Query(
@@ -32,9 +31,9 @@ interface AlbumRepository : JpaRepository<Album, String> {
 
 fun AlbumRepository.generateId(): String {
 	for (i in 0 until 3) {
-		val newId = generateRandomString(8)
-		if (this.findByIdOrNull(newId) == null) {
-			return newId
+		val id = generateRandomString(8)
+		if (!existsById(id)) {
+			return id
 		}
 	}
 	throw RuntimeException("Failed to generate new id")

@@ -1,6 +1,5 @@
 package kim.hyunsub.apparel.repository.entity
 
-import kim.hyunsub.common.random.RandomGenerator
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -23,10 +22,6 @@ data class ApparelImage(
 	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now(),
 ) {
-	companion object {
-		fun generateId(generator: RandomGenerator) = generator.generateRandomId(10)
-	}
-
 	val fileName: String
 		get() = "$id.$ext"
 }

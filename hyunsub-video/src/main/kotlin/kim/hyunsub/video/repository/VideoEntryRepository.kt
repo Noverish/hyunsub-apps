@@ -6,7 +6,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
-import org.springframework.data.repository.findByIdOrNull
 
 interface VideoEntryRepository : JpaRepository<VideoEntry, String> {
 	fun findByCategory(category: String, page: Pageable = Pageable.unpaged()): List<VideoEntry>
@@ -27,9 +26,9 @@ interface VideoEntryRepository : JpaRepository<VideoEntry, String> {
 
 fun VideoEntryRepository.generateId(): String {
 	for (i in 0 until 3) {
-		val newId = generateRandomString(6)
-		if (this.findByIdOrNull(newId) == null) {
-			return newId
+		val id = generateRandomString(6)
+		if (!existsById(id)) {
+			return id
 		}
 	}
 	throw RuntimeException("Failed to generate new id")
