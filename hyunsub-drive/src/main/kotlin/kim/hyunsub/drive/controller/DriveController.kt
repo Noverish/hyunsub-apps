@@ -3,6 +3,7 @@ package kim.hyunsub.drive.controller
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiMoveBulkParams
 import kim.hyunsub.common.api.model.ApiRenameBulkParams
+import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.drive.model.DriveRemoveBulkParams
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1")
 class DriveController(
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val drivePathService: DrivePathService,
 ) {
 	@PostMapping("/list")
@@ -26,7 +28,7 @@ class DriveController(
 		@RequestBody params: PathParam,
 	): List<FileInfo> {
 		val path = drivePathService.getPath(userAuth, params.path)
-		return apiCaller.readdirDetail(path)
+		return fsClient.readdirDetail(path)
 			.map { FileInfo(it) }
 	}
 

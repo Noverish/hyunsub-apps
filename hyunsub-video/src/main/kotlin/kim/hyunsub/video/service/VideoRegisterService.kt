@@ -4,6 +4,10 @@ import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.exist
+import kim.hyunsub.common.fs.statOrNull
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
@@ -36,6 +40,8 @@ class VideoRegisterService(
 	private val videoCategoryRepository: VideoCategoryRepository,
 	private val videoGroupRepository: VideoGroupRepository,
 	private val fileUrlConverter: FileUrlConverter,
+	private val fsVideoClient: FsVideoClient,
+	private val fsClient: FsClient,
 ) {
 	val log = KotlinLogging.logger { }
 
@@ -73,7 +79,7 @@ class VideoRegisterService(
 			}
 
 		// 비디오 파일이 존재하는지 확인
-		val videoStat = apiCaller.stat(params.videoPath)
+		val videoStat = fsClient.statOrNull(params.videoPath)
 			?: throw ErrorCodeException(ErrorCode.NO_SUCH_FILE)
 		log.info("[Register Video] videoStat={}", videoStat)
 
@@ -85,8 +91,9 @@ class VideoRegisterService(
 			apiCaller.rename(params.videoPath, params.outputPath)
 
 			// 파일 이동 확인
-			apiCaller.stat(params.outputPath)
-				?: throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+			if (!fsClient.exist(params.outputPath)) {
+				throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
+			}
 		}
 
 		val videoPath = params.outputPath
@@ -155,13 +162,13 @@ class VideoRegisterService(
 		val videoExt = Path(videoPath).extension
 		val thumbnailPath = videoPath.replace(Regex("$videoExt$"), "jpg")
 
-		if (apiCaller.stat(thumbnailPath) == null) {
+		if (fsClient.exist(thumbnailPath)) {
+			log.info("[Register Video] thumbnail is already exist: {}", thumbnailPath)
+		} else {
 			log.info("[Register Video] generate thumbnail: {}", thumbnailPath)
-			apiCaller.videoThumbnail(
+			fsVideoClient.videoThumbnail(
 				VideoThumbnailParams(input = videoPath, output = thumbnailPath)
 			)
-		} else {
-			log.info("[Register Video] thumbnail is already exist: {}", thumbnailPath)
 		}
 
 		return thumbnailPath

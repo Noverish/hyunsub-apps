@@ -7,7 +7,7 @@ import kim.hyunsub.comic.repository.ComicEpisodeRepository
 import kim.hyunsub.comic.repository.ComicRepository
 import kim.hyunsub.comic.repository.entity.Comic
 import kim.hyunsub.comic.repository.entity.ComicEpisode
-import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.annotation.Authorized
 import mu.KotlinLogging
@@ -24,7 +24,7 @@ import kotlin.io.path.Path
 class ComicRegisterController(
 	private val comicRepository: ComicRepository,
 	private val comicEpisodeRepository: ComicEpisodeRepository,
-	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val randomGenerator: RandomGenerator,
 ) {
 	private val log = KotlinLogging.logger { }
@@ -34,7 +34,7 @@ class ComicRegisterController(
 		log.debug { "[Comic Register] params=$params" }
 
 		val comicPath = Path(ComicConstants.BASE_PATH, params.title).toString()
-		val episodeTitles = apiCaller.readdir(comicPath).sorted()
+		val episodeTitles = fsClient.readdir(comicPath).sorted()
 
 		val comicId = randomGenerator.generateRandomString(6)
 
@@ -48,7 +48,7 @@ class ComicRegisterController(
 		val episodes = mutableListOf<ComicEpisode>()
 		for ((i, episodeTitle) in episodeTitles.withIndex()) {
 			val episodePath = Path(comicPath, episodeTitle).toString()
-			val length = apiCaller.readdir(episodePath).size
+			val length = fsClient.readdir(episodePath).size
 
 			val episode = ComicEpisode(
 				comicId = comicId,

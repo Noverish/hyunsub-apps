@@ -3,6 +3,7 @@ package kim.hyunsub.photo.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
+import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.util.PhotoPathUtils
 import kim.hyunsub.photo.util.isGif
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service
 @Service
 class ThumbnailService(
 	private val apiCaller: ApiCaller,
+	private val fsVideoClient: FsVideoClient,
 ) {
 	fun generateThumbnail(photo: Photo) {
 		val original = PhotoPathUtils.original(photo)
@@ -21,7 +23,7 @@ class ThumbnailService(
 		if (isVideo(photo.fileName)) {
 			val tmp = "$thumbnail.jpg"
 
-			apiCaller.videoThumbnail(
+			fsVideoClient.videoThumbnail(
 				VideoThumbnailParams(
 					input = original,
 					output = tmp,

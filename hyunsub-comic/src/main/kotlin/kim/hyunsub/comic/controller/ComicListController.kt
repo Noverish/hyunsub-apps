@@ -11,6 +11,7 @@ import kim.hyunsub.comic.repository.entity.ComicEpisodeId
 import kim.hyunsub.comic.repository.entity.ComicHistoryId
 import kim.hyunsub.comic.service.ApiModelConverter
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -33,6 +34,7 @@ class ComicListController(
 	private val comicHistoryRepository: ComicHistoryRepository,
 	private val apiModelConverter: ApiModelConverter,
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -73,7 +75,7 @@ class ComicListController(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val folderPath = Path(ComicConstants.BASE_PATH, comic.title, episode.title).toString()
-		val images = apiCaller.readdir(folderPath)
+		val images = fsClient.readdir(folderPath)
 
 		val history = comicHistoryRepository.findByIdOrNull(ComicHistoryId(userId, comicId, order))?.page
 
@@ -93,7 +95,7 @@ class ComicListController(
 
 		for (episode in episodes) {
 			val episodePath = Path(ComicConstants.BASE_PATH, comic.title, episode.title).toString()
-			val length = apiCaller.readdir(episodePath).size
+			val length = fsClient.readdir(episodePath).size
 
 			if (length != episode.length) {
 				val newEpisode = episode.copy(length = length)

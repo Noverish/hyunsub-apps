@@ -2,7 +2,7 @@ package kim.hyunsub.video.service
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 
 @Service
 class VideoMetadataService(
-	private val apiCaller: ApiCaller,
+	private val fsVideoClient: FsVideoClient,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataRepository: VideoMetadataRepository,
 ) {
@@ -27,7 +27,7 @@ class VideoMetadataService(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 		log.debug("scanAndSave: video=$video")
 
-		val ffprobe = apiCaller.ffprobe(video.path)
+		val ffprobe = fsVideoClient.ffprobe(video.path)
 		log.debug("scanAndSave: ffprobe=$ffprobe")
 
 		val streams = ffprobe["streams"] as ArrayNode

@@ -2,6 +2,7 @@ package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiSimpleResult
+import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -32,6 +33,7 @@ class VideoManageController(
 	private val videoMetadataService: VideoMetadataService,
 	private val apiCaller: ApiCaller,
 	private val videoSubtitleService: VideoSubtitleService,
+	private val fsVideoClient: FsVideoClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -72,7 +74,7 @@ class VideoManageController(
 			input = video.path,
 			time = params.time,
 		)
-		return apiCaller.videoThumbnail(apiParams)
+		return fsVideoClient.videoThumbnail(apiParams)
 	}
 
 	@PostMapping("/subtitle")

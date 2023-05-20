@@ -12,6 +12,7 @@ import kim.hyunsub.common.api.model.ApiImageMagickParams
 import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
 import kim.hyunsub.common.api.model.ApiRenameBulkParamData
 import kim.hyunsub.common.api.model.ApiRenameBulkParams
+import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -33,6 +34,7 @@ import kotlin.io.path.nameWithoutExtension
 @RequestMapping("/api/v1/organize")
 class ComicOrganizeController(
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -45,13 +47,13 @@ class ComicOrganizeController(
 		val result = mutableListOf<String>()
 
 		val comicPath = Path(ComicConstants.BASE_PATH, params.title).toString()
-		val episodes = apiCaller.readdir(comicPath).sorted()
+		val episodes = fsClient.readdir(comicPath).sorted()
 
 		for (episode in episodes) {
 			val renames = mutableListOf<ApiRenameBulkParamData>()
 
 			val episodePath = Path(comicPath, episode).toString()
-			val files = apiCaller.readdir(episodePath).sorted()
+			val files = fsClient.readdir(episodePath).sorted()
 
 			for ((i, file) in files.withIndex()) {
 				val expected = i.toString().padStart(4, '0')
@@ -89,7 +91,7 @@ class ComicOrganizeController(
 		val regex = Regex(params.pattern)
 
 		val comicPath = Path(ComicConstants.BASE_PATH, params.title).toString()
-		val candidates = apiCaller.readdir(comicPath).sorted()
+		val candidates = fsClient.readdir(comicPath).sorted()
 			.filter { it.contains(regex) }
 		val candidateMap = candidates.groupBy { regex.find(it)!!.groupValues[1] }
 
@@ -105,7 +107,7 @@ class ComicOrganizeController(
 
 			for (sibling in siblings) {
 				val siblingPath = Path(comicPath, sibling).toString()
-				apiCaller.readdir(siblingPath).forEach {
+				fsClient.readdir(siblingPath).forEach {
 					val filePath = Path(sibling, it).toString()
 
 					val newFileName = (i++).toString().padStart(4, '0') + "." + Path(it).extension
@@ -164,7 +166,7 @@ class ComicOrganizeController(
 		val result = mutableListOf<String>()
 
 		val folderPath = Path(ComicConstants.BASE_PATH, params.title, params.folder).toString()
-		val filePaths = apiCaller.readdir(folderPath).sorted()
+		val filePaths = fsClient.readdir(folderPath).sorted()
 			.filter { !params.excludes.contains(it) }
 			.map { Path(folderPath, it).toString() }
 

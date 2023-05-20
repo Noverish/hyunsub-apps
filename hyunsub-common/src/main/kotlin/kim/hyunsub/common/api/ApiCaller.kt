@@ -12,7 +12,6 @@ import kim.hyunsub.common.api.model.ApiRenameBulkParams
 import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.UploadResult
-import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.api.model.YoutubeDownloadParams
 import kim.hyunsub.common.api.model.YoutubeDownloadResult
 import kim.hyunsub.common.api.model.YoutubeMetadata
@@ -21,24 +20,12 @@ import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
 import org.springframework.http.MediaType
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.util.UriComponentsBuilder
 
 class ApiCaller(
 	private val httpClient: HttpClient,
 	private val apiProperties: ApiProperties,
 ) {
-	fun stat(path: String): FileStat? {
-		return try {
-			_get("/api/fs/stat", mapOf("path" to path))
-		} catch (ex: HttpClientErrorException) {
-			null
-		}
-	}
-
-	fun statBulk(paths: List<String>): List<FileStat> =
-		_post("/api/fs/stat", mapOf("paths" to paths))
-
 	fun mkdir(path: String) {
 		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
 	}
@@ -72,21 +59,9 @@ class ApiCaller(
 	fun walkDetail(path: String): List<FileStat> =
 		_get("/api/fs/walk/detail", mapOf("path" to path))
 
-	fun readdir(path: String): List<String> =
-		_get("/api/fs/readdir", mapOf("path" to path))
-
-	fun readdirDetail(path: String): List<FileStat> =
-		_get("/api/fs/readdir/detail", mapOf("path" to path))
-
 	fun copyMDate(from: String, to: String) {
 		_post<ObjectNode>("/api/fs/copy-mdate", mapOf("from" to from, "to" to to))
 	}
-
-	fun ffprobe(path: String): ObjectNode =
-		_get("/api/video/ffprobe", mapOf("path" to path))
-
-	fun videoThumbnail(params: VideoThumbnailParams): ApiSimpleResult =
-		_post("/api/video/generate-thumbnail", params)
 
 	fun exif(path: String): String =
 		_get("/api/image/exif", mapOf("path" to path))

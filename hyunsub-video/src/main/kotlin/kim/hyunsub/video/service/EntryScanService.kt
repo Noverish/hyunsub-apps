@@ -2,6 +2,7 @@ package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.FileStat
+import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.dto.EntryScanResult
@@ -23,6 +24,7 @@ import kotlin.io.path.nameWithoutExtension
 @Service
 class EntryScanService(
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
@@ -38,7 +40,7 @@ class EntryScanService(
 		val path = entry.thumbnail?.let { Path(it).parent.toString() }
 			?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "thumbnail is not exist")
 
-		val list = apiCaller.readdirDetail(path)
+		val list = fsClient.readdirDetail(path)
 
 		val result = mutableListOf<EntryScanResult>()
 
@@ -54,13 +56,14 @@ class EntryScanService(
 
 	fun scanDir(entryId: String, stat: FileStat): List<EntryScanResult> {
 		val season = Path(stat.path).name
-		val files = apiCaller.readdirDetail(stat.path)
+		val files = fsClient.readdirDetail(stat.path)
 		return scan(entryId, files, season)
 	}
 
 	private fun scan(entryId: String, files: List<FileStat>, season: String?): List<EntryScanResult> {
 		val registeredVideos = season?.let { videoRepository.findByVideoEntryIdAndVideoSeason(entryId, season) }
 			?: videoRepository.findNoSeasonVideos(entryId)
+		log.debug { "[Entry Scan] registeredVideos=$registeredVideos" }
 
 		val registeredVideoPaths = registeredVideos.map { it.path }
 
