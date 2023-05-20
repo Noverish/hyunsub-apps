@@ -19,9 +19,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
 
 @Service
-class ApiModelConverter(
-	private val fileUrlConverter: FileUrlConverter,
-) {
+class ApiModelConverter {
 	fun convertVideo(
 		video: Video,
 		subtitles: List<VideoSubtitle>,
@@ -55,7 +53,7 @@ class ApiModelConverter(
 
 		val url = Path(subtitle.path)
 			.let { "${it.parent}/${it.nameWithoutExtension}.vtt" }
-			.let { fileUrlConverter.pathToUrl(it) }
+			.let { FileUrlConverter.convertToUrl(it) }
 
 		return RestApiVideoSubtitle(
 			url = url,

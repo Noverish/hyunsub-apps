@@ -36,7 +36,6 @@ class VideoEntryService(
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val apiCaller: ApiCaller,
-	private val fileUrlConverter: FileUrlConverter,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -109,7 +108,7 @@ class VideoEntryService(
 			val thumbnailOriginalPath = "$folderPath/thumbnail.original.$thumbnailExt"
 
 			val nonce = apiCaller.uploadByUrl(it).nonce
-			val noncePath = fileUrlConverter.getNoncePath(nonce)
+			val noncePath = FileUrlConverter.getNoncePath(nonce)
 
 			apiCaller.rename(noncePath, thumbnailOriginalPath)
 

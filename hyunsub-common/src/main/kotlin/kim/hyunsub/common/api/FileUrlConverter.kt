@@ -1,30 +1,25 @@
 package kim.hyunsub.common.api
 
 import org.springframework.web.util.UriComponentsBuilder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import kotlin.io.path.Path
 
-class FileUrlConverter(
-	private val apiProperties: ApiProperties,
-) {
-	fun pathToUrl(path: String): String =
-		UriComponentsBuilder.newInstance()
-			.scheme("https")
-			.host(apiProperties.host)
-			.path(path)
-			.toUriString()
-
+object FileUrlConverter {
 	fun getNoncePath(nonce: String): String =
-		Path(apiProperties.nonceBase, nonce).toString()
+		Path(ApiConstants.nonceBase, nonce).toString()
 
-	companion object {
-		fun convertToUrl(path: String): String =
-			UriComponentsBuilder.newInstance()
-				.scheme("https")
-				.host(ApiConstants.host)
-				.path(path)
-				.toUriString()
+	fun convertToUrl(path: String): String {
+		val encodedPath = URLEncoder.encode(path, StandardCharsets.UTF_8)
+			.replace("%2F", "/")
+			.replace("+", "%20")
 
-		fun thumbnailUrl(path: String?): String =
-			path?.let { convertToUrl(it) } ?: "/img/placeholder.jpg"
+		return UriComponentsBuilder.fromHttpUrl(ApiConstants.host)
+			.path(encodedPath)
+			.build(false)
+			.toUriString()
 	}
+
+	fun thumbnailUrl(path: String?): String =
+		path?.let { convertToUrl(it) } ?: "/img/placeholder.jpg"
 }

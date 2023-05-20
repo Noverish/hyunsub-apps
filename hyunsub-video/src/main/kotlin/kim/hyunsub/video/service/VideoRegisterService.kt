@@ -39,7 +39,6 @@ class VideoRegisterService(
 	private val videoMetadataService: VideoMetadataService,
 	private val videoCategoryRepository: VideoCategoryRepository,
 	private val videoGroupRepository: VideoGroupRepository,
-	private val fileUrlConverter: FileUrlConverter,
 	private val fsVideoClient: FsVideoClient,
 	private val fsClient: FsClient,
 ) {
@@ -185,7 +184,7 @@ class VideoRegisterService(
 		log.info("[Register Video] Download thumbnail from web: thumbnailOriginalPath={}", thumbnailOriginalPath)
 
 		val nonce = apiCaller.uploadByUrl(url).nonce
-		val noncePath = fileUrlConverter.getNoncePath(nonce)
+		val noncePath = FileUrlConverter.getNoncePath(nonce)
 		log.info("[Register Video] Download thumbnail from web: noncePath={}", noncePath)
 
 		apiCaller.rename(noncePath, thumbnailOriginalPath)

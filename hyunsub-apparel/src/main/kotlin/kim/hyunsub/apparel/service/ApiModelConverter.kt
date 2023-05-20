@@ -10,13 +10,11 @@ import kim.hyunsub.common.api.FileUrlConverter
 import org.springframework.stereotype.Service
 
 @Service
-class ApiModelConverter(
-	private val fileUrlConverter: FileUrlConverter,
-) {
+class ApiModelConverter {
 	fun convert(userId: String, apparel: ApparelPreview): RestApiApparelPreview {
 		val url = apparel.fileName
 			?.let { FilePathConverter.getApparelImagePath(userId, apparel.id, it) }
-			?.let { fileUrlConverter.pathToUrl(it) }
+			?.let { FileUrlConverter.convertToUrl(it) }
 			?: "/img/placeholder.jpg"
 
 		return RestApiApparelPreview(
@@ -28,7 +26,7 @@ class ApiModelConverter(
 
 	fun convert(userId: String, image: ApparelImage): RestApiApparelImage {
 		val path = FilePathConverter.getApparelImagePath(userId, image.apparelId, image.fileName)
-		val url = fileUrlConverter.pathToUrl(path)
+		val url = FileUrlConverter.convertToUrl(path)
 
 		return RestApiApparelImage(
 			imageId = image.id,
