@@ -3,11 +3,11 @@ package kim.hyunsub.video.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
-import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.common.fs.exist
 import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.fs.statOrNull
 import kim.hyunsub.common.random.RandomGenerator

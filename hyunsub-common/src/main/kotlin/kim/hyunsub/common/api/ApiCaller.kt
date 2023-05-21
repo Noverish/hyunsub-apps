@@ -1,16 +1,11 @@
 package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.model.ApiFFmpegParams
-import kim.hyunsub.common.api.model.ApiFFmpegResult
 import kim.hyunsub.common.api.model.ApiImageMagickParams
 import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
 import kim.hyunsub.common.api.model.ApiImageMetadataResult
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.UploadResult
-import kim.hyunsub.common.api.model.YoutubeDownloadParams
-import kim.hyunsub.common.api.model.YoutubeDownloadResult
-import kim.hyunsub.common.api.model.YoutubeMetadata
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders
@@ -41,15 +36,6 @@ class ApiCaller(
 
 	fun uploadByUrl(url: String) =
 		_post<UploadResult>("/upload/url", mapOf("url" to url))
-
-	fun ffmpeg(params: ApiFFmpegParams): ApiFFmpegResult =
-		_post("/api/video/ffmpeg", params)
-
-	fun youtubeMetadata(url: String): YoutubeMetadata =
-		_get("/api/video/youtube/metadata", mapOf("url" to url))
-
-	fun youtubeDownload(params: YoutubeDownloadParams): YoutubeDownloadResult =
-		_post("/api/video/youtube/download", params)
 
 	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
 		request(urlOrPath, HttpMethod.GET, queryParams, null)

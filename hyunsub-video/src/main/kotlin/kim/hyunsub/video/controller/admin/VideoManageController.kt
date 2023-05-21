@@ -70,7 +70,7 @@ class VideoManageController(
 		val video = videoRepository.findByIdOrNull(videoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val apiParams = kim.hyunsub.common.api.model.VideoThumbnailParams(
+		val apiParams = kim.hyunsub.common.fs.model.VideoThumbnailParams(
 			input = video.path,
 			time = params.time,
 		)

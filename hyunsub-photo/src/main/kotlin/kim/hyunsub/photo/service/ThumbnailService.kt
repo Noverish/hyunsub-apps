@@ -2,9 +2,9 @@ package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
-import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.remove
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.util.PhotoPathConverter

@@ -1,4 +1,4 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.common.fs.model
 
 data class YoutubeMetadata(
 	val resolutions: List<String>,

@@ -1,4 +1,4 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.common.fs.model
 
 data class VideoThumbnailParams(
 	val input: String,

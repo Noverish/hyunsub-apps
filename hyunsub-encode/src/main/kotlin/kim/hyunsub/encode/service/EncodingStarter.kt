@@ -1,7 +1,7 @@
 package kim.hyunsub.encode.service
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.ApiFFmpegParams
+import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.model.FFmpegParams
 import kim.hyunsub.encode.repository.EncodeRepository
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors
 @Service
 class EncodingStarter(
 	private val encodeRepository: EncodeRepository,
-	private val apiCaller: ApiCaller,
+	private val fsVideoClient: FsVideoClient,
 ) {
 	private val executor = Executors.newSingleThreadScheduledExecutor()
 	private val log = KotlinLogging.logger { }
@@ -36,8 +36,8 @@ class EncodingStarter(
 		}
 		log.info { "[encode] candidate=$candidate" }
 
-		apiCaller.ffmpeg(
-			ApiFFmpegParams(
+		fsVideoClient.ffmpeg(
+			FFmpegParams(
 				input = candidate.input,
 				options = candidate.options,
 				output = candidate.encodeOutput,
