@@ -2,11 +2,12 @@ package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.common.fs.exist
 import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.fs.statOrNull
@@ -43,6 +44,7 @@ class VideoRegisterService(
 	private val videoGroupRepository: VideoGroupRepository,
 	private val fsVideoClient: FsVideoClient,
 	private val fsClient: FsClient,
+	private val fsImageClient: FsImageClient,
 ) {
 	val log = KotlinLogging.logger { }
 
@@ -194,8 +196,8 @@ class VideoRegisterService(
 		val thumbnailPath = videoPath.replace(Regex("$videoExt$"), thumbnailExt)
 		log.info("[Register Video] Download thumbnail from web: thumbnailPath={}", thumbnailPath)
 
-		apiCaller.imageConvert(
-			ApiPhotoConvertParams(
+		fsImageClient.convert(
+			ImageConvertParams(
 				input = thumbnailOriginalPath,
 				output = thumbnailPath,
 				resize = "512x512>",

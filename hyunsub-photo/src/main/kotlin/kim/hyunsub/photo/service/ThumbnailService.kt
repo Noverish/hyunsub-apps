@@ -1,9 +1,10 @@
 package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.remove
 import kim.hyunsub.photo.repository.entity.Photo
@@ -18,6 +19,7 @@ class ThumbnailService(
 	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val fsVideoClient: FsVideoClient,
+	private val fsImageClient: FsImageClient,
 ) {
 	fun generateThumbnail(photo: Photo) {
 		val original = PhotoPathConverter.original(photo)
@@ -34,8 +36,8 @@ class ThumbnailService(
 				)
 			)
 
-			apiCaller.imageConvert(
-				ApiPhotoConvertParams(
+			fsImageClient.convert(
+				ImageConvertParams(
 					input = tmp,
 					output = thumbnail,
 					resize = "256x256^",
@@ -51,8 +53,8 @@ class ThumbnailService(
 		}
 
 		if (isImage(photo.fileName) || isGif(photo.fileName)) {
-			apiCaller.imageConvert(
-				ApiPhotoConvertParams(
+			fsImageClient.convert(
+				ImageConvertParams(
 					input = original,
 					output = thumbnail,
 					resize = "256x256^",

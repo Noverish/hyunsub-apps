@@ -1,10 +1,10 @@
 package kim.hyunsub.common.fs
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.fs.model.FFmpegParams
 import kim.hyunsub.common.fs.model.FFmpegResult
 import kim.hyunsub.common.fs.model.VideoThumbnailParams
+import kim.hyunsub.common.fs.model.VideoThumbnailResult
 import kim.hyunsub.common.fs.model.YoutubeDownloadParams
 import kim.hyunsub.common.fs.model.YoutubeDownloadResult
 import kim.hyunsub.common.fs.model.YoutubeMetadata
@@ -23,7 +23,7 @@ interface FsVideoClient {
 	fun ffmpeg(@RequestBody params: FFmpegParams): FFmpegResult
 
 	@PostMapping("/api/video/generate-thumbnail")
-	fun videoThumbnail(@RequestBody params: VideoThumbnailParams): ApiSimpleResult
+	fun videoThumbnail(@RequestBody params: VideoThumbnailParams): VideoThumbnailResult
 
 	@GetMapping("/api/video/youtube/metadata")
 	fun youtubeMetadata(@RequestParam url: String): YoutubeMetadata

@@ -1,10 +1,6 @@
 package kim.hyunsub.common.api
 
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.model.ApiImageMagickParams
-import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
-import kim.hyunsub.common.api.model.ApiImageMetadataResult
-import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
@@ -17,19 +13,6 @@ class ApiCaller(
 	private val httpClient: HttpClient,
 	private val apiProperties: ApiProperties,
 ) {
-	fun exif(path: String): String =
-		_get("/api/image/exif", mapOf("path" to path))
-
-	fun imageConvert(params: ApiPhotoConvertParams) {
-		_post<ObjectNode>("/api/image/convert", params)
-	}
-
-	fun imageMagick(params: ApiImageMagickParams) =
-		_post<ObjectNode>("/api/image/magick", params)
-
-	fun imageMetadataBulk(params: ApiImageMetadataBulkParams) =
-		_post<List<ApiImageMetadataResult>>("/api/image/metadata-bulk", params)
-
 	fun upload(path: String, data: ByteArray, override: Boolean = false) {
 		_post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
 	}
@@ -42,9 +25,6 @@ class ApiCaller(
 
 	fun post(urlOrPath: String, body: Any?): String =
 		request(urlOrPath, HttpMethod.POST, emptyMap(), body)
-
-	private inline fun <reified T> _get(urlOrPath: String, queryParams: Map<String, String>) =
-		request<T>(urlOrPath, HttpMethod.GET, queryParams, null)
 
 	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap()) =
 		request<T>(urlOrPath, HttpMethod.POST, queryParams, body)

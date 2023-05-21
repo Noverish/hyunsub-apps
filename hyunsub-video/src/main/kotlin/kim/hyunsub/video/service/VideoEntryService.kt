@@ -2,9 +2,10 @@ package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -40,6 +41,7 @@ class VideoEntryService(
 	private val videoEntryRepository: VideoEntryRepository,
 	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
+	private val fsImageClient: FsImageClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -118,8 +120,8 @@ class VideoEntryService(
 
 			val thumbnailPath = "$folderPath/thumbnail.jpg"
 
-			apiCaller.imageConvert(
-				ApiPhotoConvertParams(
+			fsImageClient.convert(
+				ImageConvertParams(
 					input = thumbnailOriginalPath,
 					output = thumbnailPath,
 					resize = "512x512>",

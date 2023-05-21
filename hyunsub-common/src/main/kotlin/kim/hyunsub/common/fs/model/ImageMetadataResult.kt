@@ -1,6 +1,6 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.common.fs.model
 
-data class ApiImageMetadataResult(
+data class ImageMetadataResult(
 	val format: String,
 	val width: Int,
 	val height: Int,

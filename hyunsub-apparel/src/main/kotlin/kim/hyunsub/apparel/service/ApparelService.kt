@@ -11,7 +11,8 @@ import kim.hyunsub.apparel.repository.entity.ApparelImage
 import kim.hyunsub.apparel.repository.generateId
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
-import kim.hyunsub.common.api.model.ApiPhotoConvertParams
+import kim.hyunsub.common.fs.FsImageClient
+import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import mu.KotlinLogging
@@ -23,6 +24,7 @@ class ApparelService(
 	private val apparelImageRepository: ApparelImageRepository,
 	private val apparelImageService: ApparelImageService,
 	private val apiCaller: ApiCaller,
+	private val fsImageClient: FsImageClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -93,8 +95,8 @@ class ApparelService(
 		val fileName = "$imageId.$ext"
 		val path = ApparelPathConverter.imagePath(userId, apparelId, fileName)
 
-		apiCaller.imageConvert(
-			ApiPhotoConvertParams(
+		fsImageClient.convert(
+			ImageConvertParams(
 				input = noncePath,
 				output = path,
 				resize = "1024x1024>",

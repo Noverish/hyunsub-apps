@@ -8,11 +8,12 @@ import kim.hyunsub.comic.model.ComicOrganizeFileResult
 import kim.hyunsub.comic.model.ComicOrganizeSplitParams
 import kim.hyunsub.comic.model.ComicOrganizeSplitResult
 import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.ApiImageMagickParams
-import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.model.FsRenameBulkData
 import kim.hyunsub.common.fs.model.FsRenameBulkParams
+import kim.hyunsub.common.fs.model.ImageMagickParams
+import kim.hyunsub.common.fs.model.ImageMetadataBulkParams
 import kim.hyunsub.common.fs.removeBulk
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.annotation.Authorized
@@ -37,6 +38,7 @@ import kotlin.io.path.nameWithoutExtension
 class ComicOrganizeController(
 	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
+	private val fsImageClient: FsImageClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -175,7 +177,7 @@ class ComicOrganizeController(
 			.filter { !params.excludes.contains(it) }
 			.map { Path(folderPath, it).toString() }
 
-		val metadataList = apiCaller.imageMetadataBulk(ApiImageMetadataBulkParams(filePaths))
+		val metadataList = fsImageClient.metadataBulk(ImageMetadataBulkParams(filePaths))
 		val candidates = mutableListOf<String>()
 
 		for ((i, filePath) in filePaths.withIndex()) {
@@ -196,8 +198,8 @@ class ComicOrganizeController(
 			log.debug { "[Comic Organize Split] $filePath" }
 
 			if (!params.dryRun) {
-				apiCaller.imageMagick(
-					ApiImageMagickParams(
+				fsImageClient.magick(
+					ImageMagickParams(
 						input = filePath,
 						output = filePath,
 						options = listOf("-crop", "2x1@")

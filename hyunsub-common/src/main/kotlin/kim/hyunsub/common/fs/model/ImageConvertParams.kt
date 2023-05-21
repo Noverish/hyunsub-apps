@@ -1,6 +1,6 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.common.fs.model
 
-data class ApiPhotoConvertParams(
+data class ImageConvertParams(
 	val input: String,
 	val output: String,
 	val resize: String?,

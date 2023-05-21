@@ -1,8 +1,7 @@
 package kim.hyunsub.video.controller.admin
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.ApiSimpleResult
 import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.model.VideoThumbnailResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -31,7 +30,6 @@ class VideoManageController(
 	private val encodeApiCaller: VideoEncodeApiCaller,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataService: VideoMetadataService,
-	private val apiCaller: ApiCaller,
 	private val videoSubtitleService: VideoSubtitleService,
 	private val fsVideoClient: FsVideoClient,
 ) {
@@ -64,7 +62,7 @@ class VideoManageController(
 	fun thumbnail(
 		@PathVariable videoId: String,
 		@RequestBody params: VideoThumbnailParams,
-	): ApiSimpleResult {
+	): VideoThumbnailResult {
 		log.debug { "[Video Thumbnail] videoId=$videoId, params=$params" }
 
 		val video = videoRepository.findByIdOrNull(videoId)
