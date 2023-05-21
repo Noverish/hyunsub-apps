@@ -72,7 +72,7 @@ class ApparelService(
 			imageId = old.imageId
 				.takeIf { it != null && !deleteIds.contains(it) }
 				?: newImages.firstOrNull()?.id,
-		)
+		).copy(regDt = old.regDt)
 		log.debug { "[Apparel Update] apparel=$apparel" }
 
 		apparelRepository.save(apparel)

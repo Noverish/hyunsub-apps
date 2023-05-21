@@ -1,9 +1,9 @@
 package kim.hyunsub.apparel.controller
 
 import kim.hyunsub.apparel.model.RestApiApparelPreview
+import kim.hyunsub.apparel.model.toDto
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
-import kim.hyunsub.apparel.service.ApiModelConverter
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController
 class ApparelBrandController(
 	private val apparelRepository: ApparelRepository,
 	private val apparelPreviewRepository: ApparelPreviewRepository,
-	private val apiModelConverter: ApiModelConverter,
 ) {
 	@GetMapping("")
 	fun brands(userAuth: UserAuth): List<String> {
@@ -37,7 +36,7 @@ class ApparelBrandController(
 		val pageRequest = PageRequest.of(p, 48)
 
 		val list = apparelPreviewRepository.findByBrandAndUserId(brand, userAuth.idNo, pageRequest)
-			.map { apiModelConverter.convert(userAuth.idNo, it) }
+			.map { it.toDto(userId) }
 
 		return RestApiPageResult(total, p, 48, list)
 	}

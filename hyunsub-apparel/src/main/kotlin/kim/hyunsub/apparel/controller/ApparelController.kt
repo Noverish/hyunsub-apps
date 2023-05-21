@@ -7,7 +7,6 @@ import kim.hyunsub.apparel.model.toDto
 import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
-import kim.hyunsub.apparel.service.ApiModelConverter
 import kim.hyunsub.apparel.service.ApparelService
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
@@ -31,7 +30,6 @@ class ApparelController(
 	private val apparelRepository: ApparelRepository,
 	private val apparelPreviewRepository: ApparelPreviewRepository,
 	private val apparelImageRepository: ApparelImageRepository,
-	private val apiModelConverter: ApiModelConverter,
 ) {
 	@GetMapping("")
 	fun list(
@@ -44,7 +42,7 @@ class ApparelController(
 		val total = apparelPreviewRepository.countByUserId(userId)
 		val pageRequest = PageRequest.of(p, 48)
 		val list = apparelPreviewRepository.findByUserId(userId, pageRequest)
-			.map { apiModelConverter.convert(userId, it) }
+			.map { it.toDto(userId) }
 
 		return RestApiPageResult(total, p, 48, list)
 	}
