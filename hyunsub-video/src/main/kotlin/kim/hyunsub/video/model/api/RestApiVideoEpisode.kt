@@ -1,6 +1,6 @@
 package kim.hyunsub.video.model.api
 
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.video.repository.entity.Video
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
@@ -12,7 +12,7 @@ data class RestApiVideoEpisode(
 ) {
 	constructor(video: Video) : this(
 		videoId = video.id,
-		thumbnailUrl = FileUrlConverter.thumbnailUrl(video.thumbnail),
+		thumbnailUrl = FsPathConverter.thumbnailUrl(video.thumbnail),
 		title = Path(video.path).nameWithoutExtension,
 	)
 }

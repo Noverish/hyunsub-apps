@@ -1,7 +1,7 @@
 package kim.hyunsub.video.repository.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
 
@@ -17,5 +17,5 @@ data class VideoEpisode(
 		get() = Path(path).nameWithoutExtension
 
 	val thumbnailUrl: String
-		get() = FileUrlConverter.thumbnailUrl(thumbnail)
+		get() = FsPathConverter.thumbnailUrl(thumbnail)
 }

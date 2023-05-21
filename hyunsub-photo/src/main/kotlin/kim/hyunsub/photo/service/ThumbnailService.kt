@@ -1,6 +1,5 @@
 package kim.hyunsub.photo.service
 
-import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsVideoClient
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class ThumbnailService(
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val fsVideoClient: FsVideoClient,
 	private val fsImageClient: FsImageClient,

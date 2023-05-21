@@ -1,8 +1,7 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.model.FileStat
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.dto.EntryScanResult
@@ -23,7 +22,6 @@ import kotlin.io.path.nameWithoutExtension
 
 @Service
 class EntryScanService(
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,

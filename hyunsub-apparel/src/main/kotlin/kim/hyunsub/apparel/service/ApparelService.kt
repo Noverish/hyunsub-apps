@@ -9,9 +9,8 @@ import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.apparel.repository.entity.ApparelImage
 import kim.hyunsub.apparel.repository.generateId
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.fs.FsImageClient
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -23,7 +22,6 @@ class ApparelService(
 	private val apparelRepository: ApparelRepository,
 	private val apparelImageRepository: ApparelImageRepository,
 	private val apparelImageService: ApparelImageService,
-	private val apiCaller: ApiCaller,
 	private val fsImageClient: FsImageClient,
 ) {
 	private val log = KotlinLogging.logger { }
@@ -89,7 +87,7 @@ class ApparelService(
 	}
 
 	private fun processUploadedImage(it: ApparelUpsertImageParams, userId: String, apparelId: String): ApparelImage {
-		val noncePath = FileUrlConverter.noncePath(it.nonce)
+		val noncePath = FsPathConverter.noncePath(it.nonce)
 		val ext = it.ext.lowercase()
 		val imageId = apparelImageRepository.generateId()
 		val fileName = "$imageId.$ext"

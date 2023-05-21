@@ -1,7 +1,5 @@
 package kim.hyunsub.common.api
 
-import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.http.HttpClient
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpHeaders
@@ -13,21 +11,11 @@ class ApiCaller(
 	private val httpClient: HttpClient,
 	private val apiProperties: ApiProperties,
 ) {
-	fun upload(path: String, data: ByteArray, override: Boolean = false) {
-		_post<ObjectNode>("/upload/binary", data, mapOf("path" to path, "override" to override.toString()))
-	}
-
-	fun uploadByUrl(url: String) =
-		_post<UploadResult>("/upload/url", mapOf("url" to url))
-
 	fun get(urlOrPath: String, queryParams: Map<String, String> = emptyMap()): String =
 		request(urlOrPath, HttpMethod.GET, queryParams, null)
 
 	fun post(urlOrPath: String, body: Any?): String =
 		request(urlOrPath, HttpMethod.POST, emptyMap(), body)
-
-	private inline fun <reified T> _post(urlOrPath: String, body: Any?, queryParams: Map<String, String> = emptyMap()) =
-		request<T>(urlOrPath, HttpMethod.POST, queryParams, body)
 
 	private inline fun <reified T> request(
 		urlOrPath: String,

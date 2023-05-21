@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.repository.entity
 
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
@@ -92,7 +92,7 @@ data class Photo(
 		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year
 
 	private val thumbnail: String
-		get() = FileUrlConverter.convertToUrl(PhotoPathConverter.thumbnail(this.id))
+		get() = FsPathConverter.convertToUrl(PhotoPathConverter.thumbnail(this.id))
 
 	val fileName: String
 		get() = "$id.$ext"

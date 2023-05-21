@@ -1,9 +1,9 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsImageClient
+import kim.hyunsub.common.fs.FsPathConverter
+import kim.hyunsub.common.fs.FsUploadClient
 import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.common.fs.exist
 import kim.hyunsub.common.fs.mkdir
@@ -11,6 +11,7 @@ import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.fs.statOrNull
+import kim.hyunsub.common.fs.url
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
@@ -36,7 +37,6 @@ import kotlin.io.path.nameWithoutExtension
 @Service
 class VideoRegisterService(
 	private val randomGenerator: RandomGenerator,
-	private val apiCaller: ApiCaller,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataService: VideoMetadataService,
@@ -45,6 +45,7 @@ class VideoRegisterService(
 	private val fsVideoClient: FsVideoClient,
 	private val fsClient: FsClient,
 	private val fsImageClient: FsImageClient,
+	private val fsUploadClient: FsUploadClient,
 ) {
 	val log = KotlinLogging.logger { }
 
@@ -187,8 +188,8 @@ class VideoRegisterService(
 		val thumbnailOriginalPath = videoPath.replace(Regex("$videoExt$"), "original.$thumbnailExt")
 		log.info("[Register Video] Download thumbnail from web: thumbnailOriginalPath={}", thumbnailOriginalPath)
 
-		val nonce = apiCaller.uploadByUrl(url).nonce
-		val noncePath = FileUrlConverter.noncePath(nonce)
+		val nonce = fsUploadClient.url(url).nonce
+		val noncePath = FsPathConverter.noncePath(nonce)
 		log.info("[Register Video] Download thumbnail from web: noncePath={}", noncePath)
 
 		fsClient.rename(noncePath, thumbnailOriginalPath)

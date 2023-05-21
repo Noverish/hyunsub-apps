@@ -1,6 +1,6 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.util.getHumanReadableBitrate
 import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.video.model.api.RestApiVideo
@@ -28,8 +28,8 @@ class ApiModelConverter {
 	): RestApiVideo {
 		return RestApiVideo(
 			videoId = video.id,
-			videoUrl = FileUrlConverter.convertToUrl(video.path),
-			thumbnailUrl = FileUrlConverter.thumbnailUrl(video.thumbnail),
+			videoUrl = FsPathConverter.convertToUrl(video.path),
+			thumbnailUrl = FsPathConverter.thumbnailUrl(video.thumbnail),
 			title = Path(video.path).nameWithoutExtension,
 			subtitles = subtitles.map { convertVideoSubtitle(video, it) },
 			metadata = metadata?.let { convertVideoMetadata(it) },
@@ -53,7 +53,7 @@ class ApiModelConverter {
 
 		val url = Path(subtitle.path)
 			.let { "${it.parent}/${it.nameWithoutExtension}.vtt" }
-			.let { FileUrlConverter.convertToUrl(it) }
+			.let { FsPathConverter.convertToUrl(it) }
 
 		return RestApiVideoSubtitle(
 			url = url,

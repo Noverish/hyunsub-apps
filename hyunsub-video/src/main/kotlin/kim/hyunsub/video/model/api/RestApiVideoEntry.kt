@@ -1,6 +1,6 @@
 package kim.hyunsub.video.model.api
 
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.video.repository.entity.VideoEntry
 
 data class RestApiVideoEntry(
@@ -15,6 +15,6 @@ data class RestApiVideoEntry(
 	constructor(entity: VideoEntry) : this(
 		id = entity.id,
 		name = entity.name.replace(yearRegex, ""),
-		thumbnail = FileUrlConverter.thumbnailUrl(entity.thumbnail)
+		thumbnail = FsPathConverter.thumbnailUrl(entity.thumbnail)
 	)
 }

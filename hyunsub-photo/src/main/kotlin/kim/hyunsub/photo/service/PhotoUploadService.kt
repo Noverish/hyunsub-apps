@@ -1,9 +1,9 @@
 package kim.hyunsub.photo.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsImageClient
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.fs.remove
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.util.decodeHex
@@ -66,7 +66,7 @@ class PhotoUploadService(
 	}
 
 	private fun getOrCreatePhoto(params: ApiPhotoUploadParams): Photo {
-		val tmpPath = FileUrlConverter.noncePath(params.nonce)
+		val tmpPath = FsPathConverter.noncePath(params.nonce)
 
 		val hash = fsClient.hash(tmpPath).result.decodeHex().toBase64()
 

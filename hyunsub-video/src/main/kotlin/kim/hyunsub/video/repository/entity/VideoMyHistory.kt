@@ -1,7 +1,7 @@
 package kim.hyunsub.video.repository.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
@@ -19,5 +19,5 @@ data class VideoMyHistory(
 		get() = Path(path).nameWithoutExtension
 
 	val thumbnailUrl: String
-		get() = FileUrlConverter.thumbnailUrl(thumbnail)
+		get() = FsPathConverter.thumbnailUrl(thumbnail)
 }

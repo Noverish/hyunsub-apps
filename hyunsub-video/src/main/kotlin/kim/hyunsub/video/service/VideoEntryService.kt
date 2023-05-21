@@ -1,12 +1,13 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsImageClient
+import kim.hyunsub.common.fs.FsPathConverter
+import kim.hyunsub.common.fs.FsUploadClient
 import kim.hyunsub.common.fs.mkdir
 import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.rename
+import kim.hyunsub.common.fs.url
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -39,9 +40,9 @@ class VideoEntryService(
 	private val videoCategoryRepository: VideoCategoryRepository,
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val fsImageClient: FsImageClient,
+	private val fsUploadClient: FsUploadClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -113,8 +114,8 @@ class VideoEntryService(
 			val thumbnailExt = Path(URL(it).path).extension.ifEmpty { "jpg" }
 			val thumbnailOriginalPath = "$folderPath/thumbnail.original.$thumbnailExt"
 
-			val nonce = apiCaller.uploadByUrl(it).nonce
-			val noncePath = FileUrlConverter.noncePath(nonce)
+			val nonce = fsUploadClient.url(it).nonce
+			val noncePath = FsPathConverter.noncePath(nonce)
 
 			fsClient.rename(noncePath, thumbnailOriginalPath)
 

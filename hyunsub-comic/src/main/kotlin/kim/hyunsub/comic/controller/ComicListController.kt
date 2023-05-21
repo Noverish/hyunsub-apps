@@ -10,7 +10,6 @@ import kim.hyunsub.comic.repository.ComicRepository
 import kim.hyunsub.comic.repository.entity.ComicEpisodeId
 import kim.hyunsub.comic.repository.entity.ComicHistoryId
 import kim.hyunsub.comic.service.ApiModelConverter
-import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
@@ -33,7 +32,6 @@ class ComicListController(
 	private val comicEpisodeRepository: ComicEpisodeRepository,
 	private val comicHistoryRepository: ComicHistoryRepository,
 	private val apiModelConverter: ApiModelConverter,
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 ) {
 	private val log = KotlinLogging.logger { }

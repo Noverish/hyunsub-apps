@@ -1,6 +1,6 @@
 package kim.hyunsub.common.fs
 
-import kim.hyunsub.common.api.model.FileStat
+import kim.hyunsub.common.fs.model.FileStat
 import kim.hyunsub.common.fs.model.FsCopyMDateParams
 import kim.hyunsub.common.fs.model.FsHashResult
 import kim.hyunsub.common.fs.model.FsMoveBulkParams

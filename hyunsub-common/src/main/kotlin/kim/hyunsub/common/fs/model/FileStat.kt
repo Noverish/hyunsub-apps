@@ -1,4 +1,4 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.common.fs.model
 
 import java.time.Instant
 import java.time.LocalDateTime

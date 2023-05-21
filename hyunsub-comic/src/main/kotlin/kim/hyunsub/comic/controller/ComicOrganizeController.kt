@@ -7,7 +7,6 @@ import kim.hyunsub.comic.model.ComicOrganizeFileParams
 import kim.hyunsub.comic.model.ComicOrganizeFileResult
 import kim.hyunsub.comic.model.ComicOrganizeSplitParams
 import kim.hyunsub.comic.model.ComicOrganizeSplitResult
-import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.model.FsRenameBulkData
@@ -36,7 +35,6 @@ import kotlin.io.path.nameWithoutExtension
 @RestController
 @RequestMapping("/api/v1/organize")
 class ComicOrganizeController(
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val fsImageClient: FsImageClient,
 ) {

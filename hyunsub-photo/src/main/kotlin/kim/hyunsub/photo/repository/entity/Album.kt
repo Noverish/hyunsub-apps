@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.repository.entity
 
-import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.photo.model.api.ApiAlbumPreview
 import kim.hyunsub.photo.util.PhotoPathConverter
 import java.time.LocalDateTime
@@ -28,6 +28,6 @@ data class Album(
 	fun toPreview() = ApiAlbumPreview(
 		id = id,
 		name = name,
-		thumbnail = FileUrlConverter.thumbnailUrl(thumbnailPhotoId?.let { PhotoPathConverter.thumbnail(it) }),
+		thumbnail = FsPathConverter.thumbnailUrl(thumbnailPhotoId?.let { PhotoPathConverter.thumbnail(it) }),
 	)
 }

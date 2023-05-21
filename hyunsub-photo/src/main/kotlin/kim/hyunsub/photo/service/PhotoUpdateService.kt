@@ -1,7 +1,6 @@
 package kim.hyunsub.photo.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.error.ErrorCode
@@ -24,7 +23,6 @@ import javax.transaction.Transactional
 
 @Service
 class PhotoUpdateService(
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,

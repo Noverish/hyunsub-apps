@@ -1,6 +1,6 @@
 package kim.hyunsub.drive.model
 
-import kim.hyunsub.common.api.model.FileStat
+import kim.hyunsub.common.fs.model.FileStat
 import java.time.LocalDateTime
 import kotlin.io.path.Path
 import kotlin.io.path.name
