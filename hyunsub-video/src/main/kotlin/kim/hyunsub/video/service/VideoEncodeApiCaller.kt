@@ -1,20 +1,20 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.api.EncodeApiCaller
-import kim.hyunsub.common.api.model.EncodeParams
 import kim.hyunsub.common.config.AppProperties
+import kim.hyunsub.common.fs.FsEncodeClient
+import kim.hyunsub.common.fs.model.EncodeParams
 import kim.hyunsub.video.repository.entity.Video
 import org.springframework.stereotype.Service
 
 @Service
 class VideoEncodeApiCaller(
-	private val encodeApiCaller: EncodeApiCaller,
+	private val fsEncodeClient: FsEncodeClient,
 	private val appProperties: AppProperties,
 ) {
 	fun encode(video: Video, options: String? = null) {
 		val path = video.path
 
-		encodeApiCaller.encode(
+		fsEncodeClient.encode(
 			EncodeParams(
 				input = path,
 				output = path,

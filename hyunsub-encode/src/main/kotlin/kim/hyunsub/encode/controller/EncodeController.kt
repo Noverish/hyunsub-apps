@@ -1,6 +1,6 @@
 package kim.hyunsub.encode.controller
 
-import kim.hyunsub.common.api.model.EncodeParams
+import kim.hyunsub.common.fs.model.EncodeParams
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.encode.model.EncodeStatus
 import kim.hyunsub.encode.service.EncodeService

@@ -1,9 +1,8 @@
 package kim.hyunsub.encode.service
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.EncodeParams
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.copyMDate
+import kim.hyunsub.common.fs.model.EncodeParams
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.repository.entity.Encode
@@ -14,9 +13,9 @@ import java.time.LocalDateTime
 @Service
 class EncodeService(
 	private val encodeRepository: EncodeRepository,
-	private val apiCaller: ApiCaller,
 	private val encodingStarter: EncodingStarter,
 	private val fsClient: FsClient,
+	private val encodeCallbackService: EncodeCallbackService,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -54,7 +53,7 @@ class EncodeService(
 		}
 
 		encode.callback
-			?.let { apiCaller.get(it) }
+			?.let { encodeCallbackService.sendCallback(it) }
 			?.let { log.info { "[handleFinish] callback result: $it" } }
 
 		encodingStarter.tryStartNext()

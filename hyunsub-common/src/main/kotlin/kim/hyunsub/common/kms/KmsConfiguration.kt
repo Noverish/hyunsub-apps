@@ -1,6 +1,5 @@
 package kim.hyunsub.common.kms
 
-import kim.hyunsub.common.api.ApiCaller
 import org.springframework.beans.factory.BeanFactoryUtils
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
@@ -32,9 +31,6 @@ class KmsConfiguration {
 		fun dependsOnPostProcessor(): BeanFactoryPostProcessor {
 			return BeanFactoryPostProcessor { beanFactory ->
 				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, DataSource::class.java, true, false)
-					.map { beanFactory.getBeanDefinition(it) }
-					.forEach { it.setDependsOn(*StringUtils.addStringToArray(it.dependsOn, "kmsInitializer")) }
-				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, ApiCaller::class.java, true, false)
 					.map { beanFactory.getBeanDefinition(it) }
 					.forEach { it.setDependsOn(*StringUtils.addStringToArray(it.dependsOn, "kmsInitializer")) }
 			}

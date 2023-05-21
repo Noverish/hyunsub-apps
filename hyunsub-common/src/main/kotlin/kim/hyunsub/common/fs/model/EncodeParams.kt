@@ -1,4 +1,4 @@
-package kim.hyunsub.common.api.model
+package kim.hyunsub.common.fs.model
 
 data class EncodeParams(
 	val input: String,

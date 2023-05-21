@@ -1,17 +1,17 @@
 package kim.hyunsub.photo.service
 
-import kim.hyunsub.common.api.EncodeApiCaller
-import kim.hyunsub.common.api.model.EncodeParams
 import kim.hyunsub.common.config.AppProperties
+import kim.hyunsub.common.fs.FsEncodeClient
+import kim.hyunsub.common.fs.model.EncodeParams
 import org.springframework.stereotype.Service
 
 @Service
 class PhotoEncodeApiCaller(
-	private val encodeApiCaller: EncodeApiCaller,
+	private val fsEncodeClient: FsEncodeClient,
 	private val appProperties: AppProperties,
 ) {
 	fun encode(input: String, output: String, photoId: String) {
-		encodeApiCaller.encode(
+		fsEncodeClient.encode(
 			EncodeParams(
 				input = input,
 				output = output,
