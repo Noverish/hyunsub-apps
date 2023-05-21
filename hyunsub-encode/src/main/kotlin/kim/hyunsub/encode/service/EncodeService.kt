@@ -2,6 +2,9 @@ package kim.hyunsub.encode.service
 
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.EncodeParams
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.copyMDate
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.encode.repository.EncodeRepository
 import kim.hyunsub.encode.repository.entity.Encode
 import mu.KotlinLogging
@@ -13,6 +16,7 @@ class EncodeService(
 	private val encodeRepository: EncodeRepository,
 	private val apiCaller: ApiCaller,
 	private val encodingStarter: EncodingStarter,
+	private val fsClient: FsClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -42,11 +46,11 @@ class EncodeService(
 		encodeRepository.saveAndFlush(newEncode)
 
 		if (encode.input == encode.output) {
-			apiCaller.rename(encode.input, encode.input + ".old")
-			apiCaller.rename(encode.encodeOutput, encode.input)
-			apiCaller.copyMDate(encode.input + ".old", encode.output)
+			fsClient.rename(encode.input, encode.input + ".old")
+			fsClient.rename(encode.encodeOutput, encode.input)
+			fsClient.copyMDate(encode.input + ".old", encode.output)
 		} else {
-			apiCaller.copyMDate(encode.input, encode.output)
+			fsClient.copyMDate(encode.input, encode.output)
 		}
 
 		encode.callback

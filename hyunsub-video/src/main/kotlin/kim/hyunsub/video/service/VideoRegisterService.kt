@@ -7,6 +7,8 @@ import kim.hyunsub.common.api.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsVideoClient
 import kim.hyunsub.common.fs.exist
+import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.fs.statOrNull
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
@@ -86,8 +88,8 @@ class VideoRegisterService(
 		if (params.videoPath != params.outputPath) {
 			val folderPath = Path(params.outputPath).parent.toString()
 			log.info("[Register Video] folderPath={}", folderPath)
-			apiCaller.mkdir(folderPath)
-			apiCaller.rename(params.videoPath, params.outputPath)
+			fsClient.mkdir(folderPath)
+			fsClient.rename(params.videoPath, params.outputPath)
 
 			// 파일 이동 확인
 			if (!fsClient.exist(params.outputPath)) {
@@ -187,7 +189,7 @@ class VideoRegisterService(
 		val noncePath = FileUrlConverter.noncePath(nonce)
 		log.info("[Register Video] Download thumbnail from web: noncePath={}", noncePath)
 
-		apiCaller.rename(noncePath, thumbnailOriginalPath)
+		fsClient.rename(noncePath, thumbnailOriginalPath)
 
 		val thumbnailPath = videoPath.replace(Regex("$videoExt$"), thumbnailExt)
 		log.info("[Register Video] Download thumbnail from web: thumbnailPath={}", thumbnailPath)

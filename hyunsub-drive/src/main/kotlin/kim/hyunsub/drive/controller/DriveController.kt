@@ -1,9 +1,10 @@
 package kim.hyunsub.drive.controller
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.ApiMoveBulkParams
-import kim.hyunsub.common.api.model.ApiRenameBulkParams
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.model.FsMoveBulkParams
+import kim.hyunsub.common.fs.model.FsRenameBulkParams
+import kim.hyunsub.common.fs.removeBulk
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.drive.model.DriveRemoveBulkParams
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1")
 class DriveController(
-	private val apiCaller: ApiCaller,
 	private val fsClient: FsClient,
 	private val drivePathService: DrivePathService,
 ) {
@@ -35,23 +35,23 @@ class DriveController(
 	@PostMapping("/rename-bulk")
 	fun renameBulk(
 		userAuth: UserAuth,
-		@RequestBody params: ApiRenameBulkParams,
+		@RequestBody params: FsRenameBulkParams,
 	): SimpleResponse {
 		val newParams = params.copy(path = drivePathService.getPath(userAuth, params.path))
-		apiCaller.renameBulk(newParams)
+		fsClient.renameBulk(newParams)
 		return SimpleResponse()
 	}
 
 	@PostMapping("/move-bulk")
 	fun moveBulk(
 		userAuth: UserAuth,
-		@RequestBody params: ApiMoveBulkParams,
+		@RequestBody params: FsMoveBulkParams,
 	): SimpleResponse {
 		val newParams = params.copy(
 			from = drivePathService.getPath(userAuth, params.from),
 			to = drivePathService.getPath(userAuth, params.to),
 		)
-		apiCaller.moveBulk(newParams)
+		fsClient.moveBulk(newParams)
 		return SimpleResponse()
 	}
 
@@ -60,7 +60,7 @@ class DriveController(
 		userAuth: UserAuth,
 		@RequestBody params: PathParam,
 	): SimpleResponse {
-		apiCaller.mkdir(drivePathService.getPath(userAuth, params.path))
+		fsClient.mkdir(drivePathService.getPath(userAuth, params.path))
 		return SimpleResponse()
 	}
 
@@ -70,7 +70,7 @@ class DriveController(
 		@RequestBody params: DriveRemoveBulkParams,
 	): SimpleResponse {
 		val paths = params.paths.map { drivePathService.getPath(userAuth, it) }
-		apiCaller.removeBulk(paths)
+		fsClient.removeBulk(paths)
 		return SimpleResponse()
 	}
 }

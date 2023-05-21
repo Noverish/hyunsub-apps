@@ -1,6 +1,8 @@
 package kim.hyunsub.photo.service
 
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.remove
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service
 @Service
 class PhotoDeleteService(
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
@@ -57,13 +60,13 @@ class PhotoDeleteService(
 		val originalPath = PhotoPathConverter.original(photo)
 		val thumbnailPath = PhotoPathConverter.thumbnail(photoId)
 
-		apiCaller.remove(originalPath)
-		apiCaller.remove(thumbnailPath)
+		fsClient.remove(originalPath)
+		fsClient.remove(thumbnailPath)
 
 		if (photo.isVideo) {
 			val videoPath = PhotoPathConverter.video(photoId)
 			try {
-				apiCaller.remove(videoPath)
+				fsClient.remove(videoPath)
 			} catch (_: Exception) {
 			}
 		}

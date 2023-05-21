@@ -1,6 +1,6 @@
 package kim.hyunsub.video.controller.admin
 
-import kim.hyunsub.common.api.model.ApiRenameBulkParamData
+import kim.hyunsub.common.fs.model.FsRenameBulkData
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.video.model.dto.EntryRenameParams
 import kim.hyunsub.video.model.dto.EntryScanResult
@@ -34,7 +34,7 @@ class EntryManageController(
 	fun rename(
 		@PathVariable entryId: String,
 		@RequestBody params: EntryRenameParams,
-	): List<ApiRenameBulkParamData> {
+	): List<FsRenameBulkData> {
 		log.debug { "[Entry Rename] entryId=$entryId, params=$params" }
 		return entryRenameService.rename(entryId, params)
 	}

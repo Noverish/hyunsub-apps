@@ -3,6 +3,9 @@ package kim.hyunsub.video.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -36,6 +39,7 @@ class VideoEntryService(
 	private val videoGroupRepository: VideoGroupRepository,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -101,7 +105,7 @@ class VideoEntryService(
 
 		val folderPath = Path(category.path, params.name).toString()
 
-		apiCaller.mkdir(folderPath)
+		fsClient.mkdir(folderPath)
 
 		val thumbnail = params.thumbnailUrl?.let {
 			val thumbnailExt = Path(URL(it).path).extension.ifEmpty { "jpg" }
@@ -110,7 +114,7 @@ class VideoEntryService(
 			val nonce = apiCaller.uploadByUrl(it).nonce
 			val noncePath = FileUrlConverter.noncePath(nonce)
 
-			apiCaller.rename(noncePath, thumbnailOriginalPath)
+			fsClient.rename(noncePath, thumbnailOriginalPath)
 
 			val thumbnailPath = "$folderPath/thumbnail.jpg"
 

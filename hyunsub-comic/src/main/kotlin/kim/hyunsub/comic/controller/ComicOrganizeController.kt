@@ -10,9 +10,11 @@ import kim.hyunsub.comic.model.ComicOrganizeSplitResult
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiImageMagickParams
 import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
-import kim.hyunsub.common.api.model.ApiRenameBulkParamData
-import kim.hyunsub.common.api.model.ApiRenameBulkParams
 import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.model.FsRenameBulkData
+import kim.hyunsub.common.fs.model.FsRenameBulkParams
+import kim.hyunsub.common.fs.removeBulk
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -50,7 +52,7 @@ class ComicOrganizeController(
 		val episodes = fsClient.readdir(comicPath).sorted()
 
 		for (episode in episodes) {
-			val renames = mutableListOf<ApiRenameBulkParamData>()
+			val renames = mutableListOf<FsRenameBulkData>()
 
 			val episodePath = Path(comicPath, episode).toString()
 			val files = fsClient.readdir(episodePath).sorted()
@@ -63,15 +65,15 @@ class ComicOrganizeController(
 				if (expected != actual) {
 					val from = Path("$actual.$ext").toString()
 					val to = Path("$expected.$ext").toString()
-					renames.add(ApiRenameBulkParamData(from, to))
+					renames.add(FsRenameBulkData(from, to))
 					result.add("$episodePath $from -> $to")
 					log.debug { "[Comic Organize File] $episodePath $from -> $to" }
 				}
 			}
 
 			if (!params.dryRun) {
-				apiCaller.renameBulk(
-					ApiRenameBulkParams(
+				fsClient.renameBulk(
+					FsRenameBulkParams(
 						path = episodePath,
 						renames = renames,
 					)
@@ -95,7 +97,7 @@ class ComicOrganizeController(
 			.filter { it.contains(regex) }
 		val candidateMap = candidates.groupBy { regex.find(it)!!.groupValues[1] }
 
-		val renames = mutableListOf<ApiRenameBulkParamData>()
+		val renames = mutableListOf<FsRenameBulkData>()
 
 		for (siblings in candidateMap.values) {
 			if (siblings.size == 1) {
@@ -115,24 +117,24 @@ class ComicOrganizeController(
 
 					if (filePath != newFilePath) {
 						log.debug { "[Comic Organize Consolidate] file: $filePath -> $newFilePath" }
-						renames.add(ApiRenameBulkParamData(filePath, newFilePath))
+						renames.add(FsRenameBulkData(filePath, newFilePath))
 					}
 				}
 			}
 		}
 
-		val renameParams = ApiRenameBulkParams(
+		val renameParams = FsRenameBulkParams(
 			path = comicPath,
 			renames = renames.toList(),
 		)
 
-		val renameFolderParams = ApiRenameBulkParams(
+		val renameFolderParams = FsRenameBulkParams(
 			path = comicPath,
 			renames = candidateMap.values.map { siblings ->
 				val from = siblings.first()
 				val to = from.replace(regex, "$1${params.suffix}")
 				log.debug { "[Comic Organize Consolidate] folder: $from -> $to" }
-				ApiRenameBulkParamData(from, to)
+				FsRenameBulkData(from, to)
 			}
 		)
 
@@ -143,9 +145,9 @@ class ComicOrganizeController(
 		}
 
 		if (!params.dryRun) {
-			apiCaller.renameBulk(renameParams)
-			apiCaller.renameBulk(renameFolderParams)
-			apiCaller.removeBulk(removes)
+			fsClient.renameBulk(renameParams)
+			fsClient.renameBulk(renameFolderParams)
+			fsClient.removeBulk(removes)
 		}
 
 		return ComicOrganizeConsolidateResult(
@@ -153,7 +155,10 @@ class ComicOrganizeController(
 				Path(renameParams.path, it.from).toString() + " -> " + Path(renameParams.path, it.to).toString()
 			},
 			renameFolder = renameFolderParams.renames.map {
-				Path(renameFolderParams.path, it.from).toString() + " -> " + Path(renameFolderParams.path, it.to).toString()
+				Path(renameFolderParams.path, it.from).toString() + " -> " + Path(
+					renameFolderParams.path,
+					it.to
+				).toString()
 			},
 			removes = removes,
 		)
@@ -184,7 +189,7 @@ class ComicOrganizeController(
 			candidates.add(filePath)
 		}
 
-		val renames = mutableListOf<ApiRenameBulkParamData>()
+		val renames = mutableListOf<FsRenameBulkData>()
 		val removes = mutableListOf<String>()
 
 		for (filePath in candidates) {
@@ -202,7 +207,7 @@ class ComicOrganizeController(
 
 			val file = Path(filePath).name
 			renames.add(
-				ApiRenameBulkParamData(
+				FsRenameBulkData(
 					from = file.replace(".jpg", "-0.jpg"),
 					to = file.replace(".jpg", "-2.jpg"),
 				)
@@ -212,16 +217,16 @@ class ComicOrganizeController(
 		}
 
 		if (!params.dryRun && candidates.isNotEmpty()) {
-			apiCaller.renameBulk(
-				ApiRenameBulkParams(
+			fsClient.renameBulk(
+				FsRenameBulkParams(
 					path = folderPath,
 					renames = renames,
 				)
 			)
-			apiCaller.removeBulk(removes)
+			fsClient.removeBulk(removes)
 
 			if (candidates.any { it.contains("0000.jpg") }) {
-				apiCaller.rename(
+				fsClient.rename(
 					from = Path(folderPath, "0000-1.jpg").toString(),
 					to = Path(folderPath, "9999.jpg").toString(),
 				)

@@ -6,11 +6,7 @@ import kim.hyunsub.common.api.model.ApiFFmpegResult
 import kim.hyunsub.common.api.model.ApiImageMagickParams
 import kim.hyunsub.common.api.model.ApiImageMetadataBulkParams
 import kim.hyunsub.common.api.model.ApiImageMetadataResult
-import kim.hyunsub.common.api.model.ApiMoveBulkParams
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
-import kim.hyunsub.common.api.model.ApiRenameBulkParams
-import kim.hyunsub.common.api.model.ApiSimpleResult
-import kim.hyunsub.common.api.model.FileStat
 import kim.hyunsub.common.api.model.UploadResult
 import kim.hyunsub.common.api.model.YoutubeDownloadParams
 import kim.hyunsub.common.api.model.YoutubeDownloadResult
@@ -26,43 +22,6 @@ class ApiCaller(
 	private val httpClient: HttpClient,
 	private val apiProperties: ApiProperties,
 ) {
-	fun mkdir(path: String) {
-		_post<ObjectNode>("/api/fs/mkdir", mapOf("path" to path))
-	}
-
-	fun rename(from: String, to: String, override: Boolean = false) {
-		_post<ObjectNode>("/api/fs/rename", mapOf("from" to from, "to" to to, "override" to override.toString()))
-	}
-
-	fun renameBulk(params: ApiRenameBulkParams) {
-		_post<ObjectNode>("/api/fs/rename/bulk", params)
-	}
-
-	fun moveBulk(params: ApiMoveBulkParams) {
-		_post<ObjectNode>("/api/fs/move/bulk", params)
-	}
-
-	fun remove(path: String) {
-		_post<ObjectNode>("/api/fs/remove", mapOf("path" to path))
-	}
-
-	fun removeBulk(paths: List<String>) {
-		_post<ObjectNode>("/api/fs/remove-bulk", mapOf("paths" to paths))
-	}
-
-	fun hash(path: String): ApiSimpleResult =
-		_get("/api/fs/hash", mapOf("path" to path))
-
-	fun walk(path: String): List<String> =
-		_get("/api/fs/walk", mapOf("path" to path))
-
-	fun walkDetail(path: String): List<FileStat> =
-		_get("/api/fs/walk/detail", mapOf("path" to path))
-
-	fun copyMDate(from: String, to: String) {
-		_post<ObjectNode>("/api/fs/copy-mdate", mapOf("from" to from, "to" to to))
-	}
-
 	fun exif(path: String): String =
 		_get("/api/image/exif", mapOf("path" to path))
 

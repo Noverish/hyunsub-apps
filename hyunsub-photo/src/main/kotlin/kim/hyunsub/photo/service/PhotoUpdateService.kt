@@ -2,6 +2,8 @@ package kim.hyunsub.photo.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.PhotoDateType
@@ -23,6 +25,7 @@ import javax.transaction.Transactional
 @Service
 class PhotoUpdateService(
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
@@ -39,16 +42,16 @@ class PhotoUpdateService(
 
 		val oldOriginalPath = PhotoPathConverter.original(photo)
 		val newOriginalPath = PhotoPathConverter.original(newPhoto)
-		apiCaller.rename(oldOriginalPath, newOriginalPath)
+		fsClient.rename(oldOriginalPath, newOriginalPath)
 
 		val oldThumbnailPath = PhotoPathConverter.thumbnail(oldId)
 		val newThumbnailPath = PhotoPathConverter.thumbnail(newId)
-		apiCaller.rename(oldThumbnailPath, newThumbnailPath)
+		fsClient.rename(oldThumbnailPath, newThumbnailPath)
 
 		if (photo.isVideo) {
 			val oldVideoPath = PhotoPathConverter.video(oldId)
 			val newVideoPath = PhotoPathConverter.video(newId)
-			apiCaller.rename(oldVideoPath, newVideoPath)
+			fsClient.rename(oldVideoPath, newVideoPath)
 		}
 
 		val albums = albumRepository.findByThumbnailPhotoId(oldId)

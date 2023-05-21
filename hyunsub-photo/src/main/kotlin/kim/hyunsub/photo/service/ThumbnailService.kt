@@ -3,7 +3,9 @@ package kim.hyunsub.photo.service
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.model.ApiPhotoConvertParams
 import kim.hyunsub.common.api.model.VideoThumbnailParams
+import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.remove
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isGif
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service
 @Service
 class ThumbnailService(
 	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val fsVideoClient: FsVideoClient,
 ) {
 	fun generateThumbnail(photo: Photo) {
@@ -42,7 +45,7 @@ class ThumbnailService(
 				)
 			)
 
-			apiCaller.remove(tmp)
+			fsClient.remove(tmp)
 
 			return
 		}

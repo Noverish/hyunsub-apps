@@ -1,8 +1,8 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.api.ApiCaller
-import kim.hyunsub.common.api.model.ApiRenameBulkParamData
-import kim.hyunsub.common.api.model.ApiRenameBulkParams
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.model.FsRenameBulkData
+import kim.hyunsub.common.fs.model.FsRenameBulkParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.dto.EntryRenameParams
@@ -24,7 +24,7 @@ import kotlin.io.path.relativeTo
 
 @Service
 class EntryRenameService(
-	private val apiCaller: ApiCaller,
+	private val fsClient: FsClient,
 	private val videoRepository: VideoRepository,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoMetadataRepository: VideoMetadataRepository,
@@ -34,7 +34,7 @@ class EntryRenameService(
 	private val log = KotlinLogging.logger { }
 
 	@Transactional
-	fun rename(entryId: String, params: EntryRenameParams): List<ApiRenameBulkParamData> {
+	fun rename(entryId: String, params: EntryRenameParams): List<FsRenameBulkData> {
 		val entryPath = videoEntryRepository.findByIdOrNull(entryId)?.thumbnail
 			?.let { Path(it).parent }
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
@@ -48,27 +48,27 @@ class EntryRenameService(
 
 		val renames = buildList {
 			videoResults.forEach {
-				add(ApiRenameBulkParamData(it.first.path, it.second.path))
+				add(FsRenameBulkData(it.first.path, it.second.path))
 
 				val oldThumbnail = it.first.thumbnail
 				val newThumbnail = it.second.thumbnail
 				if (oldThumbnail != null && newThumbnail != null) {
-					add(ApiRenameBulkParamData(oldThumbnail, newThumbnail))
+					add(FsRenameBulkData(oldThumbnail, newThumbnail))
 				}
 			}
 
 			subtitleResults.forEach {
-				add(ApiRenameBulkParamData(it.first.path, it.second.path))
+				add(FsRenameBulkData(it.first.path, it.second.path))
 			}
 		}.map {
 			val from = Path(it.from).relativeTo(entryPath).toString()
 			val to = Path(it.to).relativeTo(entryPath).toString()
-			ApiRenameBulkParamData(from, to)
+			FsRenameBulkData(from, to)
 		}
 
 		log.debug { "[Entry Rename] renames=$renames" }
 
-		apiCaller.renameBulk(ApiRenameBulkParams(entryPath.toString(), renames))
+		fsClient.renameBulk(FsRenameBulkParams(entryPath.toString(), renames))
 
 		// Video update 전에 해야 함 (it.first.path 가 바뀌기 때문)
 		iterateMetadatas(videoResults.map { it.first.path }, params)

@@ -1,6 +1,8 @@
 package kim.hyunsub.video.service
 
 import kim.hyunsub.common.api.ApiCaller
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.dto.VideoSubtitleParams
@@ -16,6 +18,7 @@ import kotlin.io.path.extension
 
 @Service
 class VideoSubtitleService(
+	private val fsClient: FsClient,
 	private val apiCaller: ApiCaller,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
@@ -53,7 +56,7 @@ class VideoSubtitleService(
 		if (file != null) {
 			apiCaller.upload(subtitlePath, file.bytes, override)
 		} else if (path != null && path != subtitlePath) {
-			apiCaller.rename(path, subtitlePath, override)
+			fsClient.rename(path, subtitlePath, override)
 		}
 
 		if (subtitle != null) {

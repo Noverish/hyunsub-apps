@@ -3,6 +3,9 @@ package kim.hyunsub.photo.service
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kim.hyunsub.common.api.ApiCaller
 import kim.hyunsub.common.api.FileUrlConverter
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.remove
+import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
@@ -35,6 +38,7 @@ import kotlin.math.abs
 
 @Service
 class PhotoUploadService(
+	private val fsClient: FsClient,
 	private val apiCaller: ApiCaller,
 	private val encodeApiCaller: PhotoEncodeApiCaller,
 	private val photoRepository: PhotoRepository,
@@ -64,12 +68,12 @@ class PhotoUploadService(
 	private fun getOrCreatePhoto(params: ApiPhotoUploadParams): Photo {
 		val tmpPath = FileUrlConverter.noncePath(params.nonce)
 
-		val hash = apiCaller.hash(tmpPath).result.decodeHex().toBase64()
+		val hash = fsClient.hash(tmpPath).result.decodeHex().toBase64()
 
 		val exist = photoRepository.findByHash(hash)
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist photo: $exist" }
-			apiCaller.remove(tmpPath)
+			fsClient.remove(tmpPath)
 			return exist
 		}
 
@@ -92,7 +96,7 @@ class PhotoUploadService(
 
 		// move photo to original folder
 		val originalPath = PhotoPathConverter.original(photo)
-		apiCaller.rename(tmpPath, originalPath)
+		fsClient.rename(tmpPath, originalPath)
 
 		// generate thumbnail
 		thumbnailService.generateThumbnail(photo)
