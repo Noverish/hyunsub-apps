@@ -4,8 +4,8 @@ import kim.hyunsub.apparel.model.RestApiApparel
 
 data class ApparelUpsertParams(
 	val apparel: RestApiApparel,
-	val deletes: List<String>,
-	val uploads: List<ApparelUpsertImageParams>,
+	val deletes: List<String> = emptyList(),
+	val uploads: List<ApparelUpsertImageParams> = emptyList(),
 )
 
 data class ApparelUpsertImageParams(
