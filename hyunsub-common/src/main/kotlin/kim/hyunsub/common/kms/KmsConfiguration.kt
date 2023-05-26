@@ -1,7 +1,12 @@
 package kim.hyunsub.common.kms
 
+import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.FsEncodeClient
+import kim.hyunsub.common.fs.FsImageClient
+import kim.hyunsub.common.fs.FsVideoClient
 import org.springframework.beans.factory.BeanFactoryUtils
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -30,10 +35,18 @@ class KmsConfiguration {
 		@Bean
 		fun dependsOnPostProcessor(): BeanFactoryPostProcessor {
 			return BeanFactoryPostProcessor { beanFactory ->
-				BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, DataSource::class.java, true, false)
-					.map { beanFactory.getBeanDefinition(it) }
-					.forEach { it.setDependsOn(*StringUtils.addStringToArray(it.dependsOn, "kmsInitializer")) }
+				beanFactory.kmsDependsOn(DataSource::class.java)
+				beanFactory.kmsDependsOn(FsClient::class.java)
+				beanFactory.kmsDependsOn(FsVideoClient::class.java)
+				beanFactory.kmsDependsOn(FsImageClient::class.java)
+				beanFactory.kmsDependsOn(FsEncodeClient::class.java)
 			}
 		}
 	}
+}
+
+private fun ConfigurableListableBeanFactory.kmsDependsOn(type: Class<*>) {
+	BeanFactoryUtils.beanNamesForTypeIncludingAncestors(this, type, true, false)
+		.map { this.getBeanDefinition(it) }
+		.forEach { it.setDependsOn(*StringUtils.addStringToArray(it.dependsOn, "kmsInitializer")) }
 }
