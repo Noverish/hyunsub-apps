@@ -61,4 +61,7 @@ data class Apparel(
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now(),
+
+	@Column
+	val discardDt: LocalDateTime?,
 )

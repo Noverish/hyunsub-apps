@@ -54,17 +54,17 @@ class AlbumPhotoController(
 		val total = albumPhotoRepository.countByAlbumId(albumId)
 
 		val page = when {
-			photoId != null -> albumPhotoRepository.indexOfPhoto(albumId, photoId) / PhotoConstants.PHOTO_PAGE_SIZE
+			photoId != null -> albumPhotoRepository.indexOfPhoto(albumId, photoId) / PhotoConstants.PAGE_SIZE
 			else -> p ?: 0
 		}
 
-		val pageRequest = PageRequest.of(page, PhotoConstants.PHOTO_PAGE_SIZE)
+		val pageRequest = PageRequest.of(page, PhotoConstants.PAGE_SIZE)
 		val data = albumPhotoRepository.findByAlbumId(albumId, pageRequest).map { it.toPreview() }
 
 		return RestApiPageResult(
 			total = total,
 			page = page,
-			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+			pageSize = PhotoConstants.PAGE_SIZE,
 			data = data,
 		)
 	}

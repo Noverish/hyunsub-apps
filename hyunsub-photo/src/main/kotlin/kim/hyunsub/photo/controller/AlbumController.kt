@@ -45,13 +45,13 @@ class AlbumController(
 
 		val total = albumOwnerRepository.countByUserId(userId)
 
-		val page = PageRequest.of(p, PhotoConstants.PHOTO_PAGE_SIZE)
+		val page = PageRequest.of(p, PhotoConstants.PAGE_SIZE)
 		val data = albumRepository.findByUserId(userId, page).map { it.toPreview() }
 
 		return RestApiPageResult(
 			total = total,
 			page = p,
-			pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+			pageSize = PhotoConstants.PAGE_SIZE,
 			data = data,
 		)
 	}
@@ -97,7 +97,7 @@ class AlbumController(
 
 		val total = albumPhotoRepository.countByAlbumId(albumId)
 
-		val page = PageRequest.ofSize(PhotoConstants.PHOTO_PAGE_SIZE)
+		val page = PageRequest.ofSize(PhotoConstants.PAGE_SIZE)
 		val photos = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toPreview() }
 
 		return ApiAlbum(
@@ -106,7 +106,7 @@ class AlbumController(
 			photos = RestApiPageResult(
 				total = total,
 				page = 0,
-				pageSize = PhotoConstants.PHOTO_PAGE_SIZE,
+				pageSize = PhotoConstants.PAGE_SIZE,
 				data = photos,
 			),
 		)

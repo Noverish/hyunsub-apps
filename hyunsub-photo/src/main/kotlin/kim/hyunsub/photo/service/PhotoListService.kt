@@ -15,7 +15,7 @@ class PhotoListService(
 ) {
 	fun listPhotoWithPhotoId(userId: String, photoId: String): RestApiPagination<ApiPhotoPreview> {
 		val total = photoOwnerRepository.countByUserId(userId)
-		val pageRequest = PageRequest.of(0, PhotoConstants.PHOTO_PAGE_SIZE)
+		val pageRequest = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
 
 		val before = photoRepository.selectMyPhotosWithPrev(userId, photoId, pageRequest)
 		val photo = photoRepository.selectMyPhotosWithPhotoId(userId, photoId)
@@ -43,7 +43,7 @@ class PhotoListService(
 
 	fun list(userId: String, next: String? = null, prev: String? = null): RestApiPagination<ApiPhotoPreview> {
 		val total = photoOwnerRepository.countByUserId(userId)
-		val pageRequest = PageRequest.of(0, PhotoConstants.PHOTO_PAGE_SIZE)
+		val pageRequest = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
 
 		val data = when {
 			prev != null -> photoRepository.selectMyPhotosWithPrev(userId, prev, pageRequest)

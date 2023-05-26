@@ -1,6 +1,7 @@
 package kim.hyunsub.apparel.service
 
 import kim.hyunsub.apparel.model.RestApiApparelDetail
+import kim.hyunsub.apparel.model.copy
 import kim.hyunsub.apparel.model.dto.ApparelUpsertImageParams
 import kim.hyunsub.apparel.model.dto.ApparelUpsertParams
 import kim.hyunsub.apparel.model.toDto
@@ -66,13 +67,10 @@ class ApparelService(
 		val newImages = params.uploads.map { processUploadedImage(it, userId, apparelId) }
 		newImages.forEach { log.debug { "[Apparel Update] newImage=$it" } }
 
-		val apparel = params.apparel.toEntity(
-			id = apparelId,
-			userId = userId,
-			imageId = old.imageId
-				.takeIf { it != null && !deleteIds.contains(it) }
-				?: newImages.firstOrNull()?.id,
-		).copy(regDt = old.regDt)
+		val imageId = old.imageId
+			.takeIf { it != null && !deleteIds.contains(it) }
+			?: newImages.firstOrNull()?.id
+		val apparel = old.copy(params.apparel).copy(imageId = imageId)
 		log.debug { "[Apparel Update] apparel=$apparel" }
 
 		apparelRepository.save(apparel)

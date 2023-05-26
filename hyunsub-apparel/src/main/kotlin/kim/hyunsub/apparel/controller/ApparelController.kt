@@ -1,5 +1,6 @@
 package kim.hyunsub.apparel.controller
 
+import kim.hyunsub.apparel.config.ApparelConstants
 import kim.hyunsub.apparel.model.RestApiApparelDetail
 import kim.hyunsub.apparel.model.RestApiApparelPreview
 import kim.hyunsub.apparel.model.dto.ApparelUpsertParams
@@ -38,13 +39,12 @@ class ApparelController(
 	): RestApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
 
-		// TODO 48을 어디 따로 저장하기
 		val total = apparelPreviewRepository.countByUserId(userId)
-		val pageRequest = PageRequest.of(p, 48)
+		val pageRequest = PageRequest.of(p, ApparelConstants.PAGE_SIZE)
 		val list = apparelPreviewRepository.findByUserId(userId, pageRequest)
 			.map { it.toDto(userId) }
 
-		return RestApiPageResult(total, p, 48, list)
+		return RestApiPageResult(total, p, ApparelConstants.PAGE_SIZE, list)
 	}
 
 	@GetMapping("/{apparelId}")
