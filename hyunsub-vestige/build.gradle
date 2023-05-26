@@ -1,0 +1,5 @@
+dependencies {
+    implementation project(':hyunsub-common')
+
+    testImplementation project(':hyunsub-test')
+}

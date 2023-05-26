@@ -10,6 +10,7 @@ ENCODE_CONF_PATH=$ROOT_PATH/../hyunsub-encode/etc/encode-local.conf
 APPAREL_CONF_PATH=$ROOT_PATH/../hyunsub-apparel/etc/apparel-local.conf
 DRIVE_CONF_PATH=$ROOT_PATH/../hyunsub-drive/etc/drive-local.conf
 COMIC_CONF_PATH=$ROOT_PATH/../hyunsub-comic/etc/comic-local.conf
+VESTIGE_CONF_PATH=$ROOT_PATH/../hyunsub-vestige/etc/vestige-local.conf
 NGINX_IMG=nginx:1.23.1
 
 docker stop hyunsub_nginx || true
@@ -26,4 +27,5 @@ docker run -d --rm -p 80:80 -p 443:443 \
 	-v $APPAREL_CONF_PATH:/etc/nginx/conf.d/apparel-local.conf \
 	-v $DRIVE_CONF_PATH:/etc/nginx/conf.d/drive-local.conf \
 	-v $COMIC_CONF_PATH:/etc/nginx/conf.d/comic-local.conf \
+	-v $VESTIGE_CONF_PATH:/etc/nginx/conf.d/vestige-local.conf \
 	$NGINX_IMG
