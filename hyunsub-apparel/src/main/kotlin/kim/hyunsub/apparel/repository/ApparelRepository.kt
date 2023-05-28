@@ -1,7 +1,7 @@
 package kim.hyunsub.apparel.repository
 
 import kim.hyunsub.apparel.repository.entity.Apparel
-import kim.hyunsub.common.random.generateRandomString
+import kim.hyunsub.common.util.generateId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -15,12 +15,4 @@ interface ApparelRepository : JpaRepository<Apparel, String> {
 	fun findBrands(userId: String): List<String?>
 }
 
-fun ApparelRepository.generateId(): String {
-	for (i in 0 until 3) {
-		val id = generateRandomString(8)
-		if (!existsById(id)) {
-			return id
-		}
-	}
-	throw RuntimeException("Failed to generate new id")
-}
+fun ApparelRepository.generateId() = generateId(8)

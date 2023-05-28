@@ -1,6 +1,6 @@
 package kim.hyunsub.video.repository
 
-import kim.hyunsub.common.random.generateRandomString
+import kim.hyunsub.common.util.generateId
 import kim.hyunsub.video.repository.entity.VideoSubtitle
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
@@ -15,12 +15,4 @@ interface VideoSubtitleRepository : JpaRepository<VideoSubtitle, String> {
 	fun deleteByVideoIdIn(videoIds: List<String>): Int
 }
 
-fun VideoSubtitleRepository.generateId(): String {
-	for (i in 0 until 3) {
-		val id = generateRandomString(6)
-		if (!existsById(id)) {
-			return id
-		}
-	}
-	throw RuntimeException("Failed to generate new id")
-}
+fun VideoSubtitleRepository.generateId() = generateId(6)

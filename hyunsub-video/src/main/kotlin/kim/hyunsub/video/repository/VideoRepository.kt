@@ -1,6 +1,6 @@
 package kim.hyunsub.video.repository
 
-import kim.hyunsub.common.random.generateRandomString
+import kim.hyunsub.common.util.generateId
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoEpisode
 import org.springframework.data.jpa.repository.JpaRepository
@@ -37,12 +37,4 @@ interface VideoRepository : JpaRepository<Video, String> {
 	fun selectEpisode(entryId: String, userId: String): List<VideoEpisode>
 }
 
-fun VideoRepository.generateId(): String {
-	for (i in 0 until 3) {
-		val id = generateRandomString(6)
-		if (!existsById(id)) {
-			return id
-		}
-	}
-	throw RuntimeException("Failed to generate new id")
-}
+fun VideoRepository.generateId() = generateId(6)

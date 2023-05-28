@@ -1,4 +1,4 @@
-package kim.hyunsub.common.random
+package kim.hyunsub.common.util
 
 import java.security.SecureRandom
 

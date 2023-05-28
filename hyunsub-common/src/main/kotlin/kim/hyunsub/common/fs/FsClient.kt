@@ -8,6 +8,8 @@ import kim.hyunsub.common.fs.model.FsPathParams
 import kim.hyunsub.common.fs.model.FsPathsParams
 import kim.hyunsub.common.fs.model.FsRenameBulkParams
 import kim.hyunsub.common.fs.model.FsRenameParams
+import kim.hyunsub.common.fs.model.FsRsyncParams
+import kim.hyunsub.common.fs.model.FsRsyncResult
 import kim.hyunsub.common.fs.model.FsSimpleResult
 import kim.hyunsub.common.fs.model.FsStatBulkParams
 import org.springframework.cloud.openfeign.FeignClient
@@ -53,6 +55,9 @@ interface FsClient {
 
 	@GetMapping("/api/fs/hash")
 	fun hash(@RequestParam path: String): FsHashResult
+
+	@PostMapping("/api/fs/rsync")
+	fun rsync(@RequestBody params: FsRsyncParams): FsRsyncResult
 }
 
 fun FsClient.exist(path: String) =

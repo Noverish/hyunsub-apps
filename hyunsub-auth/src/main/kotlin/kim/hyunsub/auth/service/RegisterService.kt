@@ -6,7 +6,7 @@ import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
-import kim.hyunsub.common.random.RandomGenerator
+import kim.hyunsub.auth.repository.generateId
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import mu.KotlinLogging
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service
 class RegisterService(
 	private val userRepository: UserRepository,
 	private val captchaService: CaptchaService,
-	private val randomGenerator: RandomGenerator,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -39,21 +38,12 @@ class RegisterService(
 			throw ErrorCodeException(ErrorCode.SHORT_PASSWORD)
 		}
 
-		val idNo = generateIdNo()
+		val idNo = userRepository.generateId()
 		val hashed = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, params.password.toCharArray())
 		val newUser = User(idNo = idNo, username = params.username, password = hashed)
 		log.debug("newUser: {}", newUser)
 		userRepository.saveAndFlush(newUser)
 
 		return RegisterResult(idNo)
-	}
-
-	fun generateIdNo(): String {
-		while (true) {
-			val idNo = randomGenerator.generateRandomString(AuthConstants.ID_NO_LENGTH)
-			if (!userRepository.existsById(idNo)) {
-				return idNo
-			}
-		}
 	}
 }

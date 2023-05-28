@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.repository
 
-import kim.hyunsub.common.random.generateRandomString
+import kim.hyunsub.common.util.generateId
 import kim.hyunsub.photo.repository.entity.Album
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -29,12 +29,4 @@ interface AlbumRepository : JpaRepository<Album, String> {
 	fun findByThumbnailPhotoId(photoId: String): List<Album>
 }
 
-fun AlbumRepository.generateId(): String {
-	for (i in 0 until 3) {
-		val id = generateRandomString(8)
-		if (!existsById(id)) {
-			return id
-		}
-	}
-	throw RuntimeException("Failed to generate new id")
-}
+fun AlbumRepository.generateId() = generateId(8)

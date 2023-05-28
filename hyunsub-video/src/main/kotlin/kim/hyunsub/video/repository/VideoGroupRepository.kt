@@ -1,5 +1,6 @@
 package kim.hyunsub.video.repository
 
+import kim.hyunsub.common.util.generateId
 import kim.hyunsub.video.repository.entity.VideoGroup
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
@@ -13,3 +14,5 @@ interface VideoGroupRepository : JpaRepository<VideoGroup, String> {
 	fun findByCategoryIdIn(categoryIds: List<Int>): List<VideoGroup>
 	fun findByName(name: String): VideoGroup?
 }
+
+fun VideoGroupRepository.generateId() = generateId(6)

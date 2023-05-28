@@ -12,7 +12,6 @@ import kim.hyunsub.common.fs.model.VideoThumbnailParams
 import kim.hyunsub.common.fs.rename
 import kim.hyunsub.common.fs.statOrNull
 import kim.hyunsub.common.fs.url
-import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -36,7 +35,6 @@ import kotlin.io.path.nameWithoutExtension
 
 @Service
 class VideoRegisterService(
-	private val randomGenerator: RandomGenerator,
 	private val videoEntryRepository: VideoEntryRepository,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataService: VideoMetadataService,
@@ -216,7 +214,7 @@ class VideoRegisterService(
 		}
 
 		val group = VideoGroup(
-			id = VideoGroup.generateId(videoGroupRepository, randomGenerator),
+			id = videoGroupRepository.generateId(),
 			name = newGroupName,
 			categoryId = categoryId,
 		)

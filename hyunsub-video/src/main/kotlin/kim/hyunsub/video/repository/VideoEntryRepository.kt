@@ -1,6 +1,6 @@
 package kim.hyunsub.video.repository
 
-import kim.hyunsub.common.random.generateRandomString
+import kim.hyunsub.common.util.generateId
 import kim.hyunsub.video.repository.entity.VideoEntry
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -24,12 +24,4 @@ interface VideoEntryRepository : JpaRepository<VideoEntry, String> {
 	fun deleteByCategory(category: String): Int
 }
 
-fun VideoEntryRepository.generateId(): String {
-	for (i in 0 until 3) {
-		val id = generateRandomString(6)
-		if (!existsById(id)) {
-			return id
-		}
-	}
-	throw RuntimeException("Failed to generate new id")
-}
+fun VideoEntryRepository.generateId() = generateId(6)

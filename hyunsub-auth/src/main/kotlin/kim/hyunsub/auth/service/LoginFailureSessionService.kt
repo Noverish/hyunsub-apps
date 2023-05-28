@@ -2,7 +2,7 @@ package kim.hyunsub.auth.service
 
 import kim.hyunsub.auth.config.SessionTimeProperties
 import kim.hyunsub.auth.model.LoginFailureSession
-import kim.hyunsub.common.random.RandomGenerator
+import kim.hyunsub.common.util.generateRandomString
 import mu.KotlinLogging
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.script.RedisScript
@@ -12,12 +12,11 @@ import org.springframework.stereotype.Service
 class LoginFailureSessionService(
 	private val template: RedisTemplate<String, LoginFailureSession>,
 	private val sessionTimeProperties: SessionTimeProperties,
-	private val randomGenerator: RandomGenerator = RandomGenerator(),
 ) {
 	private val log = KotlinLogging.logger { }
 
 	fun createSession(session: LoginFailureSession): String {
-		val sessionKey = randomGenerator.generateRandomString(15)
+		val sessionKey = generateRandomString(15)
 		val sessionTime = sessionTimeProperties.getSessionTime(LoginFailureSession::class.java)
 		log.debug("Create Session: key={}, time={}, session={}", sessionKey, sessionTime, session)
 		template.opsForValue().set(sessionKey, session, sessionTime)

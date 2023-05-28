@@ -8,7 +8,7 @@ import kim.hyunsub.comic.repository.ComicRepository
 import kim.hyunsub.comic.repository.entity.Comic
 import kim.hyunsub.comic.repository.entity.ComicEpisode
 import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.random.RandomGenerator
+import kim.hyunsub.common.util.generateRandomString
 import kim.hyunsub.common.web.annotation.Authorized
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +25,6 @@ class ComicRegisterController(
 	private val comicRepository: ComicRepository,
 	private val comicEpisodeRepository: ComicEpisodeRepository,
 	private val fsClient: FsClient,
-	private val randomGenerator: RandomGenerator,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -36,7 +35,7 @@ class ComicRegisterController(
 		val comicPath = Path(ComicConstants.BASE_PATH, params.title).toString()
 		val episodeTitles = fsClient.readdir(comicPath).sorted()
 
-		val comicId = randomGenerator.generateRandomString(6)
+		val comicId = generateRandomString(6)
 
 		val comic = Comic(
 			id = comicId,
