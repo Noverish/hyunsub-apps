@@ -5,9 +5,9 @@ import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.service.RegisterService
 import kim.hyunsub.auth.service.RsaKeyService
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.model.HyunsubHeader
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
@@ -21,7 +21,7 @@ class RegisterController(
 	private val registerService: RegisterService,
 	private val rsaKeyService: RsaKeyService,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@PostMapping("")
 	fun register(

@@ -4,12 +4,12 @@ import com.fasterxml.jackson.core.JsonParseException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import kim.hyunsub.common.config.AppProperties
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import mu.KotlinLogging
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -27,7 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 class AuthorityCheckAspect(
 	private val appProperties: AppProperties,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	private val mapper = jacksonObjectMapper()
 

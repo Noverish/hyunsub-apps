@@ -3,12 +3,12 @@ package kim.hyunsub.video.service
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.fs.FsVideoClient
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.repository.VideoMetadataRepository
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.entity.VideoMetadata
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -19,7 +19,7 @@ class VideoMetadataService(
 	private val videoRepository: VideoRepository,
 	private val videoMetadataRepository: VideoMetadataRepository,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	fun scanAndSave(videoId: String): VideoMetadata {
 		log.debug("scanAndSave: videoId=$videoId")

@@ -6,7 +6,6 @@ import kim.hyunsub.auth.config.CaptchaProperties
 import kim.hyunsub.auth.model.captcha.CaptchaVerifyParams
 import kim.hyunsub.auth.model.captcha.CaptchaVerifyResult
 import kim.hyunsub.common.http.HttpClient
-import kim.hyunsub.common.log.Log
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
@@ -17,8 +16,6 @@ class CaptchaService(
 	private val captchaProperties: CaptchaProperties,
 	private val httpClient: HttpClient,
 ) {
-	companion object : Log
-
 	private val mapper = jacksonObjectMapper()
 	private val mapType = mapper.typeFactory.constructMapType(Map::class.java, String::class.java, String::class.java)
 	private val url = "https://www.google.com/recaptcha/api/siteverify"

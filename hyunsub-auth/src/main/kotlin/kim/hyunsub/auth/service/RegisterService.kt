@@ -6,10 +6,10 @@ import kim.hyunsub.auth.model.RegisterParams
 import kim.hyunsub.auth.model.RegisterResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.random.RandomGenerator
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
@@ -18,7 +18,7 @@ class RegisterService(
 	private val captchaService: CaptchaService,
 	private val randomGenerator: RandomGenerator,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	fun register(params: RegisterParams): RegisterResult {
 		val captchaSuccess = captchaService.verify(params.captcha, params.remoteAddr)

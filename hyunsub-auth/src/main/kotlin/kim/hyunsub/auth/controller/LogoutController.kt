@@ -3,8 +3,8 @@ package kim.hyunsub.auth.controller
 import kim.hyunsub.auth.annotation.HyunsubCors
 import kim.hyunsub.auth.model.LogoutResult
 import kim.hyunsub.auth.service.CookieGenerator
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
+import mu.KotlinLogging
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse
 class LogoutController(
 	private val cookieGenerator: CookieGenerator,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@HyunsubCors
 	@PostMapping("/api/v1/logout")

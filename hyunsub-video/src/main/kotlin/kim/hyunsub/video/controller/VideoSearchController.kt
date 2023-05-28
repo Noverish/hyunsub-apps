@@ -1,6 +1,5 @@
 package kim.hyunsub.video.controller
 
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -19,8 +18,6 @@ class VideoSearchController(
 	private val videoSearchService: VideoSearchService,
 	private val apiModelConverter: ApiModelConverter,
 ) {
-	companion object : Log
-
 	@GetMapping("")
 	fun search(
 		user: UserAuth,

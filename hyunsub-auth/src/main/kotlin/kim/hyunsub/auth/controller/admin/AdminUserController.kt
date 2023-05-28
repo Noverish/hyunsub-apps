@@ -5,9 +5,9 @@ import kim.hyunsub.auth.model.user.ApiUser
 import kim.hyunsub.auth.repository.UserAuthorityRepository
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.UserAuthority
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -22,7 +22,7 @@ class AdminUserController(
 	private val userRepository: UserRepository,
 	private val userAuthorityRepository: UserAuthorityRepository,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
 	fun userList(): List<ApiUser> {

@@ -6,7 +6,6 @@ import kim.hyunsub.auth.model.LoginFailureSession
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
 import kim.hyunsub.auth.repository.UserRepository
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.stereotype.Service
@@ -18,8 +17,6 @@ class LoginService(
 	private val captchaService: CaptchaService,
 	private val tokenService: TokenService,
 ) {
-	companion object : Log
-
 	/**
 	 * @return JWT
 	 */

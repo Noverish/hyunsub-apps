@@ -1,8 +1,8 @@
 package kim.hyunsub.common.web.controller
 
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MaxUploadSizeExceededException
 
 @RestControllerAdvice
 class CommonControllerAdvice {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@ExceptionHandler(ErrorCodeException::class)
 	fun errorCodeException(ex: ErrorCodeException): ResponseEntity<Map<String, Any?>> =

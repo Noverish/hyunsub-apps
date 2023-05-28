@@ -2,9 +2,9 @@ package kim.hyunsub.auth.controller
 
 import kim.hyunsub.auth.service.LogoutService
 import kim.hyunsub.auth.service.SignOutService
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +16,7 @@ class SignOutController(
 	private val signOutService: SignOutService,
 	private val logoutService: LogoutService,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@PostMapping("")
 	fun signOut(

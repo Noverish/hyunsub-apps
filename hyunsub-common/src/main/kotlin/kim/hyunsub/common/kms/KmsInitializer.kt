@@ -1,6 +1,6 @@
 package kim.hyunsub.common.kms
 
-import kim.hyunsub.common.log.Log
+import mu.KotlinLogging
 import org.springframework.core.env.ConfigurableEnvironment
 import org.springframework.core.env.Environment
 
@@ -8,7 +8,7 @@ class KmsInitializer(
 	environment: Environment,
 	kmsProperties: KmsProperties,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	init {
 		val profile = kmsProperties.profile

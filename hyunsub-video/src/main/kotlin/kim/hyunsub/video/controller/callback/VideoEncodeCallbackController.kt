@@ -1,8 +1,8 @@
 package kim.hyunsub.video.controller.callback
 
-import kim.hyunsub.common.log.Log
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.video.service.VideoMetadataService
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController
 class VideoEncodeCallbackController(
 	private val videoMetadataService: VideoMetadataService,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
 	fun callback(@RequestParam videoId: String): SimpleResponse {

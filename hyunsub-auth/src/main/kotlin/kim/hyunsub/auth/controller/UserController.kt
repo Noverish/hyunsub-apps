@@ -8,7 +8,7 @@ import kim.hyunsub.auth.model.dto.ModifyUserInfoResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.service.RsaKeyService
-import kim.hyunsub.common.log.Log
+import mu.KotlinLogging
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -21,7 +21,7 @@ class UserController(
 	private val rsaKeyService: RsaKeyService,
 	private val userRepository: UserRepository,
 ) {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@PutMapping("")
 	fun updateUserInfo(

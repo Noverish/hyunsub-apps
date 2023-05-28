@@ -1,6 +1,6 @@
 package kim.hyunsub.auth.aop
 
-import kim.hyunsub.common.log.Log
+import mu.KotlinLogging
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -12,7 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes
 @Aspect
 @Component
 class CorsAspect {
-	companion object : Log
+	private val log = KotlinLogging.logger { }
 
 	@Around("@annotation(kim.hyunsub.auth.annotation.HyunsubCors)")
 	fun cors(joinPoint: ProceedingJoinPoint): Any? {
