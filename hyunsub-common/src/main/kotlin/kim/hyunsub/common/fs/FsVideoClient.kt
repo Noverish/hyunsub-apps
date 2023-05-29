@@ -22,8 +22,8 @@ interface FsVideoClient {
 	@PostMapping("/api/video/ffmpeg")
 	fun ffmpeg(@RequestBody params: FFmpegParams): FFmpegResult
 
-	@PostMapping("/api/video/generate-thumbnail")
-	fun videoThumbnail(@RequestBody params: VideoThumbnailParams): VideoThumbnailResult
+	@PostMapping("/api/video/thumbnail")
+	fun thumbnail(@RequestBody params: VideoThumbnailParams): VideoThumbnailResult
 
 	@GetMapping("/api/video/youtube/metadata")
 	fun youtubeMetadata(@RequestParam url: String): YoutubeMetadata

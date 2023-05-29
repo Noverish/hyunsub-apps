@@ -168,7 +168,7 @@ class VideoRegisterService(
 			log.info("[Register Video] thumbnail is already exist: {}", thumbnailPath)
 		} else {
 			log.info("[Register Video] generate thumbnail: {}", thumbnailPath)
-			fsVideoClient.videoThumbnail(
+			fsVideoClient.thumbnail(
 				VideoThumbnailParams(input = videoPath, output = thumbnailPath)
 			)
 		}

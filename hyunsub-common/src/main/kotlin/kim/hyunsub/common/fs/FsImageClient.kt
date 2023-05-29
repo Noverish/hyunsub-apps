@@ -1,5 +1,6 @@
 package kim.hyunsub.common.fs
 
+import com.fasterxml.jackson.databind.JsonNode
 import kim.hyunsub.common.fs.model.FsSimpleResult
 import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.model.ImageMagickParams
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam
 @FeignClient(name = "fsImageClient", url = "\${fs.host}")
 interface FsImageClient {
 	@GetMapping("/api/image/exif")
-	fun exif(@RequestParam path: String): String
+	fun exif(@RequestParam path: String): JsonNode
 
 	@PostMapping("/api/image/convert")
 	fun convert(@RequestBody params: ImageConvertParams): FsSimpleResult

@@ -72,7 +72,7 @@ class VideoManageController(
 			input = video.path,
 			time = params.time,
 		)
-		return fsVideoClient.videoThumbnail(apiParams)
+		return fsVideoClient.thumbnail(apiParams)
 	}
 
 	@PostMapping("/subtitle")

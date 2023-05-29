@@ -26,11 +26,12 @@ class ThumbnailService(
 		if (isVideo(photo.fileName)) {
 			val tmp = "$thumbnail.jpg"
 
-			fsVideoClient.videoThumbnail(
+			fsVideoClient.thumbnail(
 				VideoThumbnailParams(
 					input = original,
 					output = tmp,
 					time = 0.0,
+					sync = true,
 				)
 			)
 

@@ -1,6 +1,5 @@
 package kim.hyunsub.photo.service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsPathConverter
@@ -49,7 +48,6 @@ class PhotoUploadService(
 	private val photoMetadataRepository: PhotoMetadataRepository,
 ) {
 	private val log = KotlinLogging.logger { }
-	private val mapper = jacksonObjectMapper()
 
 	fun upload(userId: String, params: ApiPhotoUploadParams): Photo {
 		val photo = getOrCreatePhoto(params)
@@ -77,7 +75,7 @@ class PhotoUploadService(
 			return exist
 		}
 
-		val exif = mapper.readTree(fsImageClient.exif(tmpPath))[0]
+		val exif = fsImageClient.exif(tmpPath)[0]
 		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
 		val date = parseResult.date
 		val dateType = parseResult.type
@@ -96,7 +94,7 @@ class PhotoUploadService(
 
 		// move photo to original folder
 		val originalPath = PhotoPathConverter.original(photo)
-		fsClient.rename(tmpPath, originalPath)
+		fsClient.rename(tmpPath, originalPath, true)
 
 		// generate thumbnail
 		thumbnailService.generateThumbnail(photo)
