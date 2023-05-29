@@ -8,4 +8,4 @@ interface UserRepository : JpaRepository<User, String> {
 	fun findByUsername(username: String): User?
 }
 
-fun UserRepository.generateId() = generateId(8)
+fun UserRepository.generateId() = generateId(5)

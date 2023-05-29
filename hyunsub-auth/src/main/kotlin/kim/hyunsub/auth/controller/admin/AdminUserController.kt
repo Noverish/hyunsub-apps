@@ -1,11 +1,14 @@
 package kim.hyunsub.auth.controller.admin
 
+import at.favre.lib.crypto.bcrypt.BCrypt
+import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.dto.UserCreateParams
 import kim.hyunsub.auth.model.user.ApiUser
 import kim.hyunsub.auth.model.user.toDto
 import kim.hyunsub.auth.repository.UserAuthorityRepository
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
+import kim.hyunsub.auth.repository.entity.UserAuthority
 import kim.hyunsub.auth.repository.generateId
 import kim.hyunsub.common.fs.FsClient
 import kim.hyunsub.common.fs.model.FsRsyncParams
@@ -38,10 +41,12 @@ class AdminUserController(
 
 	@PostMapping("")
 	fun createUser(@RequestBody params: UserCreateParams): ApiUser {
+		val hashedPassword = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, "password".toCharArray())
+
 		val user = User(
 			idNo = userRepository.generateId(),
 			username = params.name,
-			password = "password",
+			password = hashedPassword,
 		)
 
 		fsClient.rsync(
@@ -50,6 +55,11 @@ class AdminUserController(
 				to = "/hyunsub/drive/${user.idNo}",
 			)
 		)
+
+		userRepository.save(user)
+
+		val authorities = listOf(1000, 2000, 3000, 4000).map { UserAuthority(user.idNo, it) }
+		userAuthorityRepository.saveAll(authorities)
 
 		return user.toDto()
 	}
