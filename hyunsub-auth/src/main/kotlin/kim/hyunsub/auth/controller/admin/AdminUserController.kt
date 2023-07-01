@@ -1,19 +1,13 @@
 package kim.hyunsub.auth.controller.admin
 
-import at.favre.lib.crypto.bcrypt.BCrypt
-import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.dto.UserCreateParams
+import kim.hyunsub.auth.model.toApi
 import kim.hyunsub.auth.model.user.ApiUser
-import kim.hyunsub.auth.model.user.toDto
-import kim.hyunsub.auth.repository.UserAuthorityRepository
-import kim.hyunsub.auth.repository.UserRepository
-import kim.hyunsub.auth.repository.entity.User
-import kim.hyunsub.auth.repository.entity.UserAuthority
-import kim.hyunsub.auth.repository.generateId
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.model.FsRsyncParams
+import kim.hyunsub.auth.service.UserService
 import kim.hyunsub.common.web.annotation.Authorized
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,44 +17,21 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/admin/users")
 class AdminUserController(
-	private val fsClient: FsClient,
-	private val userRepository: UserRepository,
-	private val userAuthorityRepository: UserAuthorityRepository,
+	private val userService: UserService,
 ) {
 	@GetMapping("")
-	fun userList(): List<ApiUser> {
-		val users = userRepository.findAll()
-		val userAuthorities = userAuthorityRepository.findAll()
-
-		val authorityMap = userAuthorities.groupBy({ it.userIdNo }, { it.authorityId })
-
-		return users.map { user ->
-			user.toDto(authorityMap[user.idNo] ?: emptyList())
-		}
-	}
+	fun list(): List<ApiUser> =
+		userService.list().map { it.toApi() }
 
 	@PostMapping("")
-	fun createUser(@RequestBody params: UserCreateParams): ApiUser {
-		val hashedPassword = BCrypt.withDefaults().hashToString(AuthConstants.BCRYPT_COST, "password".toCharArray())
+	fun create(@RequestBody params: UserCreateParams): ApiUser =
+		userService.create(params).toApi()
 
-		val user = User(
-			idNo = userRepository.generateId(),
-			username = params.name,
-			password = hashedPassword,
-		)
+	@GetMapping("/{idNo}")
+	fun get(@PathVariable idNo: String): ApiUser =
+		userService.get(idNo).toApi()
 
-		fsClient.rsync(
-			FsRsyncParams(
-				from = "/hyunsub/drive/base",
-				to = "/hyunsub/drive/${user.idNo}",
-			)
-		)
-
-		userRepository.save(user)
-
-		val authorities = listOf(1000, 2000, 3000, 4000).map { UserAuthority(user.idNo, it) }
-		userAuthorityRepository.saveAll(authorities)
-
-		return user.toDto()
-	}
+	@DeleteMapping("/{idNo}")
+	fun delete(@PathVariable idNo: String): ApiUser =
+		userService.delete(idNo).toApi()
 }

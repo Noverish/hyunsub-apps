@@ -1,4 +1,4 @@
-*.pem
+etc/cert/
 .java-version
 logs/
 Hyunsub*ApplicationTest.kt

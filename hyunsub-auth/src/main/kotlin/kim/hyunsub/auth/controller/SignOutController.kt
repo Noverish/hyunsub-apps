@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.controller
 
 import kim.hyunsub.auth.service.LogoutService
-import kim.hyunsub.auth.service.SignOutService
+import kim.hyunsub.auth.service.UserService
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import mu.KotlinLogging
@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse
 @RestController
 @RequestMapping("/api/v1/sign-out")
 class SignOutController(
-	private val signOutService: SignOutService,
+	private val userService: UserService,
 	private val logoutService: LogoutService,
 ) {
 	private val log = KotlinLogging.logger { }
@@ -26,7 +26,7 @@ class SignOutController(
 		val idNo = userAuth.idNo
 		log.info("[SignOut] idNo={}", idNo)
 
-		signOutService.signOut(idNo)
+		userService.delete(idNo)
 		logoutService.logout(response)
 
 		return SimpleResponse()
