@@ -2,7 +2,7 @@ package kim.hyunsub.video.service
 
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
-import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.client.FsVideoClient
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.repository.VideoMetadataRepository

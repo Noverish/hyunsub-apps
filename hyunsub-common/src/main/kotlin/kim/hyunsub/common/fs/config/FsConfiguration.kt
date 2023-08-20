@@ -1,4 +1,4 @@
-package kim.hyunsub.common.fs
+package kim.hyunsub.common.fs.config
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
-@EnableFeignClients
+@EnableFeignClients(basePackages = ["kim.hyunsub.common.fs.client"])
 @ImportAutoConfiguration(classes = [FeignAutoConfiguration::class, HttpClientConfiguration::class]) // 자동으로 auto configuration 되지 않아 명시적으로 선언
 @EnableConfigurationProperties(FsProperties::class)
 class FsConfiguration {

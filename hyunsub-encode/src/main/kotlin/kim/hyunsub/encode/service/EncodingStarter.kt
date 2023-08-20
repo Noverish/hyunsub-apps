@@ -1,6 +1,6 @@
 package kim.hyunsub.encode.service
 
-import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.client.FsVideoClient
 import kim.hyunsub.common.fs.model.FFmpegParams
 import kim.hyunsub.encode.repository.EncodeRepository
 import mu.KotlinLogging

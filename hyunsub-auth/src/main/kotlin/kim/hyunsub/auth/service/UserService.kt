@@ -9,9 +9,9 @@ import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.repository.entity.UserAuthority
 import kim.hyunsub.auth.repository.generateId
-import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.model.FsRsyncParams
-import kim.hyunsub.common.fs.remove
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.data.repository.findByIdOrNull

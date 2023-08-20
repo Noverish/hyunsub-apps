@@ -1,4 +1,4 @@
-package kim.hyunsub.common.fs
+package kim.hyunsub.common.fs.client
 
 import kim.hyunsub.common.fs.model.FsSimpleResult
 import kim.hyunsub.common.fs.model.UploadUrlParams

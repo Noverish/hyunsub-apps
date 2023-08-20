@@ -1,8 +1,8 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.FsUploadClient
-import kim.hyunsub.common.fs.rename
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.FsUploadClient
+import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.video.model.dto.VideoSubtitleParams

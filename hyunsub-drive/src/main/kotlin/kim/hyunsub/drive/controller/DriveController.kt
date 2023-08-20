@@ -1,10 +1,10 @@
 package kim.hyunsub.drive.controller
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.mkdir
+import kim.hyunsub.common.fs.client.removeBulk
 import kim.hyunsub.common.fs.model.FsMoveBulkParams
 import kim.hyunsub.common.fs.model.FsRenameBulkParams
-import kim.hyunsub.common.fs.removeBulk
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.drive.model.DriveRemoveBulkParams

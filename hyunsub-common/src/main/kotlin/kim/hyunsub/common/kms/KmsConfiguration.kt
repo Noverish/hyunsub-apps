@@ -1,9 +1,9 @@
 package kim.hyunsub.common.kms
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.FsEncodeClient
-import kim.hyunsub.common.fs.FsImageClient
-import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.FsEncodeClient
+import kim.hyunsub.common.fs.client.FsImageClient
+import kim.hyunsub.common.fs.client.FsVideoClient
 import org.springframework.beans.factory.BeanFactoryUtils
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory

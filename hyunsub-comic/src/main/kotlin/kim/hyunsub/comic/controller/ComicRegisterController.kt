@@ -7,7 +7,7 @@ import kim.hyunsub.comic.repository.ComicEpisodeRepository
 import kim.hyunsub.comic.repository.ComicRepository
 import kim.hyunsub.comic.repository.entity.Comic
 import kim.hyunsub.comic.repository.entity.ComicEpisode
-import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.util.generateRandomString
 import kim.hyunsub.common.web.annotation.Authorized
 import mu.KotlinLogging

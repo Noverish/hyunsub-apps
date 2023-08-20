@@ -10,8 +10,8 @@ import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.apparel.repository.entity.ApparelImage
 import kim.hyunsub.apparel.repository.generateId
-import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsPathConverter
+import kim.hyunsub.common.fs.client.FsImageClient
 import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException

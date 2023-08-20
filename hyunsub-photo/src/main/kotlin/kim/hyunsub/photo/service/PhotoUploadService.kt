@@ -1,10 +1,10 @@
 package kim.hyunsub.photo.service
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsPathConverter
-import kim.hyunsub.common.fs.remove
-import kim.hyunsub.common.fs.rename
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.FsImageClient
+import kim.hyunsub.common.fs.client.remove
+import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams

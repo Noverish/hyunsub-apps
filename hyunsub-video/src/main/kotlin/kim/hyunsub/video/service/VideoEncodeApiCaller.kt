@@ -1,7 +1,7 @@
 package kim.hyunsub.video.service
 
 import kim.hyunsub.common.config.AppProperties
-import kim.hyunsub.common.fs.FsEncodeClient
+import kim.hyunsub.common.fs.client.FsEncodeClient
 import kim.hyunsub.common.fs.model.EncodeParams
 import kim.hyunsub.video.repository.entity.Video
 import org.springframework.stereotype.Service

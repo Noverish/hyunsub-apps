@@ -1,4 +1,4 @@
-package kim.hyunsub.common.fs
+package kim.hyunsub.common.fs.client
 
 import kim.hyunsub.common.fs.model.FileStat
 import kim.hyunsub.common.fs.model.FsCopyMDateParams
@@ -31,6 +31,9 @@ interface FsClient {
 
 	@GetMapping("/api/fs/readdir/detail")
 	fun readdirDetail(@RequestParam path: String): List<FileStat>
+
+	@GetMapping("/api/fs/walk")
+	fun walk(@RequestParam path: String): List<String>
 
 	@PostMapping("/api/fs/mkdir")
 	fun mkdir(@RequestBody params: FsPathParams): FsSimpleResult

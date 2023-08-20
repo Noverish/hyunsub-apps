@@ -1,11 +1,11 @@
 package kim.hyunsub.photo.service
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.FsImageClient
-import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.FsImageClient
+import kim.hyunsub.common.fs.client.FsVideoClient
+import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.model.VideoThumbnailParams
-import kim.hyunsub.common.fs.remove
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isGif

@@ -1,7 +1,7 @@
 package kim.hyunsub.photo.service
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.remove
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.repository.AlbumPhotoRepository

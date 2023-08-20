@@ -1,6 +1,6 @@
 package kim.hyunsub.encode.service
 
-import kim.hyunsub.common.fs.FsProperties
+import kim.hyunsub.common.fs.config.FsProperties
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders

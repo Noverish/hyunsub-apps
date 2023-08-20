@@ -1,6 +1,6 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.model.FileStat
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException

@@ -1,8 +1,8 @@
 package kim.hyunsub.photo.service
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.rename
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.PhotoDateType

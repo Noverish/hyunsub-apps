@@ -1,17 +1,17 @@
 package kim.hyunsub.video.service
 
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.FsImageClient
 import kim.hyunsub.common.fs.FsPathConverter
-import kim.hyunsub.common.fs.FsUploadClient
-import kim.hyunsub.common.fs.FsVideoClient
-import kim.hyunsub.common.fs.exist
-import kim.hyunsub.common.fs.mkdir
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.FsImageClient
+import kim.hyunsub.common.fs.client.FsUploadClient
+import kim.hyunsub.common.fs.client.FsVideoClient
+import kim.hyunsub.common.fs.client.exist
+import kim.hyunsub.common.fs.client.mkdir
+import kim.hyunsub.common.fs.client.rename
+import kim.hyunsub.common.fs.client.statOrNull
+import kim.hyunsub.common.fs.client.url
 import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.fs.model.VideoThumbnailParams
-import kim.hyunsub.common.fs.rename
-import kim.hyunsub.common.fs.statOrNull
-import kim.hyunsub.common.fs.url
 import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException

@@ -1,4 +1,4 @@
-package kim.hyunsub.common.fs
+package kim.hyunsub.common.fs.client
 
 import com.fasterxml.jackson.databind.node.ObjectNode
 import kim.hyunsub.common.fs.model.FFmpegParams

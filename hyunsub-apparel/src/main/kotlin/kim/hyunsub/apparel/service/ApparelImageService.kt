@@ -2,8 +2,8 @@ package kim.hyunsub.apparel.service
 
 import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.entity.ApparelImage
-import kim.hyunsub.common.fs.FsClient
-import kim.hyunsub.common.fs.removeBulk
+import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.removeBulk
 import org.springframework.stereotype.Service
 
 @Service

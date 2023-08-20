@@ -1,6 +1,6 @@
 package kim.hyunsub.video.controller.admin
 
-import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.client.FsVideoClient
 import kim.hyunsub.common.fs.model.VideoThumbnailResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode

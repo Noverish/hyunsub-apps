@@ -1,6 +1,6 @@
 package kim.hyunsub.drive.controller
 
-import kim.hyunsub.common.fs.FsVideoClient
+import kim.hyunsub.common.fs.client.FsVideoClient
 import kim.hyunsub.common.fs.model.YoutubeDownloadParams
 import kim.hyunsub.common.fs.model.YoutubeDownloadResult
 import kim.hyunsub.common.fs.model.YoutubeMetadata

@@ -1,4 +1,4 @@
-package kim.hyunsub.common.fs
+package kim.hyunsub.common.fs.config
 
 import feign.Logger
 import feign.Response

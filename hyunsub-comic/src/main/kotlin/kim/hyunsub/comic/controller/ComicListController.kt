@@ -10,7 +10,7 @@ import kim.hyunsub.comic.repository.ComicRepository
 import kim.hyunsub.comic.repository.entity.ComicEpisodeId
 import kim.hyunsub.comic.repository.entity.ComicHistoryId
 import kim.hyunsub.comic.service.ApiModelConverter
-import kim.hyunsub.common.fs.FsClient
+import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
