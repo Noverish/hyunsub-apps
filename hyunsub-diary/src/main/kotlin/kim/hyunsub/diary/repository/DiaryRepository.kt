@@ -11,19 +11,20 @@ import java.time.LocalDate
 interface DiaryRepository : JpaRepository<Diary, DiaryId> {
 	@Query(
 		"""
-		SELECT a FROM Diary a
-		WHERE a.userId = :userId
-			AND (a.content LIKE CONCAT('%', :query, '%') OR a.summary LIKE CONCAT('%', :query, '%'))
-	"""
+			SELECT a FROM Diary a
+			WHERE a.userId = :userId
+				AND (a.content LIKE CONCAT('%', :query, '%') OR a.summary LIKE CONCAT('%', :query, '%'))
+			ORDER BY a.date DESC
+		"""
 	)
 	fun search(userId: String, query: String, page: Pageable): List<Diary>
 
 	@Query(
 		"""
-		SELECT COUNT(a) FROM Diary a
-		WHERE a.userId = :userId
-			AND (a.content LIKE CONCAT('%', :query, '%') OR a.summary LIKE CONCAT('%', :query, '%'))
-	"""
+			SELECT COUNT(a) FROM Diary a
+			WHERE a.userId = :userId
+				AND (a.content LIKE CONCAT('%', :query, '%') OR a.summary LIKE CONCAT('%', :query, '%'))
+		"""
 	)
 	fun searchCount(userId: String, query: String): Int
 }

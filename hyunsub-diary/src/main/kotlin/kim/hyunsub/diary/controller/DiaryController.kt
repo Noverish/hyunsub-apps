@@ -9,6 +9,7 @@ import kim.hyunsub.diary.repository.DiaryRepository
 import kim.hyunsub.diary.repository.entity.Diary
 import kim.hyunsub.diary.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -41,6 +42,15 @@ class DiaryController(
 		diaryRepository.save(diary)
 
 		return diary
+	}
+
+	@GetMapping("/{date}")
+	fun detail(
+		user: UserAuth,
+		@PathVariable date: LocalDate,
+	): Diary {
+		return diaryRepository.findByIdOrNull(user.idNo, date)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 	}
 
 	@PutMapping("/{date}")
