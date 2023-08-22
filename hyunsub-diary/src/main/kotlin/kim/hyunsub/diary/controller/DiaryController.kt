@@ -63,8 +63,8 @@ class DiaryController(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val newDiary = diary.copy(
-			summary = params.summary ?: diary.summary,
-			content = params.content ?: diary.content,
+			summary = params.summary,
+			content = params.content,
 		)
 
 		diaryRepository.save(newDiary)
