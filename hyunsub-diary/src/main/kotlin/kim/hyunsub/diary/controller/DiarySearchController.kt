@@ -21,9 +21,9 @@ class DiarySearchController(
 		user: UserAuth,
 		@RequestBody params: DiarySearchQuery,
 	): RestApiPageResult<Diary> {
-		val total = diaryRepository.searchCount(user.idNo, params.query)
+		val total = diaryRepository.searchCount(user.idNo, params.query ?: "")
 		val pageRequest = PageRequest.of(params.page, params.pageSize)
-		val result = diaryRepository.search(user.idNo, params.query, pageRequest)
+		val result = diaryRepository.search(user.idNo, params.query ?: "", pageRequest)
 		return RestApiPageResult(
 			total = total,
 			page = params.page,
