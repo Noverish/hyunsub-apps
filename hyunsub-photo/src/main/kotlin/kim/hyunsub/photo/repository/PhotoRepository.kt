@@ -64,3 +64,62 @@ fun PhotoRepository.generateId(date: OffsetDateTime, hash: String): String {
 	}
 	throw RuntimeException("Failed to generate new id")
 }
+
+/*
+@Repository
+class PhotoSearchDao {
+	@PersistenceContext
+	private lateinit var entityManager: EntityManager
+
+	fun search(userId: String, query: ApiPhotoSearchQuery): RestApiPagination<Photo> {
+		val cb = entityManager.criteriaBuilder
+
+		fun buildQuery(cq: CriteriaQuery<*>): Root<Photo> {
+			val root = cq.from(Photo::class.java)
+
+			val predicates = buildList<Predicate> {
+				add(cb.equal(root.get<String>("userId"), userId))
+				add(
+					cb.or(
+						cb.like(root.get("content"), "%$query%"),
+						cb.like(root.get("summary"), "%$query%"),
+					)
+				)
+
+				query.prev?.let {
+					add(cb.greaterThan(root.get("date"), it))
+				}
+
+				query.next?.let {
+					add(cb.lessThan(root.get("date"), it))
+				}
+			}
+
+			cq.where(cb.and(*predicates.toTypedArray()))
+			cq.orderBy(cb.desc(root.get<LocalDate>("date")))
+
+			return root
+		}
+
+		val selectQuery = cb.createQuery(Photo::class.java)
+		val selectRoot = buildQuery(selectQuery)
+		selectQuery.select(selectRoot)
+		val list = entityManager.createQuery(selectQuery)
+			.setMaxResults(query.pageSize)
+			.resultList
+
+		val countQuery = cb.createQuery(Long::class.java)
+		val countRoot = buildQuery(countQuery)
+		countQuery.select(cb.count(countRoot))
+		val count = entityManager.createQuery(countQuery)
+			.singleResult
+
+		return RestApiPagination(
+			total = count.toInt(),
+			prev = list.firstOrNull()?.date?.let { localDateFormatter.format(it) },
+			next = list.lastOrNull()?.date?.let { localDateFormatter.format(it) },
+			data = list,
+		)
+	}
+}
+ */
