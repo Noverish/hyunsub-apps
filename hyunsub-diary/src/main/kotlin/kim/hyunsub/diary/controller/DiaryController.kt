@@ -48,9 +48,8 @@ class DiaryController(
 	fun detail(
 		user: UserAuth,
 		@PathVariable date: LocalDate,
-	): Diary {
+	): Diary? {
 		return diaryRepository.findByIdOrNull(user.idNo, date)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 	}
 
 	@PutMapping("/{date}")
