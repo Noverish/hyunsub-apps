@@ -34,9 +34,10 @@ class ComicListController(
 	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
-	fun comicList(): List<ApiComicPreview> {
+	fun comicList(userAuth: UserAuth): List<ApiComicPreview> {
 		log.debug { "[Comic List]" }
 		return comicRepository.findAll()
+			.filter { it.authority.isEmpty() || userAuth.names.contains(it.authority) }
 			.map { apiModelConverter.convert(it) }
 	}
 

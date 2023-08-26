@@ -13,4 +13,7 @@ data class Comic(
 
 	@Column(nullable = false)
 	val title: String,
+
+	@Column(nullable = false)
+	val authority: String,
 )

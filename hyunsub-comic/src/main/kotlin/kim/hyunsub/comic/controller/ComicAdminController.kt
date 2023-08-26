@@ -41,6 +41,7 @@ class ComicAdminController(
 		val comic = Comic(
 			id = comicRepository.generateId(),
 			title = params.title,
+			authority = "",
 		)
 		log.debug { "[Comic Register] comic=$comic" }
 
