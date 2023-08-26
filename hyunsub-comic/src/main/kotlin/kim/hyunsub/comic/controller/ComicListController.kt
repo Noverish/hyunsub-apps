@@ -11,16 +11,13 @@ import kim.hyunsub.comic.repository.entity.ComicEpisodeId
 import kim.hyunsub.comic.repository.entity.ComicHistoryId
 import kim.hyunsub.comic.service.ApiModelConverter
 import kim.hyunsub.common.fs.client.FsClient
-import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import kotlin.io.path.Path
@@ -81,26 +78,5 @@ class ComicListController(
 		val hasNextEpisode = order < episodeNum - 1
 
 		return apiModelConverter.convert(comic, episode, images, hasNextEpisode, history)
-	}
-
-	@Authorized(["admin"])
-	@PostMapping("/{comicId}/rescan")
-	fun rescan(@PathVariable comicId: String): SimpleResponse {
-		log.debug { "[Comic Rescan] comicId=$comicId" }
-		val comic = comicRepository.findByIdOrNull(comicId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		val episodes = comicEpisodeRepository.findByComicId(comicId)
-
-		for (episode in episodes) {
-			val episodePath = Path(ComicConstants.BASE_PATH, comic.title, episode.title).toString()
-			val length = fsClient.readdir(episodePath).size
-
-			if (length != episode.length) {
-				val newEpisode = episode.copy(length = length)
-				comicEpisodeRepository.save(newEpisode)
-			}
-		}
-
-		return SimpleResponse()
 	}
 }
