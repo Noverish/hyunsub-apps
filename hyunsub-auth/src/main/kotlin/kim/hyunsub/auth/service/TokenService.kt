@@ -10,7 +10,7 @@ import kim.hyunsub.auth.repository.entity.User
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.Duration
-import java.util.*
+import java.util.Date
 
 @Service
 class TokenService(
@@ -33,7 +33,8 @@ class TokenService(
 		val payload = TokenPayload(
 			idNo = user.idNo,
 			username = user.username,
-			authorities = userAuthService.getAuthorities(user.idNo)
+			authorities = userAuthService.getAuthorities(user.idNo),
+			lang = user.lang,
 		)
 
 		return Jwts.builder()

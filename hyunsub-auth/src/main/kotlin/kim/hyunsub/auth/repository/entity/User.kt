@@ -1,6 +1,6 @@
 package kim.hyunsub.auth.repository.entity
 
-import java.time.LocalDateTime
+import org.hibernate.annotations.Type
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -19,6 +19,7 @@ data class User(
 	@Column(nullable = false)
 	val password: String,
 
-	@Column(nullable = false)
-	val regDt: LocalDateTime = LocalDateTime.now().withNano(0),
+	@Type(type = "char")
+	@Column
+	val lang: String? = null,
 )
