@@ -27,6 +27,14 @@ interface DiaryRepository : JpaRepository<Diary, DiaryId> {
 		"""
 	)
 	fun searchCount(userId: String, query: String): Int
+
+	@Query(
+		"""
+			SELECT a.date FROM Diary a
+			WHERE a.userId = :userId AND a.date BETWEEN :start AND :end
+		"""
+	)
+	fun findDates(userId: String, start: LocalDate, end: LocalDate): List<LocalDate>
 }
 
 fun DiaryRepository.findByIdOrNull(userId: String, date: LocalDate) = findByIdOrNull(DiaryId(userId, date))
