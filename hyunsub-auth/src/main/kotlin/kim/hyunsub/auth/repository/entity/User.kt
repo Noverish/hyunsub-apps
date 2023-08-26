@@ -1,6 +1,5 @@
 package kim.hyunsub.auth.repository.entity
 
-import org.hibernate.annotations.Type
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -19,7 +18,6 @@ data class User(
 	@Column(nullable = false)
 	val password: String,
 
-	@Type(type = "char")
 	@Column
 	val lang: String? = null,
 )
