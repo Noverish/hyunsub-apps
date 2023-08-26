@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 
 @JsonInclude(Include.NON_NULL)
-data class ModifyUserInfoResult(
+data class ProfileUpdateResult(
 	val username: Boolean? = null,
 	val password: Boolean? = null,
 )

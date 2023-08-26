@@ -11,15 +11,15 @@ import org.springframework.web.bind.annotation.RestController
 import javax.servlet.http.HttpServletResponse
 
 @RestController
-@RequestMapping("/api/v1/sign-out")
-class SignOutController(
+@RequestMapping("/api/v1/withdraw")
+class WithdrawController(
 	private val userService: UserService,
 	private val logoutService: LogoutService,
 ) {
 	private val log = KotlinLogging.logger { }
 
 	@PostMapping("")
-	fun signOut(
+	fun withdraw(
 		userAuth: UserAuth,
 		response: HttpServletResponse,
 	): SimpleResponse {

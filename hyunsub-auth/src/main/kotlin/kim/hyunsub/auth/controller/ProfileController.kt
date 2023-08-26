@@ -2,9 +2,9 @@ package kim.hyunsub.auth.controller
 
 import at.favre.lib.crypto.bcrypt.BCrypt
 import kim.hyunsub.auth.config.AuthConstants
-import kim.hyunsub.auth.model.MyPageUserInfo
+import kim.hyunsub.auth.model.Profile
 import kim.hyunsub.auth.model.dto.ModifyUserInfoParams
-import kim.hyunsub.auth.model.dto.ModifyUserInfoResult
+import kim.hyunsub.auth.model.dto.ProfileUpdateResult
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.service.RsaKeyService
@@ -16,18 +16,18 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/user")
-class UserController(
+@RequestMapping("/api/v1/profile")
+class ProfileController(
 	private val rsaKeyService: RsaKeyService,
 	private val userRepository: UserRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
 	@PutMapping("")
-	fun updateUserInfo(
+	fun update(
 		user: User,
 		@RequestBody params: ModifyUserInfoParams,
-	): ModifyUserInfoResult {
+	): ProfileUpdateResult {
 		log.debug("updateUserInfo: user={}, params={}", user, params)
 
 		var newUser = user
@@ -44,7 +44,7 @@ class UserController(
 			newUser = newUser.copy(password = hashed)
 		}
 
-		val result = ModifyUserInfoResult(
+		val result = ProfileUpdateResult(
 			username = user.username != newUser.username,
 			password = user.password != newUser.password,
 		)
@@ -57,9 +57,9 @@ class UserController(
 		return result
 	}
 
-	@GetMapping("/my-page")
-	fun getMyPageUserInfo(user: User): MyPageUserInfo {
-		return MyPageUserInfo(
+	@GetMapping("")
+	fun detail(user: User): Profile {
+		return Profile(
 			username = user.username,
 			historyNum = 0,
 			deviceNum = 0,
