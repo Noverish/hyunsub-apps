@@ -1,10 +1,10 @@
 package kim.hyunsub.photo.controller
 
+import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.fs.model.UserDeleteParams
 import kim.hyunsub.common.fs.model.UserInitParams
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse2
-import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -36,7 +36,7 @@ class PhotoServerController(
 	fun userInit(@RequestBody params: UserInitParams): SimpleResponse2 {
 		log.debug { "[User Init] params=$params" }
 
-		val fromUserId = PhotoConstants.INIT_FROM_USER_ID
+		val fromUserId = AppConstants.INIT_FROM_USER_ID
 		val toUserId = params.userId
 
 		val albums = albumRepository.findByUserId(fromUserId)

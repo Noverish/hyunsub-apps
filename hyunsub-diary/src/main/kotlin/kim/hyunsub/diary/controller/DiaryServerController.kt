@@ -1,10 +1,10 @@
 package kim.hyunsub.diary.controller
 
+import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.fs.model.UserDeleteParams
 import kim.hyunsub.common.fs.model.UserInitParams
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse2
-import kim.hyunsub.diary.config.DiaryConstants
 import kim.hyunsub.diary.repository.DiaryRepository
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,7 +25,7 @@ class DiaryServerController(
 	fun userInit(@RequestBody params: UserInitParams): SimpleResponse2 {
 		log.debug { "[User Init] params=$params" }
 
-		val fromUserId = DiaryConstants.INIT_FROM_USER_ID
+		val fromUserId = AppConstants.INIT_FROM_USER_ID
 		val toUserId = params.userId
 
 		val diary = diaryRepository.findByUserId(fromUserId).first()

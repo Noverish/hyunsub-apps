@@ -1,5 +1,6 @@
 package kim.hyunsub.drive.controller
 
+import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.model.FsRsyncParams
@@ -28,7 +29,7 @@ class DriveServerController(
 		if (!params.dryRun) {
 			fsClient.rsync(
 				FsRsyncParams(
-					from = "/hyunsub/drive/base/",
+					from = "/hyunsub/drive/${AppConstants.INIT_FROM_USER_ID}/",
 					to = "/hyunsub/drive/${params.userId}",
 				)
 			)
