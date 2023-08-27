@@ -9,9 +9,11 @@ import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.auth.repository.entity.UserAuthority
 import kim.hyunsub.auth.repository.generateId
+import kim.hyunsub.common.fs.client.DriveServiceClient
 import kim.hyunsub.common.fs.client.FsClient
-import kim.hyunsub.common.fs.client.remove
-import kim.hyunsub.common.fs.model.FsRsyncParams
+import kim.hyunsub.common.fs.client.PhotoServiceClient
+import kim.hyunsub.common.fs.model.UserDeleteParams
+import kim.hyunsub.common.fs.model.UserInitParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import org.springframework.data.repository.findByIdOrNull
@@ -22,6 +24,8 @@ class UserService(
 	private val fsClient: FsClient,
 	private val userRepository: UserRepository,
 	private val userAuthorityRepository: UserAuthorityRepository,
+	private val photoServiceClient: PhotoServiceClient,
+	private val driveServiceClient: DriveServiceClient,
 ) {
 	fun list(): List<UserInfo> {
 		val users = userRepository.findAll()
@@ -43,17 +47,14 @@ class UserService(
 			password = hashedPassword,
 		)
 
-		fsClient.rsync(
-			FsRsyncParams(
-				from = "/hyunsub/drive/base",
-				to = "/hyunsub/drive/${user.idNo}",
-			)
-		)
+		val authorities = listOf(1000, 2000, 3000, 4000).map { UserAuthority(user.idNo, it) }
 
 		userRepository.save(user)
-
-		val authorities = listOf(1000, 2000, 3000, 4000).map { UserAuthority(user.idNo, it) }
 		userAuthorityRepository.saveAll(authorities)
+
+		val userInitParams = UserInitParams(user.idNo)
+		photoServiceClient.userInit(userInitParams)
+		driveServiceClient.userInit(userInitParams)
 
 		return UserInfo(user, authorities)
 	}
@@ -69,7 +70,9 @@ class UserService(
 	fun delete(idNo: String): UserInfo {
 		val info = get(idNo)
 
-		fsClient.remove("/hyunsub/drive/${info.user.idNo}")
+		val userDeleteParams = UserDeleteParams(info.user.idNo)
+		photoServiceClient.userDelete(userDeleteParams)
+		driveServiceClient.userDelete(userDeleteParams)
 
 		userAuthorityRepository.deleteAll(info.authorities)
 		userRepository.delete(info.user)

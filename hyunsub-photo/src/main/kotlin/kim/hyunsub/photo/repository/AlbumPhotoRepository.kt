@@ -35,6 +35,8 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 
 	fun findByUserIdAndPhotoId(userId: String, photoId: String): List<AlbumPhoto>
 
+	fun findByAlbumIdIn(albumIds: List<String>): List<AlbumPhoto>
+
 	fun countByAlbumId(albumId: String): Int
 
 	@Query(

@@ -20,6 +20,8 @@ interface PhotoOwnerRepository : JpaRepository<PhotoOwner, PhotoOwnerId> {
 
 	fun countByPhotoId(photoId: String): Int
 
+	fun findByUserId(userId: String): List<PhotoOwner>
+
 	@Modifying
 	@Query("UPDATE PhotoOwner SET photoId = :to WHERE photoId = :from")
 	fun updatePhotoId(from: String, to: String): Int
