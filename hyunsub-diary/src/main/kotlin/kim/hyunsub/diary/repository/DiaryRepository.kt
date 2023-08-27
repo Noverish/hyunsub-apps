@@ -9,6 +9,8 @@ import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 
 interface DiaryRepository : JpaRepository<Diary, DiaryId> {
+	fun findByUserId(userId: String): List<Diary>
+
 	@Query(
 		"""
 			SELECT a FROM Diary a

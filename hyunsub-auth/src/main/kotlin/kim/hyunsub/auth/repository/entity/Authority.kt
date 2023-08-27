@@ -22,4 +22,7 @@ data class Authority(
 
 	@Column
 	val api: String?,
+
+	@Column(nullable = false)
+	val default: Boolean,
 )
