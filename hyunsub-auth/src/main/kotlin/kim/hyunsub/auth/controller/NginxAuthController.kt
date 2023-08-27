@@ -8,7 +8,6 @@ import kim.hyunsub.auth.model.TokenPayload
 import kim.hyunsub.auth.service.TokenService
 import kim.hyunsub.auth.service.UserAuthService
 import kim.hyunsub.common.config.AppProperties
-import kim.hyunsub.common.util.isNotEmpty
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
@@ -116,7 +115,7 @@ class NginxAuthController(
 			val tokenPayload = parseToken(request)
 			val userAuth = userAuthService.getUserAuth(tokenPayload.idNo)
 
-			if (originalReferer.isNotEmpty() && originalReferer.endsWith("drive.hyunsub.kim/")) {
+			if (!originalReferer.isNullOrEmpty() && originalReferer.endsWith("drive.hyunsub.kim/")) {
 				log.info { "[AuthFile Success] ip=$originalIp, url=$decodedUrl, method=$originalMethod, referer=$originalReferer, userAuth=$userAuth" }
 				response.status = HttpStatus.OK.value()
 				response.setHeader(WebConstants.USER_AUTH_HEADER, mapper.writeValueAsString(userAuth))
@@ -124,7 +123,8 @@ class NginxAuthController(
 			}
 
 			val paths = if (isFromApi) userAuth.apis else userAuth.paths
-			val allowed = paths.any { path.startsWith(it) }
+			val filledPath = path.replace("{idNo}", userAuth.idNo)
+			val allowed = paths.any { filledPath.startsWith(it) }
 			if (!allowed) {
 				throw ErrorCodeException(ErrorCode.NO_AUTHORITY, mapOf("path" to path))
 			}
@@ -140,7 +140,8 @@ class NginxAuthController(
 				val res = mapOf("code" to e.errorCode.code, "msg" to e.errorCode.msg, "payload" to e.payload)
 				response.setHeader("X-Auth-Failed", mapper.writeValueAsString(res))
 			} else {
-				val res = if (e.errorCode == ErrorCode.NO_AUTHORITY) HttpStatus.FORBIDDEN.toString() else HttpStatus.UNAUTHORIZED.toString()
+				val res =
+					if (e.errorCode == ErrorCode.NO_AUTHORITY) HttpStatus.FORBIDDEN.toString() else HttpStatus.UNAUTHORIZED.toString()
 				response.setHeader("X-Auth-Failed", res)
 			}
 		}
