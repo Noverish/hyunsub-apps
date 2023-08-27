@@ -19,8 +19,8 @@ data class Diary(
 	@Id
 	val date: LocalDate,
 
-	@Column
-	val summary: String?,
+	@Column(nullable = false)
+	val summary: String,
 
 	@Type(type = "org.hibernate.type.TextType")
 	@Column(nullable = false)
