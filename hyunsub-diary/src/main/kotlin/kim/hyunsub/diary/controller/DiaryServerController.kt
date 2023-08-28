@@ -31,7 +31,7 @@ class DiaryServerController(
 		val diary = diaryRepository.findByUserId(fromUserId).first()
 		log.debug { "[User Init] diary=$diary" }
 
-		val newDiary = diary.copy(userId = toUserId, date = LocalDate.now())
+		val newDiary = diary.copy(userId = toUserId, date = LocalDate.now().minusDays(-1L))
 		log.debug { "[User Init] newDiary=$newDiary" }
 
 		if (!params.dryRun) {
