@@ -1,6 +1,9 @@
 package kim.hyunsub.auth.repository.entity
 
+import kim.hyunsub.auth.model.UserLanguage
+import kim.hyunsub.auth.repository.converter.UserLanguageConverter
 import javax.persistence.Column
+import javax.persistence.Convert
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
@@ -19,5 +22,6 @@ data class User(
 	val password: String,
 
 	@Column
-	val lang: String? = null,
+	@Convert(converter = UserLanguageConverter::class)
+	val lang: UserLanguage? = null,
 )

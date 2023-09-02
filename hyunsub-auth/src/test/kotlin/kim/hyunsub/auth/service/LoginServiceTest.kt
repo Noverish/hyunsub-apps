@@ -10,6 +10,7 @@ import kim.hyunsub.auth.model.LoginApiError
 import kim.hyunsub.auth.model.LoginFailureSession
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
+import kim.hyunsub.auth.model.UserLanguage
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.common.web.error.ErrorCode
@@ -32,10 +33,12 @@ class LoginServiceTest : FreeSpec({
 	val hashed = "\$2a\$12\$umWkbsinybLfpuEknH3IqufPEtv8hbUYJts6GN/fBAZZA.fIpp1aK"
 	val token = "kotest_token"
 	val remoteAddr = "kotest_remote_addr"
+	val lang = UserLanguage.KO
 
 	beforeTest {
 		every { user.idNo } returns idNo
 		every { user.password } returns hashed
+		every { user.lang } returns lang
 		every { params.username } returns username
 		every { params.password } returns password
 		every { params.remoteAddr } returns remoteAddr
@@ -49,7 +52,7 @@ class LoginServiceTest : FreeSpec({
 
 	"Success" {
 		val result = service.login(params)
-		result shouldBe LoginResult(idNo, token)
+		result shouldBe LoginResult(idNo, token, lang)
 	}
 
 	"Not exist user" {

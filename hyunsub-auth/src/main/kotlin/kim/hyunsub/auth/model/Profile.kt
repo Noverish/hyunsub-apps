@@ -4,4 +4,5 @@ data class Profile(
 	val username: String,
 	val historyNum: Int,
 	val deviceNum: Int,
+	val language: UserLanguage?,
 )

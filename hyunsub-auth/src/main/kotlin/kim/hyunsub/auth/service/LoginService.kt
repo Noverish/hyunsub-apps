@@ -54,6 +54,7 @@ class LoginService(
 		return LoginResult(
 			idNo = user.idNo,
 			token = token,
+			lang = user.lang,
 		)
 	}
 }

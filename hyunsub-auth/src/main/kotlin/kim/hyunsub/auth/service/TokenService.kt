@@ -34,7 +34,6 @@ class TokenService(
 			idNo = user.idNo,
 			username = user.username,
 			authorities = userAuthService.getAuthorities(user.idNo),
-			lang = user.lang,
 		)
 
 		return Jwts.builder()

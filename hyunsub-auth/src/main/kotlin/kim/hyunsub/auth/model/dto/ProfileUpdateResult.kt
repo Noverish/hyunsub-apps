@@ -7,4 +7,5 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include
 data class ProfileUpdateResult(
 	val username: Boolean? = null,
 	val password: Boolean? = null,
+	val language: Boolean? = null,
 )

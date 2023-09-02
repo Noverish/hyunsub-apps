@@ -47,6 +47,9 @@ class LoginController(
 		val cookie = cookieGenerator.generateLoginCookie(result.token, params.remember)
 		response.addCookie(cookie)
 
+		val langCookie = cookieGenerator.generateLanguageCookie(result.lang)
+		response.addCookie(langCookie)
+
 		return result
 	}
 }
