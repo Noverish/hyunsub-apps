@@ -29,6 +29,7 @@ class FsFileClient(
 	private fun generateUrl(path: String) = UriComponentsBuilder
 		.fromHttpUrl(fsProperties.host)
 		.path(path)
+		.build(false)
 		.toUriString()
 
 	fun readAsString(path: String): String {
