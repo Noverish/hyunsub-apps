@@ -17,7 +17,7 @@ class DiaryDummyService(
 	private val fsClient: FsClient,
 	private val fsFileClient: FsFileClient,
 ) {
-	private val userIds = listOf("00004", "9qs7H")
+	private val userIds = listOf("00001", "9qs7H")
 	private val log = KotlinLogging.logger { }
 
 	@Scheduled(cron = "0 0 6 * * *")
@@ -28,7 +28,7 @@ class DiaryDummyService(
 	private fun saveDummyWithUserId(userId: String) {
 		log.debug { "[Diary Dummy] userId=$userId" }
 
-		val path = "/hyunsub/drive/$userId/novels"
+		val path = "/hyunsub/drive/99999/novels"
 		val novel = fsClient.readdir(path).random()
 		val content = fsFileClient.readAsString(Path(path, novel).toString())
 		val parts = content.split(" ")
