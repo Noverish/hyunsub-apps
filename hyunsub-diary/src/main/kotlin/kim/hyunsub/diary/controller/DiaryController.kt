@@ -35,8 +35,8 @@ class DiaryController(
 		val diary = Diary(
 			userId = user.idNo,
 			date = params.date,
-			summary = params.summary,
-			content = params.content,
+			summary = params.summary.trim(),
+			content = params.content.trim(),
 		)
 
 		diaryRepository.save(diary)
@@ -62,8 +62,8 @@ class DiaryController(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val newDiary = diary.copy(
-			summary = params.summary,
-			content = params.content,
+			summary = params.summary.trim(),
+			content = params.content.trim(),
 		)
 
 		diaryRepository.save(newDiary)
