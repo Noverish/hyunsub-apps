@@ -25,6 +25,9 @@ data class Diary(
 	@Type(type = "org.hibernate.type.TextType")
 	@Column(nullable = false)
 	val content: String,
+
+	@Column(nullable = false)
+	val length: Int = content.length,
 )
 
 data class DiaryId(
