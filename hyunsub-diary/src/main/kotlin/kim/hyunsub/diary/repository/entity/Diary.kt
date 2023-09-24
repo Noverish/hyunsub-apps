@@ -22,7 +22,7 @@ data class Diary(
 	@Column(nullable = false)
 	val summary: String,
 
-	@Type(type = "org.hibernate.type.TextType")
+	@Type(type = "text")
 	@Column(nullable = false)
 	val content: String,
 
