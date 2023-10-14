@@ -1,6 +1,5 @@
 package kim.hyunsub.video.repository.entity
 
-import kim.hyunsub.video.model.api.RestApiVideoEntry
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -27,6 +26,4 @@ data class VideoEntry(
 
 	@Column
 	val videoGroupId: String? = null,
-) {
-	fun toDto() = RestApiVideoEntry(this)
-}
+)

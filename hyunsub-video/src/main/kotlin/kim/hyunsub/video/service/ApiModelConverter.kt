@@ -8,6 +8,7 @@ import kim.hyunsub.video.model.api.RestApiVideoGroup
 import kim.hyunsub.video.model.api.RestApiVideoMetadata
 import kim.hyunsub.video.model.api.RestApiVideoSearchResult
 import kim.hyunsub.video.model.api.RestApiVideoSubtitle
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoSearchResult
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoGroup
@@ -82,7 +83,7 @@ class ApiModelConverter {
 
 	fun convertVideoSearchResult(result: VideoSearchResult): RestApiVideoSearchResult {
 		val entries = result.entries.groupBy { it.category }
-			.mapValues { entry -> entry.value.map { it.toDto() } }
+			.mapValues { entry -> entry.value.map { it.toApi() } }
 
 		return RestApiVideoSearchResult(
 			entries = entries

@@ -1,6 +1,7 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoHomeRecent
 import kim.hyunsub.video.model.dto.VideoHomeResult
 import kim.hyunsub.video.repository.VideoEntryRepository
@@ -30,7 +31,7 @@ class VideoHomeController(
 			VideoHomeRecent(
 				category = category.toDto(),
 				list = videoEntryRepository.findByCategoryOrderByRand(category.name, randomSeed, PageRequest.of(0, 12))
-					.map { it.toDto() }
+					.map { it.toApi() }
 			)
 		}
 

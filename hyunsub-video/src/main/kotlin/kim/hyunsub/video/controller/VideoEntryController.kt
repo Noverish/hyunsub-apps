@@ -8,6 +8,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.VideoSort
 import kim.hyunsub.video.model.api.RestApiVideoEntry
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoEntryCreateParams
 import kim.hyunsub.video.model.dto.VideoEntryDeleteResult
 import kim.hyunsub.video.model.dto.VideoEntryUpdateParams
@@ -67,11 +68,22 @@ class VideoEntryController(
 			total = total,
 			page = p,
 			pageSize = ps,
-			data = sorted.map { it.toDto() },
+			data = sorted.map { it.toApi() },
 		)
 	}
 
 	@GetMapping("/{entryId}")
+	fun get(
+		user: UserAuth,
+		@PathVariable entryId: String,
+	): RestApiVideoEntry {
+		val entry = videoEntryRepository.findByIdOrNull(entryId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
+		return entry.toApi()
+	}
+
+	@GetMapping("/{entryId}/detail")
 	fun detail(
 		user: UserAuth,
 		@PathVariable entryId: String,
@@ -90,7 +102,7 @@ class VideoEntryController(
 	@Authorized(["admin"])
 	@PostMapping("")
 	fun create(@RequestBody params: VideoEntryCreateParams): RestApiVideoEntry {
-		return videoEntryService.create(params).toDto()
+		return videoEntryService.create(params).toApi()
 	}
 
 	@Authorized(["admin"])
@@ -100,7 +112,7 @@ class VideoEntryController(
 		@RequestBody params: VideoEntryUpdateParams,
 	): RestApiVideoEntry {
 		log.debug { "[VideoEntryUpdate] entryId=$entryId, params=$params" }
-		return videoEntryService.update(entryId, params).toDto()
+		return videoEntryService.update(entryId, params).toApi()
 	}
 
 	@Authorized(["admin"])

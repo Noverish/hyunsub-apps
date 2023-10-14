@@ -13,6 +13,7 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
 import kim.hyunsub.video.model.api.RestApiVideoSeason
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoEntryCreateParams
 import kim.hyunsub.video.model.dto.VideoEntryDeleteResult
 import kim.hyunsub.video.model.dto.VideoEntryUpdateParams
@@ -75,7 +76,7 @@ class VideoEntryService(
 
 		return RestApiVideoEntryDetail(
 			category = category.toDto(),
-			entry = entry.toDto(),
+			entry = entry.toApi(),
 			video = videoService.loadVideo(userId, video),
 			seasons = seasons,
 			group = group,
