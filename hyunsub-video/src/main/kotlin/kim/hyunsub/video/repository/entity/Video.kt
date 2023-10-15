@@ -22,8 +22,8 @@ data class Video(
 	val regDt: LocalDateTime,
 
 	@Column(nullable = false)
-	val videoEntryId: String,
+	val entryId: String,
 
 	@Column
-	val videoSeason: String? = null,
+	val season: String? = null,
 )

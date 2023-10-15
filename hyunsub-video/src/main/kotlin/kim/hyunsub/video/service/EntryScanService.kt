@@ -59,7 +59,7 @@ class EntryScanService(
 	}
 
 	private fun scan(entryId: String, files: List<FileStat>, season: String?): List<EntryScanResult> {
-		val registeredVideos = season?.let { videoRepository.findByVideoEntryIdAndVideoSeason(entryId, season) }
+		val registeredVideos = season?.let { videoRepository.findByEntryIdAndSeason(entryId, season) }
 			?: videoRepository.findNoSeasonVideos(entryId)
 		log.debug { "[Entry Scan] registeredVideos=$registeredVideos" }
 
@@ -80,8 +80,8 @@ class EntryScanService(
 			path = videoFile.path,
 			thumbnail = thumbnailPath,
 			regDt = videoFile.mDate,
-			videoEntryId = entryId,
-			videoSeason = season,
+			entryId = entryId,
+			season = season,
 		)
 		log.debug { "[Video Scan] video=$video" }
 

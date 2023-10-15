@@ -39,7 +39,7 @@ class EntryRenameService(
 			?.let { Path(it).parent }
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val videos = videoRepository.findByVideoEntryId(entryId)
+		val videos = videoRepository.findByEntryId(entryId)
 		val videoIds = videos.map { it.id }
 
 		val videoResults = iterateVideos(videos, params)

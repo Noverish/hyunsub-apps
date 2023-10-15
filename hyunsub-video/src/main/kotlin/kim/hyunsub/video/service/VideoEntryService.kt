@@ -53,7 +53,7 @@ class VideoEntryService(
 	}
 
 	fun load(entry: VideoEntry, videoId: String?, userId: String): RestApiVideoEntryDetail {
-		val videos = videoRepository.findByVideoEntryId(entry.id)
+		val videos = videoRepository.findByEntryId(entry.id)
 		if (videos.isEmpty()) {
 			throw ErrorCodeException(ErrorCode.EMPTY_VIDEO_ENTRY)
 		}
@@ -63,7 +63,7 @@ class VideoEntryService(
 		val episodes = videoRepository.selectEpisode(entry.id, userId)
 
 		val seasons = if (episodes.size > 1) {
-			episodes.groupBy { it.videoSeason }
+			episodes.groupBy { it.season }
 				.map { (key, value) -> RestApiVideoSeason(key, value) }
 		} else {
 			null
@@ -89,11 +89,11 @@ class VideoEntryService(
 				?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 		}
 
-		val season = videos.mapNotNull { it.videoSeason }.distinct().minOrNull()
+		val season = videos.mapNotNull { it.season }.distinct().minOrNull()
 		return if (season == null) {
 			videos.minBy { it.path }
 		} else {
-			val episodes = videos.filter { it.videoSeason == season }
+			val episodes = videos.filter { it.season == season }
 			episodes.minBy { it.path }
 		}
 	}
@@ -166,7 +166,7 @@ class VideoEntryService(
 		val entry = videoEntryRepository.findByIdOrNull(entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such entryId")
 
-		val videos = videoRepository.findByVideoEntryId(entryId)
+		val videos = videoRepository.findByEntryId(entryId)
 			.map { videoService.delete(it) }
 
 		videoEntryRepository.delete(entry)

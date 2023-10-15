@@ -10,7 +10,7 @@ data class VideoEpisode(
 	val time: Int?,
 	@field:JsonIgnore val path: String,
 	@field:JsonIgnore val thumbnail: String,
-	@field:JsonIgnore val videoSeason: String?,
+	@field:JsonIgnore val season: String?,
 	val duration: Int,
 ) {
 	val title: String

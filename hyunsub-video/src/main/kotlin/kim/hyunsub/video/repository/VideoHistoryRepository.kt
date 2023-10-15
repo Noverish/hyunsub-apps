@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query
 interface VideoHistoryRepository : JpaRepository<VideoHistory, VideoHistoryId> {
 	@Query(
 		"""
-			SELECT new kim.hyunsub.video.repository.entity.VideoMyHistory(a.videoId, a.time, a.date, b.videoEntryId, c.duration, b.thumbnail, b.path)
+			SELECT new kim.hyunsub.video.repository.entity.VideoMyHistory(a.videoId, a.time, a.date, b.entryId, c.duration, b.thumbnail, b.path)
 			FROM VideoHistory a
 			INNER JOIN Video b ON b.id = a.videoId
 			LEFT JOIN VideoMetadata  c ON c.path = b.path

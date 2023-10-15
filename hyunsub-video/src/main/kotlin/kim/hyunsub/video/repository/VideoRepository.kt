@@ -8,29 +8,29 @@ import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
 interface VideoRepository : JpaRepository<Video, String> {
-	fun findByVideoEntryIdIn(videoEntryIds: List<String>): List<Video>
-	fun findByVideoEntryId(videoEntryId: String): List<Video>
+	fun findByEntryIdIn(entryIds: List<String>): List<Video>
+	fun findByEntryId(entryId: String): List<Video>
 
 	@Query(
 		"""
 			SELECT a FROM Video a
-			WHERE a.videoEntryId = :entryId AND a.videoSeason IS NULL
+			WHERE a.entryId = :entryId AND a.season IS NULL
 		"""
 	)
 	fun findNoSeasonVideos(entryId: String): List<Video>
-	fun findByVideoEntryIdAndVideoSeason(videoEntryId: String, videoSeason: String): List<Video>
+	fun findByEntryIdAndSeason(entryId: String, season: String): List<Video>
 
 	@Modifying
-	@Query("DELETE FROM Video v WHERE v.videoEntryId IN (:videoEntryIds)")
-	fun deleteByVideoEntryIdIn(videoEntryIds: List<String>): Int
+	@Query("DELETE FROM Video v WHERE v.entryId IN (:entryIds)")
+	fun deleteByEntryIdIn(entryIds: List<String>): Int
 
 	@Query(
 		"""
-			SELECT new kim.hyunsub.video.repository.entity.VideoEpisode(a.id, b.time, a.path, a.thumbnail, a.videoSeason, c.duration)
+			SELECT new kim.hyunsub.video.repository.entity.VideoEpisode(a.id, b.time, a.path, a.thumbnail, a.season, c.duration)
 			FROM Video AS a
 			LEFT JOIN VideoHistory AS b ON b.userId = :userId AND b.videoId = a.id
 			LEFT JOIN VideoMetadata c ON c.path = a.path
-			WHERE a.videoEntryId = :entryId
+			WHERE a.entryId = :entryId
 			ORDER BY a.path
 		"""
 	)

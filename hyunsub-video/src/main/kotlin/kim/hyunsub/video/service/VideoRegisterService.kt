@@ -52,10 +52,10 @@ class VideoRegisterService(
 
 		// Entry 확인
 		val entryFromParam =
-			if (params.videoEntryId.isNotEmpty()) {
-				videoEntryRepository.findByIdOrNull(params.videoEntryId)
+			if (params.entryId.isNotEmpty()) {
+				videoEntryRepository.findByIdOrNull(params.entryId)
 					.apply { log.info("[Register Video] entry={}", this) }
-					?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No such entry: ${params.videoEntryId}")
+					?: throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No such entry: ${params.entryId}")
 			} else {
 				null
 			}
@@ -141,8 +141,8 @@ class VideoRegisterService(
 			path = videoPath,
 			thumbnail = thumbnailPath,
 			regDt = videoDate,
-			videoEntryId = videoEntry.id,
-			videoSeason = params.videoSeason,
+			entryId = videoEntry.id,
+			season = params.season,
 		)
 		log.info("[Register Video] video={}", video)
 		videoRepository.save(video)

@@ -45,32 +45,32 @@
       "path": "/root/group1/folder1/video1.mp4",
       "thumbnail": "/root/group1/folder1/video1.jpg",
       "regDt": "2020-09-13 21:26:43",
-      "videoEntryId": "000001",
-      "videoSeason": null
+      "entryId": "000001",
+      "season": null
     },
     {
       "id": "000006",
       "path": "/root/group1/folder2/video2.mp4",
       "thumbnail": "/root/group1/folder2/video2.jpg",
       "regDt": "2020-09-13 21:26:49",
-      "videoEntryId": "000005",
-      "videoSeason": null
+      "entryId": "000005",
+      "season": null
     },
     {
       "id": "000010",
       "path": "/root/folder3/no_group.mp4",
       "thumbnail": "/root/folder3/no_group.jpg",
       "regDt": "2020-09-13 21:26:54",
-      "videoEntryId": "000009",
-      "videoSeason": null
+      "entryId": "000009",
+      "season": null
     },
     {
       "id": "000015",
       "path": "/root/folder4/no_group_no_thumbnail.mp4",
       "thumbnail": "/root/folder4/no_group_no_thumbnail.jpg",
       "regDt": "2020-09-13 21:27:00",
-      "videoEntryId": "000014",
-      "videoSeason": null
+      "entryId": "000014",
+      "season": null
     }
   ],
   "subtitles": [

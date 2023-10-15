@@ -8,6 +8,6 @@ data class VideoRegisterParams(
 	val newGroupName: String?,
 	val thumbnailUrl: String?,
 
-	val videoEntryId: String?,
-	val videoSeason: String?,
+	val entryId: String?,
+	val season: String?,
 )
