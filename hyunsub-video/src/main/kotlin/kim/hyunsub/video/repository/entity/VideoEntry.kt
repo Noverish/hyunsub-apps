@@ -26,4 +26,10 @@ data class VideoEntry(
 
 	@Column
 	val videoGroupId: String? = null,
-)
+) {
+	companion object {
+		private val yearRegex = Regex(" \\(\\d{4}\\)")
+
+		fun parseTitle(name: String) = name.replace(yearRegex, "")
+	}
+}

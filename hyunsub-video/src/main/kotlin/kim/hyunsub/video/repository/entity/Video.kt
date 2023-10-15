@@ -5,6 +5,8 @@ import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
 import javax.persistence.Table
+import kotlin.io.path.Path
+import kotlin.io.path.nameWithoutExtension
 
 @Entity
 @Table(name = "video")
@@ -26,4 +28,8 @@ data class Video(
 
 	@Column
 	val season: String? = null,
-)
+) {
+	companion object {
+		fun parseTitle(path: String) = Path(path).nameWithoutExtension
+	}
+}

@@ -9,10 +9,8 @@ data class RestApiVideoEntry(
 	val thumbnail: String,
 )
 
-private val yearRegex = Regex(" \\(\\d{4}\\)")
-
 fun VideoEntry.toApi() = RestApiVideoEntry(
 	id = id,
-	name = name.replace(yearRegex, ""),
+	name = VideoEntry.parseTitle(name),
 	thumbnail = FsPathConverter.thumbnailUrl(thumbnail)
 )

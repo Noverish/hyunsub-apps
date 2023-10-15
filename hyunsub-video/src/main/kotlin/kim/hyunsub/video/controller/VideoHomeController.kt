@@ -5,6 +5,7 @@ import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoHomeRecent
 import kim.hyunsub.video.model.dto.VideoHomeResult
 import kim.hyunsub.video.repository.VideoEntryRepository
+import kim.hyunsub.video.repository.VideoHistoryRepository
 import kim.hyunsub.video.service.VideoCategoryService
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class VideoHomeController(
 	private val videoCategoryService: VideoCategoryService,
 	private val videoEntryRepository: VideoEntryRepository,
+	private val videoHistoryRepository: VideoHistoryRepository,
 ) {
 	@GetMapping("")
 	fun home(
@@ -35,8 +37,11 @@ class VideoHomeController(
 			)
 		}
 
+		val histories = videoHistoryRepository.selectHistories2(userAuth.idNo)
+
 		return VideoHomeResult(
 			recents = recents,
+			histories = histories.map { it.toApi() },
 		)
 	}
 }
