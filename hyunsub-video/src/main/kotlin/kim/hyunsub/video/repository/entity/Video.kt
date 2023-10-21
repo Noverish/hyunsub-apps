@@ -15,10 +15,10 @@ data class Video(
 	val id: String,
 
 	@Column(nullable = false)
-	val path: String,
+	var path: String,
 
 	@Column
-	val thumbnail: String?,
+	var thumbnail: String?,
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime,

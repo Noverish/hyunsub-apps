@@ -16,7 +16,7 @@ data class VideoEntry(
 	val name: String,
 
 	@Column
-	val thumbnail: String?,
+	var thumbnail: String?,
 
 	@Column(nullable = false)
 	val category: String,

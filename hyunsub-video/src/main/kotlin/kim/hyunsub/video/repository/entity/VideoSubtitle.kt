@@ -12,7 +12,7 @@ data class VideoSubtitle(
 	val id: String,
 
 	@Column(nullable = false)
-	val path: String,
+	var path: String,
 
 	@Column(nullable = false)
 	val videoId: String,

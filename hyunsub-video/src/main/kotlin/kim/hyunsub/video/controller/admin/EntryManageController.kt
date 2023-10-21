@@ -2,8 +2,10 @@ package kim.hyunsub.video.controller.admin
 
 import kim.hyunsub.common.fs.model.FsRenameBulkData
 import kim.hyunsub.common.web.annotation.Authorized
+import kim.hyunsub.video.model.dto.EntryMoveParams
 import kim.hyunsub.video.model.dto.EntryRenameParams
 import kim.hyunsub.video.model.dto.EntryScanResult
+import kim.hyunsub.video.service.EntryMoveService
 import kim.hyunsub.video.service.EntryRenameService
 import kim.hyunsub.video.service.EntryScanService
 import mu.KotlinLogging
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 class EntryManageController(
 	private val entryScanService: EntryScanService,
 	private val entryRenameService: EntryRenameService,
+	private val entryMoveService: EntryMoveService,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -37,5 +40,15 @@ class EntryManageController(
 	): List<FsRenameBulkData> {
 		log.debug { "[Entry Rename] entryId=$entryId, params=$params" }
 		return entryRenameService.rename(entryId, params)
+	}
+
+	@PostMapping("/move")
+	fun move(
+		@PathVariable entryId: String,
+		@RequestBody params: EntryMoveParams,
+	): String {
+		log.debug { "[Entry Move] entryId=$entryId, params=$params" }
+		entryMoveService.move(entryId, params)
+		return "success"
 	}
 }
