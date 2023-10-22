@@ -1,6 +1,7 @@
 package kim.hyunsub.friend.repository.entity
 
 import org.hibernate.annotations.Type
+import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -19,15 +20,18 @@ data class Friend(
 	val toUserId: String?,
 
 	@Column(nullable = false)
-	val name: String,
+	var name: String,
 
 	@Column
-	val birthday: String?,
+	var birthday: String?,
 
 	@Column(nullable = false)
-	val tags: String,
+	var tags: String,
 
 	@Type(type = "text")
-	@Column(nullable = false)
-	val description: String,
+	@Column
+	var description: String?,
+
+	@Column(nullable = true)
+	val regDt: LocalDateTime = LocalDateTime.now().withNano(0),
 )
