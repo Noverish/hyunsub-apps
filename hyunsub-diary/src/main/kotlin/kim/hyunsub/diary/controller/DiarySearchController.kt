@@ -3,8 +3,9 @@ package kim.hyunsub.diary.controller
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.diary.model.DiarySearchQuery
+import kim.hyunsub.diary.model.api.ApiDiaryPreview
+import kim.hyunsub.diary.model.api.toApiPreview
 import kim.hyunsub.diary.repository.DiaryRepository
-import kim.hyunsub.diary.repository.entity.Diary
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,7 +21,7 @@ class DiarySearchController(
 	fun search(
 		user: UserAuth,
 		@RequestBody params: DiarySearchQuery,
-	): RestApiPageResult<Diary> {
+	): RestApiPageResult<ApiDiaryPreview> {
 		val total = diaryRepository.searchCount(user.idNo, params.query ?: "")
 		val pageRequest = PageRequest.of(params.page, params.pageSize)
 		val result = diaryRepository.search(user.idNo, params.query ?: "", pageRequest)
@@ -28,7 +29,7 @@ class DiarySearchController(
 			total = total,
 			page = params.page,
 			pageSize = params.pageSize,
-			data = result,
+			data = result.map { it.toApiPreview() },
 		)
 	}
 }

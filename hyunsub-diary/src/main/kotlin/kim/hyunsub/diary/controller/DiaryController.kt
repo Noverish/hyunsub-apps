@@ -1,13 +1,18 @@
 package kim.hyunsub.diary.controller
 
+import kim.hyunsub.common.fs.client.FriendServiceClient
+import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.diary.model.DiaryCreateParams
-import kim.hyunsub.diary.model.DiaryModifyParams
+import kim.hyunsub.diary.model.DiaryUpdateParams
+import kim.hyunsub.diary.model.api.ApiDiary
+import kim.hyunsub.diary.model.api.toApi
 import kim.hyunsub.diary.repository.DiaryRepository
 import kim.hyunsub.diary.repository.entity.Diary
 import kim.hyunsub.diary.repository.findByIdOrNull
+import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -22,12 +27,14 @@ import java.time.LocalDate
 @RequestMapping("/api/v1/diaries")
 class DiaryController(
 	private val diaryRepository: DiaryRepository,
+	private val friendServiceClient: FriendServiceClient,
 ) {
 	@PostMapping("")
 	fun create(
 		user: UserAuth,
 		@RequestBody params: DiaryCreateParams,
-	): Diary {
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
+	): ApiDiary {
 		if (diaryRepository.findByIdOrNull(user.idNo, params.date) != null) {
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST)
 		}
@@ -41,23 +48,32 @@ class DiaryController(
 
 		diaryRepository.save(diary)
 
-		return diary
+		val friends = friendServiceClient.selectMeetFriends(token, diary.date)
+
+		return diary.toApi(friends)
 	}
 
 	@GetMapping("/{date}")
-	fun detail(
+	fun get(
 		user: UserAuth,
 		@PathVariable date: LocalDate,
-	): Diary? {
-		return diaryRepository.findByIdOrNull(user.idNo, date)
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
+	): ApiDiary? {
+		val diary = diaryRepository.findByIdOrNull(user.idNo, date)
+			?: return null
+
+		val friends = friendServiceClient.selectMeetFriends(token, date)
+
+		return diary.toApi(friends)
 	}
 
 	@PutMapping("/{date}")
 	fun modify(
 		user: UserAuth,
 		@PathVariable date: LocalDate,
-		@RequestBody params: DiaryModifyParams,
-	): Diary {
+		@RequestBody params: DiaryUpdateParams,
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
+	): ApiDiary {
 		val diary = diaryRepository.findByIdOrNull(user.idNo, date)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
@@ -68,19 +84,24 @@ class DiaryController(
 
 		diaryRepository.save(newDiary)
 
-		return newDiary
+		val friends = friendServiceClient.selectMeetFriends(token, date)
+
+		return newDiary.toApi(friends)
 	}
 
 	@DeleteMapping("/{date}")
 	fun delete(
 		user: UserAuth,
 		@PathVariable date: LocalDate,
-	): Diary {
+		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
+	): ApiDiary {
 		val diary = diaryRepository.findByIdOrNull(user.idNo, date)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		diaryRepository.delete(diary)
 
-		return diary
+		val friends = friendServiceClient.selectMeetFriends(token, date)
+
+		return diary.toApi(friends)
 	}
 }
