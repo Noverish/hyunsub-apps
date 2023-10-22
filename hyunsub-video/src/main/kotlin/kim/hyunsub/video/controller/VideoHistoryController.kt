@@ -2,15 +2,19 @@ package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.config.userAuth
+import kim.hyunsub.common.web.model.SimpleResponse2
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.video.model.api.ApiVideoHistory
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoHistoryCreateParams
 import kim.hyunsub.video.repository.VideoHistoryRepository
 import kim.hyunsub.video.repository.entity.VideoHistory
-import kim.hyunsub.video.repository.entity.VideoMyHistory
+import kim.hyunsub.video.repository.entity.VideoHistoryId
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -25,21 +29,39 @@ class VideoHistoryController(
 	@GetMapping("/api/v1/histories")
 	fun list(
 		user: UserAuth,
+		@RequestParam category: String,
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
-	): RestApiPageResult<VideoMyHistory> {
+	): RestApiPageResult<ApiVideoHistory> {
 		val userId = user.idNo
 		val total = videoHistoryRepository.countByUserId(userId)
 
 		val page = PageRequest.of(p, ps)
-		val list = videoHistoryRepository.selectHistories(user.idNo, page)
+		val list = videoHistoryRepository.selectByUserId(user.idNo, category, page)
 
 		return RestApiPageResult(
 			total = total,
 			page = p,
 			pageSize = ps,
-			data = list
+			data = list.map { it.toApi() },
 		)
+	}
+
+	@DeleteMapping("/api/v1/histories/:videoId")
+	fun delete(
+		user: UserAuth,
+		@RequestParam videoId: String,
+	): SimpleResponse2 {
+		val userId = user.idNo
+
+		videoHistoryRepository.deleteById(
+			VideoHistoryId(
+				userId = userId,
+				videoId = videoId,
+			)
+		)
+
+		return SimpleResponse2()
 	}
 
 	@MessageMapping("/v1/histories")

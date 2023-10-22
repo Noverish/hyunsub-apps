@@ -15,11 +15,12 @@ interface VideoHistoryRepository : JpaRepository<VideoHistory, VideoHistoryId> {
 			FROM VideoHistory a
 			INNER JOIN Video b ON b.id = a.videoId
 			LEFT JOIN VideoMetadata  c ON c.path = b.path
-			WHERE a.userId = :userId
+			INNER JOIN VideoEntry d ON d.id = b.entryId
+			WHERE a.userId = :userId AND d.category = :category
 			ORDER BY a.date DESC
 		"""
 	)
-	fun selectHistories(userId: String, page: Pageable = Pageable.unpaged()): List<VideoMyHistory>
+	fun selectByUserId(userId: String, category: String, page: Pageable = Pageable.unpaged()): List<VideoMyHistory>
 
 	@Query(
 		value = """
