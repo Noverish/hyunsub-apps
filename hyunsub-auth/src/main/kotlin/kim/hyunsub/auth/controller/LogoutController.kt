@@ -1,8 +1,8 @@
 package kim.hyunsub.auth.controller
 
-import kim.hyunsub.auth.annotation.HyunsubCors
 import kim.hyunsub.auth.model.LogoutResult
 import kim.hyunsub.auth.service.CookieGenerator
+import kim.hyunsub.common.annotation.HyunsubCors
 import kim.hyunsub.common.web.annotation.IgnoreAuthorize
 import mu.KotlinLogging
 import org.springframework.http.HttpHeaders

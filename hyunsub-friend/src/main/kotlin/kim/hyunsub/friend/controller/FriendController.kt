@@ -1,5 +1,6 @@
 package kim.hyunsub.friend.controller
 
+import kim.hyunsub.common.annotation.HyunsubCors
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 class FriendController(
 	private val friendRepository: FriendRepository,
 ) {
+	@HyunsubCors
 	@GetMapping("")
 	fun list(
 		userAuth: UserAuth,
