@@ -4,7 +4,9 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.friend.model.api.ApiFriend
+import kim.hyunsub.friend.model.api.ApiFriendPreview
 import kim.hyunsub.friend.model.api.toApi
+import kim.hyunsub.friend.model.api.toApiPreview
 import kim.hyunsub.friend.model.dto.FriendCreateParams
 import kim.hyunsub.friend.model.dto.FriendUpdateParams
 import kim.hyunsub.friend.repository.FriendRepository
@@ -28,8 +30,8 @@ class FriendController(
 	@GetMapping("")
 	fun list(
 		userAuth: UserAuth,
-	): List<ApiFriend> {
-		return friendRepository.findAll().map { it.toApi() }
+	): List<ApiFriendPreview> {
+		return friendRepository.findAll().map { it.toApiPreview() }
 	}
 
 	@PostMapping("")

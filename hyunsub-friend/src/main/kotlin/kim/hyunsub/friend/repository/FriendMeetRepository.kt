@@ -1,6 +1,6 @@
 package kim.hyunsub.friend.repository
 
-import kim.hyunsub.friend.model.api.ApiMeetFriend
+import kim.hyunsub.friend.model.api.ApiFriendPreview
 import kim.hyunsub.friend.repository.entity.FriendMeet
 import kim.hyunsub.friend.repository.entity.FriendMeetId
 import org.springframework.data.jpa.repository.JpaRepository
@@ -13,13 +13,13 @@ interface FriendMeetRepository : JpaRepository<FriendMeet, FriendMeetId> {
 
 	@Query(
 		"""
-			SELECT new kim.hyunsub.friend.model.api.ApiMeetFriend(b.id, b.name)
+			SELECT new kim.hyunsub.friend.model.api.ApiFriendPreview(b.id, b.name)
 			FROM FriendMeet a
 			INNER JOIN Friend b ON b.id = a.friendId
 			WHERE a.date = :date
 		"""
 	)
-	fun findByDate(date: LocalDate): List<ApiMeetFriend>
+	fun findByDate(date: LocalDate): List<ApiFriendPreview>
 }
 
 fun FriendMeetRepository.findByIdOrNull(friendId: String, date: LocalDate) =

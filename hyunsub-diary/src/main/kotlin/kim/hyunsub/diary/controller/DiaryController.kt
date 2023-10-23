@@ -12,6 +12,7 @@ import kim.hyunsub.diary.model.api.toApi
 import kim.hyunsub.diary.repository.DiaryRepository
 import kim.hyunsub.diary.repository.entity.Diary
 import kim.hyunsub.diary.repository.findByIdOrNull
+import kim.hyunsub.friend.model.dto.MeetFriendBulkUpdateParams
 import org.springframework.web.bind.annotation.CookieValue
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -48,7 +49,8 @@ class DiaryController(
 
 		diaryRepository.save(diary)
 
-		val friends = friendServiceClient.selectMeetFriends(token, diary.date)
+		val meetParams = MeetFriendBulkUpdateParams(params.friendIds)
+		val friends = friendServiceClient.updateMeetFriendsBulk(token, diary.date, meetParams)
 
 		return diary.toApi(friends)
 	}
@@ -84,7 +86,8 @@ class DiaryController(
 
 		diaryRepository.save(newDiary)
 
-		val friends = friendServiceClient.selectMeetFriends(token, date)
+		val meetParams = MeetFriendBulkUpdateParams(params.friendIds)
+		val friends = friendServiceClient.updateMeetFriendsBulk(token, date, meetParams)
 
 		return newDiary.toApi(friends)
 	}

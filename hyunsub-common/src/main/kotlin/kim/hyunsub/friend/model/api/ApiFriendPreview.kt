@@ -1,6 +1,6 @@
 package kim.hyunsub.friend.model.api
 
-data class ApiMeetFriend(
-	val friendId: String,
+data class ApiFriendPreview(
+	val id: String,
 	val name: String,
 )
