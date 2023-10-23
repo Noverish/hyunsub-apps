@@ -68,7 +68,7 @@ class DiaryController(
 	}
 
 	@PutMapping("/{date}")
-	fun modify(
+	fun update(
 		user: UserAuth,
 		@PathVariable date: LocalDate,
 		@RequestBody params: DiaryUpdateParams,
