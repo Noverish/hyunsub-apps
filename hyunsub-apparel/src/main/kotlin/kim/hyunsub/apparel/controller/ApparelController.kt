@@ -57,7 +57,7 @@ class ApparelController(
 		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val images = apparelImageRepository.findByApparelId(apparelId)
+		val images = apparelImageRepository.findByApparelIdOrderByRegDt(apparelId)
 
 		return RestApiApparelDetail(
 			apparel = apparel.toDto(),

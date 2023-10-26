@@ -68,7 +68,7 @@ class ApparelService(
 		newImages.forEach { log.debug { "[Apparel Update] newImage=$it" } }
 
 		val imageId = old.imageId
-			.takeIf { it != null && !deleteIds.contains(it) }
+			?.takeIf { !deleteIds.contains(it) }
 			?: newImages.firstOrNull()?.id
 		val apparel = old.copy(params.apparel).copy(imageId = imageId)
 		log.debug { "[Apparel Update] apparel=$apparel" }
@@ -76,7 +76,7 @@ class ApparelService(
 		apparelRepository.save(apparel)
 		apparelImageRepository.saveAll(newImages)
 
-		val images = apparelImageRepository.findByApparelId(apparelId)
+		val images = apparelImageRepository.findByApparelIdOrderByRegDt(apparelId)
 
 		return RestApiApparelDetail(
 			apparel = apparel.toDto(),
@@ -111,7 +111,7 @@ class ApparelService(
 		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val images = apparelImageRepository.findByApparelId(apparelId)
+		val images = apparelImageRepository.findByApparelIdOrderByRegDt(apparelId)
 
 		apparelImageService.deleteBulk(userId, images)
 		apparelRepository.delete(apparel)

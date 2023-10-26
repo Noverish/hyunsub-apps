@@ -5,7 +5,7 @@ import kim.hyunsub.common.util.generateId
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface ApparelImageRepository : JpaRepository<ApparelImage, String> {
-	fun findByApparelId(apparelId: String): List<ApparelImage>
+	fun findByApparelIdOrderByRegDt(apparelId: String): List<ApparelImage>
 }
 
 fun ApparelImageRepository.generateId() = generateId(10)
