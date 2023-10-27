@@ -14,6 +14,6 @@ fun Friend.toApi() = ApiFriend(
 	id = id,
 	name = name,
 	birthday = birthday,
-	tags = tags.split(",").map { it.trim() },
+	tags = tags.split(",").map { it.trim() }.filter { it.isNotEmpty() },
 	description = description,
 )

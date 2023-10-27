@@ -33,7 +33,7 @@ class FriendController(
 	fun list(
 		userAuth: UserAuth,
 	): List<ApiFriendPreview> {
-		return friendRepository.findAll().map { it.toApiPreview() }
+		return friendRepository.select().map { it.toApiPreview() }
 	}
 
 	@PostMapping("")
