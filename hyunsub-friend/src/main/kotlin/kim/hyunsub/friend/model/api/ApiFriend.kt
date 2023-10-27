@@ -10,10 +10,10 @@ data class ApiFriend(
 	val description: String?,
 )
 
-fun Friend.toApi() = ApiFriend(
+fun Friend.toApi(tags: List<String>) = ApiFriend(
 	id = id,
 	name = name,
 	birthday = birthday,
-	tags = tags.split(",").map { it.trim() }.filter { it.isNotEmpty() },
+	tags = tags,
 	description = description,
 )

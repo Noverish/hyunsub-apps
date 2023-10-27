@@ -25,13 +25,10 @@ data class Friend(
 	@Column
 	var birthday: String?,
 
-	@Column(nullable = false)
-	var tags: String,
-
 	@Type(type = "text")
 	@Column
 	var description: String?,
 
-	@Column(nullable = true)
+	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now().withNano(0),
 )
