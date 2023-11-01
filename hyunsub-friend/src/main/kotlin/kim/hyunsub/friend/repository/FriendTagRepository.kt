@@ -1,24 +1,37 @@
 package kim.hyunsub.friend.repository
 
+import kim.hyunsub.friend.model.api.ApiFriendTagPreview
+import kim.hyunsub.friend.repository.entity.Friend
 import kim.hyunsub.friend.repository.entity.FriendTag
-import kim.hyunsub.friend.repository.entity.FriendTagId
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 
-interface FriendTagRepository : JpaRepository<FriendTag, FriendTagId> {
-	fun findByFriendId(friendId: String): List<FriendTag>
+interface FriendTagRepository : JpaRepository<FriendTag, String> {
+	@Query("SELECT a.tag FROM FriendTag a WHERE a.userId = :userId AND a.friendId = :friendId")
+	fun selectTag(userId: String, friendId: String): List<String>
+
+	@Modifying
+	@Query("DELETE FROM FriendTag a WHERE a.userId = :userId AND a.friendId = :friendId")
+	fun delete(userId: String, friendId: String): Int
 
 	@Query(
 		"""
-			SELECT DISTINCT(a.tag)
+			SELECT new kim.hyunsub.friend.model.api.ApiFriendTagPreview(a.tag, COUNT(a.tag))
 			FROM FriendTag a
-			INNER JOIN Friend b ON b.id = a.friendId
-			WHERE b.fromUserId = :userId
+			WHERE a.userId = :userId
+			GROUP BY a.tag
 		"""
 	)
-	fun selectDistinctTag(userId: String): List<String>
+	fun selectDistinctTag(userId: String): List<ApiFriendTagPreview>
 
-	@Modifying
-	fun deleteByFriendId(friendId: String): Int
+	@Query(
+		"""
+			SELECT b
+			FROM FriendTag a
+			INNER JOIN Friend b ON b.id = a.friendId
+			WHERE a.userId = :userId AND a.tag = :tag
+		"""
+	)
+	fun selectFriendByTag(userId: String, tag: String): List<Friend>
 }

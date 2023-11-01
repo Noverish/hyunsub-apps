@@ -13,6 +13,9 @@ import javax.persistence.Table
 @IdClass(FriendTagId::class)
 data class FriendTag(
 	@Id
+	val userId: String,
+
+	@Id
 	val friendId: String,
 
 	@Id
@@ -23,6 +26,7 @@ data class FriendTag(
 )
 
 data class FriendTagId(
+	val userId: String = "",
 	val friendId: String = "",
 	val tag: String = "",
 ) : Serializable

@@ -9,11 +9,14 @@ interface FriendRepository : JpaRepository<Friend, String> {
 	@Query("SELECT a FROM Friend a WHERE a.fromUserId = :userId ORDER BY a.regDt DESC")
 	fun select(userId: String): List<Friend>
 
+	@Query("SELECT a FROM Friend a WHERE a.id = :friendId AND a.fromUserId = :userId")
+	fun selectOne(friendId: String, userId: String): Friend?
+
 	@Query("SELECT COUNT(a) FROM Friend a WHERE a.fromUserId = :fromUserId AND a.toUserId = :toUserId")
-	fun checkExist(fromUserId: String, toUserId: String): Int
+	fun countByToUserId(fromUserId: String, toUserId: String): Int
 
 	@Query("SELECT COUNT(a) FROM Friend a WHERE a.fromUserId = :userId AND a.name = :name")
-	fun checkExistName(userId: String, name: String): Int
+	fun countByName(userId: String, name: String): Int
 }
 
 fun FriendRepository.generateId() = generateId(16)

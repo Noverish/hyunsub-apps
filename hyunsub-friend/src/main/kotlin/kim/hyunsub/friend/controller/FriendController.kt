@@ -13,9 +13,8 @@ import kim.hyunsub.friend.model.dto.FriendUpdateParams
 import kim.hyunsub.friend.repository.FriendRepository
 import kim.hyunsub.friend.repository.FriendTagRepository
 import kim.hyunsub.friend.repository.entity.Friend
-import kim.hyunsub.friend.repository.entity.FriendTag
 import kim.hyunsub.friend.repository.generateId
-import org.springframework.data.repository.findByIdOrNull
+import kim.hyunsub.friend.service.FriendTagService
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController
 class FriendController(
 	private val friendRepository: FriendRepository,
 	private val friendTagRepository: FriendTagRepository,
+	private val friendTagService: FriendTagService,
 ) {
 	@HyunsubCors
 	@GetMapping("")
@@ -44,30 +44,29 @@ class FriendController(
 		userAuth: UserAuth,
 		@RequestBody params: FriendCreateParams,
 	): ApiFriend {
+		val userId = userAuth.idNo
+
 		params.userId?.let {
-			val exist = friendRepository.checkExist(userAuth.idNo, it)
-			if (exist > 0) {
-				throw ErrorCodeException(ErrorCode.ALREADY_EXIST)
+			if (friendRepository.countByToUserId(userId, it) > 0) {
+				throw ErrorCodeException(ErrorCode.ALREADY_EXIST, "already exist user: ${params.userId}")
 			}
 		}
 
-		if (friendRepository.checkExistName(userAuth.idNo, params.name) > 0) {
+		if (friendRepository.countByName(userId, params.name) > 0) {
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST, "already exist name: ${params.name}")
 		}
 
 		val friend = Friend(
 			id = friendRepository.generateId(),
-			fromUserId = userAuth.idNo,
+			fromUserId = userId,
 			toUserId = params.userId,
 			name = params.name,
 			birthday = params.birthday,
 			description = params.description,
 		)
-
-		val tags = params.tags.map { FriendTag(friend.id, it) }
-
 		friendRepository.save(friend)
-		friendTagRepository.saveAll(tags)
+
+		friendTagService.update(friend, params.tags)
 
 		return friend.toApi(params.tags)
 	}
@@ -77,10 +76,11 @@ class FriendController(
 		userAuth: UserAuth,
 		@PathVariable friendId: String,
 	): ApiFriend {
-		val friend = friendRepository.findByIdOrNull(friendId)
-			?.takeIf { it.fromUserId == userAuth.idNo }
+		val userId = userAuth.idNo
+		val friend = friendRepository.selectOne(friendId, userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		val tags = friendTagRepository.findByFriendId(friendId).map { it.tag }
+
+		val tags = friendTagRepository.selectTag(userId, friendId)
 		return friend.toApi(tags)
 	}
 
@@ -90,17 +90,16 @@ class FriendController(
 		@PathVariable friendId: String,
 		@RequestBody params: FriendUpdateParams,
 	): ApiFriend {
-		val friend = friendRepository.findByIdOrNull(friendId)
-			?.takeIf { it.fromUserId == userAuth.idNo }
+		val userId = userAuth.idNo
+		val friend = friendRepository.selectOne(friendId, userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+
 		friend.name = params.name
 		friend.birthday = params.birthday
 		friend.description = params.description
 		friendRepository.save(friend)
 
-		val tags = params.tags.map { FriendTag(friend.id, it) }
-		friendTagRepository.deleteByFriendId(friendId)
-		friendTagRepository.saveAll(tags)
+		friendTagService.update(friend, params.tags)
 
 		return friend.toApi(params.tags)
 	}
@@ -110,13 +109,14 @@ class FriendController(
 		userAuth: UserAuth,
 		@PathVariable friendId: String,
 	): ApiFriend {
-		val friend = friendRepository.findByIdOrNull(friendId)
-			?.takeIf { it.fromUserId == userAuth.idNo }
+		val userId = userAuth.idNo
+		val friend = friendRepository.selectOne(friendId, userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		val tags = friendTagRepository.findByFriendId(friendId).map { it.tag }
+
+		val tags = friendTagRepository.selectTag(userId, friendId)
 
 		friendRepository.deleteById(friendId)
-		friendTagRepository.deleteByFriendId(friendId)
+		friendTagRepository.delete(userId, friendId)
 
 		return friend.toApi(tags)
 	}
