@@ -4,6 +4,7 @@ import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.config.userAuth
 import kim.hyunsub.common.web.model.SimpleResponse2
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.video.model.api.ApiDeleteBulkParams
 import kim.hyunsub.video.model.api.ApiVideoHistory
 import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoHistoryCreateParams
@@ -16,6 +17,8 @@ import org.springframework.messaging.handler.annotation.MessageMapping
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
@@ -45,6 +48,22 @@ class VideoHistoryController(
 			pageSize = ps,
 			data = list.map { it.toApi() },
 		)
+	}
+
+	@PostMapping("/api/v1/histories/delete-bulk")
+	fun deleteBulk(
+		user: UserAuth,
+		@RequestBody params: ApiDeleteBulkParams,
+	): SimpleResponse2 {
+		val userId = user.idNo
+
+		videoHistoryRepository.deleteAllById(
+			params.videoIds.map {
+				VideoHistoryId(userId, it)
+			}
+		)
+
+		return SimpleResponse2()
 	}
 
 	@DeleteMapping("/api/v1/histories/:videoId")
