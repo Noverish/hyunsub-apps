@@ -1,6 +1,5 @@
 package kim.hyunsub.friend.repository
 
-import kim.hyunsub.friend.model.api.ApiFriendPreview
 import kim.hyunsub.friend.repository.entity.FriendMeet
 import kim.hyunsub.friend.repository.entity.FriendMeetId
 import org.springframework.data.jpa.repository.JpaRepository
@@ -9,18 +8,12 @@ import org.springframework.data.repository.findByIdOrNull
 import java.time.LocalDate
 
 interface FriendMeetRepository : JpaRepository<FriendMeet, FriendMeetId> {
-	fun findByFriendId(friendId: String): List<FriendMeet>
+	@Query("SELECT a FROM FriendMeet a WHERE a.userId = :userId AND a.friendId = :friendId")
+	fun select(userId: String, friendId: String): List<FriendMeet>
 
-	@Query(
-		"""
-			SELECT new kim.hyunsub.friend.model.api.ApiFriendPreview(b.id, b.name)
-			FROM FriendMeet a
-			INNER JOIN Friend b ON b.id = a.friendId
-			WHERE a.date = :date
-		"""
-	)
-	fun findByDate(date: LocalDate): List<ApiFriendPreview>
+	@Query("DELETE FROM FriendMeet WHERE userId = :userId AND friendId = :friendId")
+	fun delete(userId: String, friendId: String): Int
 }
 
-fun FriendMeetRepository.findByIdOrNull(friendId: String, date: LocalDate) =
-	findByIdOrNull(FriendMeetId(friendId, date))
+fun FriendMeetRepository.findByIdOrNull(userId: String, friendId: String, date: LocalDate) =
+	findByIdOrNull(FriendMeetId(userId, friendId, date))

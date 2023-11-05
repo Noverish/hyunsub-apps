@@ -29,7 +29,8 @@ class FriendMeetController(
 		userAuth: UserAuth,
 		@PathVariable friendId: String,
 	): List<ApiFriendMeet> {
-		return friendMeetRepository.findByFriendId(friendId).map { it.toApi() }
+		val userId = userAuth.idNo
+		return friendMeetRepository.select(userId, friendId).map { it.toApi() }
 	}
 
 	@PostMapping("")
@@ -38,12 +39,15 @@ class FriendMeetController(
 		@PathVariable friendId: String,
 		@RequestBody params: FriendMeetCreateParams,
 	): ApiFriendMeet {
-		val exist = friendMeetRepository.findByIdOrNull(friendId, params.date)
+		val userId = userAuth.idNo
+
+		val exist = friendMeetRepository.findByIdOrNull(userId, friendId, params.date)
 		if (exist != null) {
 			throw ErrorCodeException(ErrorCode.ALREADY_EXIST)
 		}
 
 		val friendMeet = FriendMeet(
+			userId = userId,
 			friendId = friendId,
 			date = params.date,
 		)
@@ -57,7 +61,8 @@ class FriendMeetController(
 		@PathVariable friendId: String,
 		@PathVariable date: LocalDate,
 	): ApiFriendMeet {
-		val friendMeet = friendMeetRepository.findByIdOrNull(friendId, date)
+		val userId = userAuth.idNo
+		val friendMeet = friendMeetRepository.findByIdOrNull(userId, friendId, date)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 		return friendMeet.toApi()
 	}
@@ -68,9 +73,10 @@ class FriendMeetController(
 		@PathVariable friendId: String,
 		@PathVariable date: LocalDate,
 	): ApiFriendMeet {
-		val friendMeet = friendMeetRepository.findByIdOrNull(friendId, date)
+		val userId = userAuth.idNo
+		val friendMeet = friendMeetRepository.findByIdOrNull(userId, friendId, date)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-		friendMeetRepository.deleteById(FriendMeetId(friendId, date))
+		friendMeetRepository.deleteById(FriendMeetId(userId, friendId, date))
 		return friendMeet.toApi()
 	}
 }

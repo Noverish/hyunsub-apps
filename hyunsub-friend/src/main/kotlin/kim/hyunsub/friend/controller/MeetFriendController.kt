@@ -2,6 +2,7 @@ package kim.hyunsub.friend.controller
 
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.friend.model.api.ApiFriendPreview
+import kim.hyunsub.friend.model.api.toApiPreview
 import kim.hyunsub.friend.model.dto.MeetFriendBulkUpdateParams
 import kim.hyunsub.friend.repository.FriendMeetRepository
 import kim.hyunsub.friend.repository.FriendRepository
@@ -29,7 +30,9 @@ class MeetFriendController(
 		userAuth: UserAuth,
 		@PathVariable date: LocalDate,
 	): List<ApiFriendPreview> {
-		return friendMeetRepository.findByDate(date)
+		val userId = userAuth.idNo
+		return friendRepository.selectByMeetDate(userId, date)
+			.map { it.toApiPreview() }
 	}
 
 	@PutMapping("")
@@ -38,10 +41,11 @@ class MeetFriendController(
 		@PathVariable date: LocalDate,
 		@RequestBody params: MeetFriendBulkUpdateParams,
 	): List<ApiFriendPreview> {
+		val userId = userAuth.idNo
 		val friends = friendRepository.findAllById(params.friendIds)
 
 		val paramFriendIds = friends.map { it.id }
-		val dbFriendIds = friendMeetRepository.findByDate(date).map { it.id }
+		val dbFriendIds = friendRepository.selectByMeetDate(userId, date).map { it.id }
 
 		val deletes = dbFriendIds - paramFriendIds.toSet()
 		val inserts = paramFriendIds - dbFriendIds.toSet()
@@ -49,8 +53,8 @@ class MeetFriendController(
 		log.debug { "[MeetFriendBulkUpdate] deletes=$deletes" }
 		log.debug { "[MeetFriendBulkUpdate] inserts=$inserts" }
 
-		friendMeetRepository.deleteAllById(deletes.map { FriendMeetId(it, date) })
-		friendMeetRepository.saveAll(inserts.map { FriendMeet(it, date) })
+		friendMeetRepository.deleteAllById(deletes.map { FriendMeetId(userId, it, date) })
+		friendMeetRepository.saveAll(inserts.map { FriendMeet(userId, it, date) })
 
 		return friends.map { ApiFriendPreview(it.id, it.name) }
 	}

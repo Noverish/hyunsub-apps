@@ -12,6 +12,9 @@ import javax.persistence.Table
 @IdClass(FriendMeetId::class)
 data class FriendMeet(
 	@Id
+	val userId: String,
+
+	@Id
 	val friendId: String,
 
 	@Id
@@ -19,6 +22,7 @@ data class FriendMeet(
 )
 
 data class FriendMeetId(
+	val userId: String = "",
 	val friendId: String = "",
 	val date: LocalDate = LocalDate.now(),
 ) : Serializable

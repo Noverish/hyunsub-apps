@@ -10,6 +10,7 @@ import kim.hyunsub.friend.model.api.toApi
 import kim.hyunsub.friend.model.api.toApiPreview
 import kim.hyunsub.friend.model.dto.FriendCreateParams
 import kim.hyunsub.friend.model.dto.FriendUpdateParams
+import kim.hyunsub.friend.repository.FriendMeetRepository
 import kim.hyunsub.friend.repository.FriendRepository
 import kim.hyunsub.friend.repository.FriendTagRepository
 import kim.hyunsub.friend.repository.entity.Friend
@@ -30,6 +31,7 @@ class FriendController(
 	private val friendRepository: FriendRepository,
 	private val friendTagRepository: FriendTagRepository,
 	private val friendTagService: FriendTagService,
+	private val friendMeetRepository: FriendMeetRepository,
 ) {
 	@HyunsubCors
 	@GetMapping("")
@@ -68,7 +70,7 @@ class FriendController(
 
 		friendTagService.update(friend, params.tags)
 
-		return friend.toApi(params.tags)
+		return friend.toApi(params.tags, emptyList())
 	}
 
 	@GetMapping("/{friendId}")
@@ -81,7 +83,10 @@ class FriendController(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val tags = friendTagRepository.selectTag(userId, friendId)
-		return friend.toApi(tags)
+
+		val meets = friendMeetRepository.select(userId, friendId).map { it.date }
+
+		return friend.toApi(tags, meets)
 	}
 
 	@PutMapping("/{friendId}")
@@ -101,7 +106,9 @@ class FriendController(
 
 		friendTagService.update(friend, params.tags)
 
-		return friend.toApi(params.tags)
+		val meets = friendMeetRepository.select(userId, friendId).map { it.date }
+
+		return friend.toApi(params.tags, meets)
 	}
 
 	@DeleteMapping("/{friendId}")
@@ -115,9 +122,12 @@ class FriendController(
 
 		val tags = friendTagRepository.selectTag(userId, friendId)
 
+		val meets = friendMeetRepository.select(userId, friendId).map { it.date }
+
 		friendRepository.deleteById(friendId)
 		friendTagRepository.delete(userId, friendId)
+		friendMeetRepository.delete(userId, friendId)
 
-		return friend.toApi(tags)
+		return friend.toApi(tags, meets)
 	}
 }

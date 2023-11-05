@@ -5,6 +5,7 @@ import kim.hyunsub.friend.repository.entity.Friend
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import java.time.LocalDate
 
 interface FriendRepository : JpaRepository<Friend, String> {
 	@Query("SELECT a FROM Friend a WHERE a.fromUserId = :userId ORDER BY a.regDt DESC")
@@ -24,6 +25,15 @@ interface FriendRepository : JpaRepository<Friend, String> {
 
 	@Query("SELECT a FROM Friend a WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')")
 	fun search(userId: String, query: String, page: Pageable): List<Friend>
+
+	@Query(
+		"""
+			SELECT b FROM FriendMeet a
+			INNER JOIN Friend b ON b.id = a.friendId
+			WHERE a.userId = :userId AND a.date = :date
+		"""
+	)
+	fun selectByMeetDate(userId: String, date: LocalDate): List<Friend>
 }
 
 fun FriendRepository.generateId() = generateId(16)
