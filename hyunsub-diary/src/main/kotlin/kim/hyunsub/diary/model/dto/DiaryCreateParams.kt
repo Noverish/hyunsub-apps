@@ -1,4 +1,4 @@
-package kim.hyunsub.diary.model
+package kim.hyunsub.diary.model.dto
 
 import java.time.LocalDate
 

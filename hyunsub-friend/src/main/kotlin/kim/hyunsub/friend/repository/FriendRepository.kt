@@ -2,6 +2,7 @@ package kim.hyunsub.friend.repository
 
 import kim.hyunsub.common.util.generateId
 import kim.hyunsub.friend.repository.entity.Friend
+import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -17,6 +18,12 @@ interface FriendRepository : JpaRepository<Friend, String> {
 
 	@Query("SELECT COUNT(a) FROM Friend a WHERE a.fromUserId = :userId AND a.name = :name")
 	fun countByName(userId: String, name: String): Int
+
+	@Query("SELECT COUNT(a) FROM Friend a WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')")
+	fun searchCount(userId: String, query: String): Int
+
+	@Query("SELECT a FROM Friend a WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')")
+	fun search(userId: String, query: String, page: Pageable): List<Friend>
 }
 
 fun FriendRepository.generateId() = generateId(16)

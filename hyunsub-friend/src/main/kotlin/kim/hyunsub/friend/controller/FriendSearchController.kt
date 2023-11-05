@@ -1,11 +1,11 @@
-package kim.hyunsub.diary.controller
+package kim.hyunsub.friend.controller
 
 import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.diary.model.api.ApiDiaryPreview
-import kim.hyunsub.diary.model.api.toApiPreview
-import kim.hyunsub.diary.model.dto.DiarySearchParams
-import kim.hyunsub.diary.repository.DiaryRepository
+import kim.hyunsub.friend.model.api.ApiFriendPreview
+import kim.hyunsub.friend.model.api.toApiPreview
+import kim.hyunsub.friend.model.dto.FriendSearchParams
+import kim.hyunsub.friend.repository.FriendRepository
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -14,17 +14,18 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/v1/search")
-class DiarySearchController(
-	private val diaryRepository: DiaryRepository,
+class FriendSearchController(
+	private val friendRepository: FriendRepository,
 ) {
 	@PostMapping("")
 	fun search(
-		user: UserAuth,
-		@RequestBody params: DiarySearchParams,
-	): RestApiPageResult<ApiDiaryPreview> {
-		val total = diaryRepository.searchCount(user.idNo, params.query ?: "")
+		userAuth: UserAuth,
+		@RequestBody params: FriendSearchParams,
+	): RestApiPageResult<ApiFriendPreview> {
+		val userId = userAuth.idNo
+		val total = friendRepository.searchCount(userId, params.query)
 		val pageRequest = PageRequest.of(params.page, params.pageSize)
-		val result = diaryRepository.search(user.idNo, params.query ?: "", pageRequest)
+		val result = friendRepository.search(userId, params.query, pageRequest)
 		return RestApiPageResult(
 			total = total,
 			page = params.page,

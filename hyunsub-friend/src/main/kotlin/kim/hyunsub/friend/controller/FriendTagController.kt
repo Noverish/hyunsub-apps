@@ -1,13 +1,16 @@
 package kim.hyunsub.friend.controller
 
+import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.friend.model.api.ApiFriendTagDetail
+import kim.hyunsub.friend.model.api.ApiFriendPreview
 import kim.hyunsub.friend.model.api.ApiFriendTagPreview
 import kim.hyunsub.friend.model.api.toApiPreview
 import kim.hyunsub.friend.repository.FriendTagRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -22,20 +25,23 @@ class FriendTagController(
 		return friendTagRepository.selectDistinctTag(userAuth.idNo)
 	}
 
-	@GetMapping("/{tag}")
-	fun detail(
-		@PathVariable tag: String,
+	@GetMapping("/{tag}/friends")
+	fun friendsOfTag(
 		userAuth: UserAuth,
-	): ApiFriendTagDetail {
+		@PathVariable tag: String,
+		@RequestParam p: Int?,
+	): RestApiPageResult<ApiFriendPreview> {
+		val page = p ?: 0
+		val pageSize = 10
 		val userId = userAuth.idNo
-
-		val friends = friendTagRepository.selectFriendByTag(userId, tag)
-			.map { it.toApiPreview() }
-
-		return ApiFriendTagDetail(
-			name = tag,
-			count = friends.size.toLong(),
-			friends = friends
+		val total = friendTagRepository.friendsOfTagCount(userId, tag)
+		val pageRequest = PageRequest.of(page, pageSize)
+		val result = friendTagRepository.friendsOfTag(userId, tag, pageRequest)
+		return RestApiPageResult(
+			total = total,
+			page = page,
+			pageSize = pageSize,
+			data = result.map { it.toApiPreview() }
 		)
 	}
 }

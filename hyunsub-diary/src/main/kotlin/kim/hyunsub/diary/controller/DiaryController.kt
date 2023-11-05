@@ -5,10 +5,10 @@ import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.diary.model.DiaryCreateParams
-import kim.hyunsub.diary.model.DiaryUpdateParams
 import kim.hyunsub.diary.model.api.ApiDiary
 import kim.hyunsub.diary.model.api.toApi
+import kim.hyunsub.diary.model.dto.DiaryCreateParams
+import kim.hyunsub.diary.model.dto.DiaryUpdateParams
 import kim.hyunsub.diary.repository.DiaryRepository
 import kim.hyunsub.diary.repository.entity.Diary
 import kim.hyunsub.diary.repository.findByIdOrNull
