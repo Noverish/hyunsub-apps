@@ -20,11 +20,23 @@ interface FriendRepository : JpaRepository<Friend, String> {
 	@Query("SELECT COUNT(a) FROM Friend a WHERE a.fromUserId = :userId AND a.name = :name")
 	fun countByName(userId: String, name: String): Int
 
-	@Query("SELECT COUNT(a) FROM Friend a WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')")
-	fun searchCount(userId: String, query: String): Int
-
-	@Query("SELECT a FROM Friend a WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')")
+	@Query(
+		"""
+			SELECT a FROM Friend a
+			WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')
+			ORDER BY a.regDt DESC
+		"""
+	)
 	fun search(userId: String, query: String, page: Pageable): List<Friend>
+
+	@Query(
+		"""
+			SELECT COUNT(a) FROM Friend a
+			WHERE a.fromUserId = :userId AND a.name LIKE CONCAT('%', :query, '%')
+			ORDER BY a.regDt DESC
+		"""
+	)
+	fun searchCount(userId: String, query: String): Int
 
 	@Query(
 		"""
