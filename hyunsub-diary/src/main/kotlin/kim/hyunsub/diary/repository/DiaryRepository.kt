@@ -19,7 +19,7 @@ interface DiaryRepository : JpaRepository<Diary, DiaryId> {
 			ORDER BY a.date DESC
 		"""
 	)
-	fun search(userId: String, query: String, page: Pageable): List<Diary>
+	fun selectByQuery(userId: String, query: String, page: Pageable): List<Diary>
 
 	@Query(
 		"""
@@ -28,7 +28,23 @@ interface DiaryRepository : JpaRepository<Diary, DiaryId> {
 				AND (a.content LIKE CONCAT('%', :query, '%') OR a.summary LIKE CONCAT('%', :query, '%'))
 		"""
 	)
-	fun searchCount(userId: String, query: String): Int
+	fun countByQuery(userId: String, query: String): Int
+
+	@Query(
+		"""
+			SELECT a FROM Diary a
+			WHERE a.userId = :userId AND a.date IN :dates
+		"""
+	)
+	fun selectByDates(userId: String, dates: List<LocalDate>, page: Pageable): List<Diary>
+
+	@Query(
+		"""
+			SELECT COUNT(a) FROM Diary a
+			WHERE a.userId = :userId AND a.date IN :dates
+		"""
+	)
+	fun countByDates(userId: String, dates: List<LocalDate>): Int
 
 	@Query(
 		"""
