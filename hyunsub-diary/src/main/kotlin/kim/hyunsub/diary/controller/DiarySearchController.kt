@@ -36,7 +36,7 @@ class DiarySearchController(
 	private fun searchByQuery(
 		userId: String,
 		page: Pageable,
-		query: String
+		query: String,
 	): RestApiPageResult<ApiDiaryPreview> {
 		val total = diaryRepository.countByQuery(userId, query)
 		val result = diaryRepository.selectByQuery(userId, query, page)

@@ -2,6 +2,7 @@ package kim.hyunsub.friend.repository
 
 import kim.hyunsub.common.util.generateId
 import kim.hyunsub.friend.repository.entity.Friend
+import kim.hyunsub.friend.repository.entity.FriendMeetAndName
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
@@ -46,6 +47,15 @@ interface FriendRepository : JpaRepository<Friend, String> {
 		"""
 	)
 	fun selectByMeetDate(userId: String, date: LocalDate): List<Friend>
+
+	@Query(
+		"""
+			SELECT a.date AS date, b.id AS id, b.name AS name FROM FriendMeet a
+			INNER JOIN Friend b ON b.id = a.friendId
+			WHERE a.userId = :userId AND a.date IN :dates
+		"""
+	)
+	fun selectByMeetDates(userId: String, dates: List<LocalDate>): List<FriendMeetAndName>
 }
 
 fun FriendRepository.generateId() = generateId(16)

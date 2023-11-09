@@ -31,7 +31,6 @@ class ThumbnailService(
 					input = original,
 					output = tmp,
 					time = 0.0,
-					sync = true,
 				)
 			)
 

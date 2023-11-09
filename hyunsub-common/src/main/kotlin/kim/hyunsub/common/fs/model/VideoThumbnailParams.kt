@@ -4,5 +4,4 @@ data class VideoThumbnailParams(
 	val input: String,
 	val output: String? = null,
 	val time: Double? = null,
-	val sync: Boolean? = null,
 )

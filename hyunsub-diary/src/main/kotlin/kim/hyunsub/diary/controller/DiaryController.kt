@@ -56,7 +56,7 @@ class DiaryController(
 	}
 
 	@GetMapping("/{date}")
-	fun get(
+	fun detail(
 		user: UserAuth,
 		@PathVariable date: LocalDate,
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
