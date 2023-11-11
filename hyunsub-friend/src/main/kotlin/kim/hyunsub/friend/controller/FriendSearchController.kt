@@ -22,10 +22,11 @@ class FriendSearchController(
 		userAuth: UserAuth,
 		@RequestBody params: FriendSearchParams,
 	): RestApiPageResult<ApiFriendPreview> {
+		val query = params.query ?: ""
 		val userId = userAuth.idNo
-		val total = friendRepository.searchCount(userId, params.query)
 		val pageRequest = PageRequest.of(params.page, params.pageSize)
-		val result = friendRepository.search(userId, params.query, pageRequest)
+		val total = friendRepository.searchCount(userId, query)
+		val result = friendRepository.search(userId, query, pageRequest)
 		return RestApiPageResult(
 			total = total,
 			page = params.page,
