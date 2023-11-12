@@ -23,6 +23,6 @@ class OffsetDateTimeSerializer : StdSerializer<OffsetDateTime>(OffsetDateTime::c
 
 class OffsetDateTimeDeserializer : StdDeserializer<OffsetDateTime>(OffsetDateTime::class.java) {
 	override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): OffsetDateTime {
-		return OffsetDateTime.parse(jp.text, localDateFormatter)
+		return OffsetDateTime.parse(jp.text)
 	}
 }

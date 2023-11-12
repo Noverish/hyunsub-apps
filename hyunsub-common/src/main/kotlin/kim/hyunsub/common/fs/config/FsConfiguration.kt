@@ -3,6 +3,7 @@ package kim.hyunsub.common.fs.config
 import com.fasterxml.jackson.databind.ObjectMapper
 import feign.Logger
 import feign.jackson.JacksonDecoder
+import feign.jackson.JacksonEncoder
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.commons.httpclient.HttpClientConfiguration
@@ -28,6 +29,7 @@ class FsConfiguration {
 	fun feignBuilderCustomizer(mapper: ObjectMapper, interceptor: FsClientInterceptor) =
 		FeignBuilderCustomizer {
 			it
+				.encoder(JacksonEncoder(mapper))
 				.decoder(JacksonDecoder(mapper))
 				.contract(SpringMvcContract())
 				.logLevel(Logger.Level.FULL)
