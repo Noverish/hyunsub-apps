@@ -1,14 +1,10 @@
 package kim.hyunsub.photo.repository.entity
 
-import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
 import kim.hyunsub.common.util.toLong
 import kim.hyunsub.photo.model.PhotoDateType
-import kim.hyunsub.photo.model.PhotoType
-import kim.hyunsub.photo.model.api.ApiPhotoPreview
-import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isVideo
 import java.time.Instant
 import java.time.OffsetDateTime
@@ -74,14 +70,6 @@ data class Photo(
 			OffsetDateTime.ofInstant(Instant.ofEpochMilli(restoreMillis(id)), ZoneOffset.ofTotalSeconds(offset))
 	}
 
-	fun toPreview() = ApiPhotoPreview(
-		id = id,
-		thumbnail = thumbnail,
-		date = date,
-		type = if (isVideo) PhotoType.VIDEO else PhotoType.PHOTO,
-		ext = ext,
-	)
-
 	val millis: Long
 		get() = restoreMillis(id)
 
@@ -90,9 +78,6 @@ data class Photo(
 
 	val year: Int
 		get() = date.withOffsetSameInstant(ZoneOffset.UTC).year
-
-	private val thumbnail: String
-		get() = FsPathConverter.convertToUrl(PhotoPathConverter.thumbnail(this.id))
 
 	val fileName: String
 		get() = "$id.$ext"

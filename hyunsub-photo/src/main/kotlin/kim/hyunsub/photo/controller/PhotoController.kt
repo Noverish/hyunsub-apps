@@ -5,6 +5,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.PhotoBo
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
+import kim.hyunsub.photo.model.api.toApiPreview
 import kim.hyunsub.photo.service.PhotoDeleteService
 import kim.hyunsub.photo.service.PhotoListService
 import mu.KotlinLogging
@@ -58,6 +59,6 @@ class PhotoController(
 	): ApiPhotoPreview {
 		val userId = userAuth.idNo
 		log.debug { "[Delete Photo] userId=$userId, photoId=$photoId" }
-		return photoDeleteService.delete(userId, photoId).toPreview()
+		return photoDeleteService.delete(userId, photoId).toApiPreview()
 	}
 }

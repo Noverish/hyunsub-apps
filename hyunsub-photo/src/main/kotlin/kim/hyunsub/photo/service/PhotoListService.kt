@@ -3,6 +3,7 @@ package kim.hyunsub.photo.service
 import kim.hyunsub.common.model.RestApiPagination
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
+import kim.hyunsub.photo.model.api.toApiPreview
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import org.springframework.data.domain.PageRequest
@@ -31,7 +32,7 @@ class PhotoListService(
 		}
 			.filterNotNull()
 			.sortedByDescending { it.id }
-			.map { it.toPreview() }
+			.map { it.toApiPreview() }
 
 		return RestApiPagination(
 			total = total,
@@ -51,7 +52,7 @@ class PhotoListService(
 			else -> photoRepository.selectMyPhotos(userId, pageRequest)
 		}
 			.sortedByDescending { it.id.lowercase() }
-			.map { it.toPreview() }
+			.map { it.toApiPreview() }
 
 		val full = data.size == pageRequest.pageSize
 

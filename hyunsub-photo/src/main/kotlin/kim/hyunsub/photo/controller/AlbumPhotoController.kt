@@ -10,6 +10,7 @@ import kim.hyunsub.photo.model.api.ApiAlbumPhotoRegisterParams
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.ApiPhotoMetadata
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
+import kim.hyunsub.photo.model.api.toApiPreview
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -59,7 +60,7 @@ class AlbumPhotoController(
 		}
 
 		val pageRequest = PageRequest.of(page, PhotoConstants.PAGE_SIZE)
-		val data = albumPhotoRepository.findByAlbumId(albumId, pageRequest).map { it.toPreview() }
+		val data = albumPhotoRepository.findByAlbumId(albumId, pageRequest).map { it.toApiPreview() }
 
 		return RestApiPageResult(
 			total = total,

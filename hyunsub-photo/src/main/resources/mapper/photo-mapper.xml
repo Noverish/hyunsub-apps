@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.photo.mapper.PhotoMapper">
+    <select id="select" resultType="Photo">
+        SELECT b.*
+        FROM photo_owner a
+        INNER JOIN photo b ON b.id = a.photo_id
+        WHERE a.user_id = #{userId} AND a.photo_id BETWEEN #{start} AND #{end}
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+    </select>
+
+    <select id="count" resultType="Int">
+        SELECT count(*)
+        FROM photo_owner a
+        INNER JOIN photo b ON b.id = a.photo_id
+        WHERE a.user_id = #{userId} AND a.photo_id BETWEEN #{start} AND #{end}
+    </select>
+</mapper>

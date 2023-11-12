@@ -9,6 +9,7 @@ import kim.hyunsub.photo.model.api.ApiAlbum
 import kim.hyunsub.photo.model.api.ApiAlbumCreateParams
 import kim.hyunsub.photo.model.api.ApiAlbumPreview
 import kim.hyunsub.photo.model.api.ApiAlbumThumbnailParams
+import kim.hyunsub.photo.model.api.toApiPreview
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -98,7 +99,7 @@ class AlbumController(
 		val total = albumPhotoRepository.countByAlbumId(albumId)
 
 		val page = PageRequest.ofSize(PhotoConstants.PAGE_SIZE)
-		val photos = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toPreview() }
+		val photos = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toApiPreview() }
 
 		return ApiAlbum(
 			id = album.id,
