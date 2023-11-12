@@ -1,6 +1,6 @@
 package kim.hyunsub.friend.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.friend.model.api.ApiFriendPreview
 import kim.hyunsub.friend.model.api.toApiPreview
@@ -21,7 +21,7 @@ class FriendSearchController(
 	fun search(
 		userAuth: UserAuth,
 		@RequestBody(required = false) params: FriendSearchParams?,
-	): RestApiPageResult<ApiFriendPreview> {
+	): ApiPageResult<ApiFriendPreview> {
 		val query = params?.query ?: ""
 		val page = params?.page ?: 0
 		val pageSize = params?.pageSize ?: 10
@@ -32,7 +32,7 @@ class FriendSearchController(
 		val total = friendRepository.searchCount(userId, query)
 		val result = friendRepository.search(userId, query, pageRequest)
 
-		return RestApiPageResult(
+		return ApiPageResult(
 			total = total,
 			page = page,
 			pageSize = pageSize,

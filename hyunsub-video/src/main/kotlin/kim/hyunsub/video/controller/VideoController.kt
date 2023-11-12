@@ -1,7 +1,7 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.api.RestApiVideo
+import kim.hyunsub.video.model.api.ApiVideo
 import kim.hyunsub.video.service.VideoService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +17,7 @@ class VideoController(
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable videoId: String,
-	): RestApiVideo {
+	): ApiVideo {
 		return videoService.loadVideo(userAuth.idNo, videoId)
 	}
 }

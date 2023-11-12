@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -40,7 +40,7 @@ class AlbumController(
 	fun list(
 		userAuth: UserAuth,
 		@RequestParam(defaultValue = "0") p: Int,
-	): RestApiPageResult<ApiAlbumPreview> {
+	): ApiPageResult<ApiAlbumPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Albums] userId=$userId" }
 
@@ -49,7 +49,7 @@ class AlbumController(
 		val page = PageRequest.of(p, PhotoConstants.PAGE_SIZE)
 		val data = albumRepository.findByUserId(userId, page).map { it.toPreview() }
 
-		return RestApiPageResult(
+		return ApiPageResult(
 			total = total,
 			page = p,
 			pageSize = PhotoConstants.PAGE_SIZE,
@@ -104,7 +104,7 @@ class AlbumController(
 		return ApiAlbum(
 			id = album.id,
 			name = album.name,
-			photos = RestApiPageResult(
+			photos = ApiPageResult(
 				total = total,
 				page = 0,
 				pageSize = PhotoConstants.PAGE_SIZE,

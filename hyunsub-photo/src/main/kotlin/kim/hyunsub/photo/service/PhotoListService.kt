@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.service
 
-import kim.hyunsub.common.model.RestApiPagination
+import kim.hyunsub.common.model.ApiPagination
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.model.api.toApiPreview
@@ -14,7 +14,7 @@ class PhotoListService(
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 ) {
-	fun listPhotoWithPhotoId(userId: String, photoId: String): RestApiPagination<ApiPhotoPreview> {
+	fun listPhotoWithPhotoId(userId: String, photoId: String): ApiPagination<ApiPhotoPreview> {
 		val total = photoOwnerRepository.countByUserId(userId)
 		val pageRequest = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
 
@@ -34,7 +34,7 @@ class PhotoListService(
 			.sortedByDescending { it.id }
 			.map { it.toApiPreview() }
 
-		return RestApiPagination(
+		return ApiPagination(
 			total = total,
 			prev = prev,
 			next = next,
@@ -42,7 +42,7 @@ class PhotoListService(
 		)
 	}
 
-	fun list(userId: String, next: String? = null, prev: String? = null): RestApiPagination<ApiPhotoPreview> {
+	fun list(userId: String, next: String? = null, prev: String? = null): ApiPagination<ApiPhotoPreview> {
 		val total = photoOwnerRepository.countByUserId(userId)
 		val pageRequest = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
 
@@ -68,7 +68,7 @@ class PhotoListService(
 			else -> if (full) data.lastOrNull()?.id else null
 		}
 
-		return RestApiPagination(
+		return ApiPagination(
 			total = total,
 			prev = prevResult,
 			next = nextResult,

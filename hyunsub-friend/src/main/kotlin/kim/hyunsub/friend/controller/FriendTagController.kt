@@ -1,6 +1,6 @@
 package kim.hyunsub.friend.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.friend.model.api.ApiFriendPreview
 import kim.hyunsub.friend.model.api.ApiFriendTagPreview
@@ -30,14 +30,14 @@ class FriendTagController(
 		userAuth: UserAuth,
 		@PathVariable tag: String,
 		@RequestParam p: Int?,
-	): RestApiPageResult<ApiFriendPreview> {
+	): ApiPageResult<ApiFriendPreview> {
 		val page = p ?: 0
 		val pageSize = 10
 		val userId = userAuth.idNo
 		val total = friendTagRepository.friendsOfTagCount(userId, tag)
 		val pageRequest = PageRequest.of(page, pageSize)
 		val result = friendTagRepository.friendsOfTag(userId, tag, pageRequest)
-		return RestApiPageResult(
+		return ApiPageResult(
 			total = total,
 			page = page,
 			pageSize = pageSize,

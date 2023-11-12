@@ -1,6 +1,6 @@
 package kim.hyunsub.common.model
 
-data class RestApiPagination<T>(
+data class ApiPagination<T>(
 	val total: Int,
 	val prev: String?,
 	val next: String?,

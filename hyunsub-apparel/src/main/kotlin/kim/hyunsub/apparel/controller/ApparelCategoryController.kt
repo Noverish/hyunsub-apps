@@ -4,7 +4,7 @@ import kim.hyunsub.apparel.model.RestApiApparelPreview
 import kim.hyunsub.apparel.model.toDto
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,7 +29,7 @@ class ApparelCategoryController(
 		userAuth: UserAuth,
 		@RequestParam(defaultValue = "0") p: Int,
 		@PathVariable category: String,
-	): RestApiPageResult<RestApiApparelPreview> {
+	): ApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
 
 		val total = apparelPreviewRepository.countByCategoryAndUserId(category, userId)
@@ -38,6 +38,6 @@ class ApparelCategoryController(
 		val list = apparelPreviewRepository.findByCategoryAndUserId(category, userAuth.idNo, pageRequest)
 			.map { it.toDto(userId) }
 
-		return RestApiPageResult(total, p, 48, list)
+		return ApiPageResult(total, p, 48, list)
 	}
 }

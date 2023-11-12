@@ -1,6 +1,6 @@
 package kim.hyunsub.video.repository.entity
 
-import kim.hyunsub.video.model.api.RestApiVideoCategory
+import kim.hyunsub.video.model.api.ApiVideoCategory
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -33,5 +33,5 @@ data class VideoCategory(
 	@Column(nullable = false)
 	val path: String,
 ) {
-	fun toDto() = RestApiVideoCategory(this)
+	fun toDto() = ApiVideoCategory(this)
 }

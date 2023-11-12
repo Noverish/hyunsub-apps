@@ -2,7 +2,7 @@ package kim.hyunsub.common.fs.client
 
 import kim.hyunsub.common.fs.model.UserDeleteParams
 import kim.hyunsub.common.fs.model.UserInitParams
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.model.SimpleResponse2
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
@@ -24,5 +24,5 @@ interface PhotoServiceClient {
 	fun searchPhoto(
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
 		@RequestBody params: PhotoSearchParams,
-	): RestApiPageResult<ApiPhotoPreview>
+	): ApiPageResult<ApiPhotoPreview>
 }

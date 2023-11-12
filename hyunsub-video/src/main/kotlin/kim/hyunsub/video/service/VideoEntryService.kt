@@ -11,8 +11,8 @@ import kim.hyunsub.common.fs.model.ImageConvertParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
-import kim.hyunsub.video.model.api.RestApiVideoSeason
+import kim.hyunsub.video.model.api.ApiVideoEntryDetail
+import kim.hyunsub.video.model.api.ApiVideoSeason
 import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoEntryCreateParams
 import kim.hyunsub.video.model.dto.VideoEntryDeleteResult
@@ -52,7 +52,7 @@ class VideoEntryService(
 		return availableCategories.any { it.name == entry.category }
 	}
 
-	fun load(entry: VideoEntry, videoId: String?, userId: String): RestApiVideoEntryDetail {
+	fun load(entry: VideoEntry, videoId: String?, userId: String): ApiVideoEntryDetail {
 		val videos = videoRepository.findByEntryId(entry.id)
 		if (videos.isEmpty()) {
 			throw ErrorCodeException(ErrorCode.EMPTY_VIDEO_ENTRY)
@@ -64,7 +64,7 @@ class VideoEntryService(
 
 		val seasons = if (episodes.size > 1) {
 			episodes.groupBy { it.season }
-				.map { (key, value) -> RestApiVideoSeason(key, value) }
+				.map { (key, value) -> ApiVideoSeason(key, value) }
 		} else {
 			null
 		}
@@ -74,7 +74,7 @@ class VideoEntryService(
 		val category = videoCategoryRepository.findByName(entry.category)
 			?: throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
 
-		return RestApiVideoEntryDetail(
+		return ApiVideoEntryDetail(
 			category = category.toDto(),
 			entry = entry.toApi(),
 			video = videoService.loadVideo(userId, video),

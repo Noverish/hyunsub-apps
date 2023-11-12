@@ -1,6 +1,6 @@
 package kim.hyunsub.video.model.api
 
-data class RestApiVideoMetadata(
+data class ApiVideoMetadata(
 	val duration: String,
 	val size: String,
 	val resolution: String,

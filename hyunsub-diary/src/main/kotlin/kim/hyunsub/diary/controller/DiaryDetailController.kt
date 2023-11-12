@@ -1,6 +1,6 @@
 package kim.hyunsub.diary.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.config.WebConstants
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.diary.bo.DiaryDetailBo
@@ -34,7 +34,7 @@ class DiaryDetailController(
 		@PathVariable date: LocalDate,
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
 		@RequestParam(required = false) page: Int?,
-	): RestApiPageResult<ApiPhotoPreview> {
+	): ApiPageResult<ApiPhotoPreview> {
 		return diaryDetailBo.photos(token, date, page)
 	}
 }

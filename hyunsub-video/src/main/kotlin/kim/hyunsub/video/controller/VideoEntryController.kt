@@ -1,13 +1,13 @@
 package kim.hyunsub.video.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.VideoSort
-import kim.hyunsub.video.model.api.RestApiVideoEntry
-import kim.hyunsub.video.model.api.RestApiVideoEntryDetail
+import kim.hyunsub.video.model.api.ApiVideoEntry
+import kim.hyunsub.video.model.api.ApiVideoEntryDetail
 import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoEntryCreateParams
 import kim.hyunsub.video.model.dto.VideoEntryDeleteResult
@@ -46,10 +46,10 @@ class VideoEntryController(
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
 		@RequestParam(required = false, defaultValue = "RANDOM") sort: VideoSort,
-	): RestApiPageResult<RestApiVideoEntry> {
+	): ApiPageResult<ApiVideoEntry> {
 		val availableCategories = videoCategoryService.getAvailableCategories(user)
 		if (availableCategories.none { it.name == category }) {
-			return RestApiPageResult.empty()
+			return ApiPageResult.empty()
 		}
 
 		val total = videoEntryRepository.countByCategory(category)
@@ -64,7 +64,7 @@ class VideoEntryController(
 			VideoSort.NEW -> videoEntryRepository.findByCategory(category, PageRequest.of(p, ps, Sort.Direction.DESC, "regDt"))
 		}
 
-		return RestApiPageResult(
+		return ApiPageResult(
 			total = total,
 			page = p,
 			pageSize = ps,
@@ -76,7 +76,7 @@ class VideoEntryController(
 	fun get(
 		user: UserAuth,
 		@PathVariable entryId: String,
-	): RestApiVideoEntry {
+	): ApiVideoEntry {
 		val entry = videoEntryRepository.findByIdOrNull(entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
@@ -88,7 +88,7 @@ class VideoEntryController(
 		user: UserAuth,
 		@PathVariable entryId: String,
 		@RequestParam(required = false) videoId: String?,
-	): RestApiVideoEntryDetail {
+	): ApiVideoEntryDetail {
 		val entry = videoEntryRepository.findByIdOrNull(entryId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
@@ -101,7 +101,7 @@ class VideoEntryController(
 
 	@Authorized(["admin"])
 	@PostMapping("")
-	fun create(@RequestBody params: VideoEntryCreateParams): RestApiVideoEntry {
+	fun create(@RequestBody params: VideoEntryCreateParams): ApiVideoEntry {
 		return videoEntryService.create(params).toApi()
 	}
 
@@ -110,7 +110,7 @@ class VideoEntryController(
 	fun update(
 		@PathVariable entryId: String,
 		@RequestBody params: VideoEntryUpdateParams,
-	): RestApiVideoEntry {
+	): ApiVideoEntry {
 		log.debug { "[VideoEntryUpdate] entryId=$entryId, params=$params" }
 		return videoEntryService.update(entryId, params).toApi()
 	}

@@ -2,7 +2,7 @@ package kim.hyunsub.diary.bo
 
 import kim.hyunsub.common.fs.client.FriendServiceClient
 import kim.hyunsub.common.fs.client.PhotoServiceClient
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.diary.model.api.ApiDiary
 import kim.hyunsub.diary.model.api.toApi
 import kim.hyunsub.diary.repository.DiaryRepository
@@ -27,7 +27,7 @@ class DiaryDetailBo(
 		return diary.toApi(friends)
 	}
 
-	fun photos(token: String, date: LocalDate, page: Int?): RestApiPageResult<ApiPhotoPreview> {
+	fun photos(token: String, date: LocalDate, page: Int?): ApiPageResult<ApiPhotoPreview> {
 		val params = PhotoSearchParams(date, false, page, null)
 		return photoServiceClient.searchPhoto(token, params)
 	}

@@ -1,13 +1,13 @@
 package kim.hyunsub.video.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.config.userAuth
 import kim.hyunsub.common.web.model.SimpleResponse2
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.api.ApiDeleteBulkParams
 import kim.hyunsub.video.model.api.ApiVideoHistory
 import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoHistoryCreateParams
+import kim.hyunsub.video.model.dto.VideoHistoryDeleteBulkParams
 import kim.hyunsub.video.repository.VideoHistoryRepository
 import kim.hyunsub.video.repository.entity.VideoHistory
 import kim.hyunsub.video.repository.entity.VideoHistoryId
@@ -35,14 +35,14 @@ class VideoHistoryController(
 		@RequestParam category: String,
 		@RequestParam(required = false, defaultValue = "0") p: Int,
 		@RequestParam(required = false, defaultValue = "48") ps: Int,
-	): RestApiPageResult<ApiVideoHistory> {
+	): ApiPageResult<ApiVideoHistory> {
 		val userId = user.idNo
 		val total = videoHistoryRepository.countByUserId(userId)
 
 		val page = PageRequest.of(p, ps)
 		val list = videoHistoryRepository.selectByUserId(user.idNo, category, page)
 
-		return RestApiPageResult(
+		return ApiPageResult(
 			total = total,
 			page = p,
 			pageSize = ps,
@@ -53,7 +53,7 @@ class VideoHistoryController(
 	@PostMapping("/api/v1/histories/delete-bulk")
 	fun deleteBulk(
 		user: UserAuth,
-		@RequestBody params: ApiDeleteBulkParams,
+		@RequestBody params: VideoHistoryDeleteBulkParams,
 	): SimpleResponse2 {
 		val userId = user.idNo
 

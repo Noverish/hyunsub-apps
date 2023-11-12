@@ -5,7 +5,7 @@ import kim.hyunsub.video.repository.entity.Video
 import kotlin.io.path.Path
 import kotlin.io.path.nameWithoutExtension
 
-data class RestApiVideoEpisode(
+data class ApiVideoEpisode(
 	val videoId: String,
 	val thumbnailUrl: String,
 	val title: String,

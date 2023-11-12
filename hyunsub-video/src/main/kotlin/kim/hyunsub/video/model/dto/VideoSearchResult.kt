@@ -1,7 +1,7 @@
 package kim.hyunsub.video.model.dto
 
-import kim.hyunsub.video.repository.entity.VideoEntry
+import kim.hyunsub.video.model.api.ApiVideoEntry
 
 data class VideoSearchResult(
-	val entries: List<VideoEntry>,
+	val entries: Map<String, List<ApiVideoEntry>>,
 )

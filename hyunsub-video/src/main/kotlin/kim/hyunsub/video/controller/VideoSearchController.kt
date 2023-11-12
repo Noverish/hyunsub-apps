@@ -1,12 +1,8 @@
 package kim.hyunsub.video.controller
 
-import kim.hyunsub.common.web.error.ErrorCode
-import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.api.RestApiVideoSearchResult
-import kim.hyunsub.video.service.ApiModelConverter
-import kim.hyunsub.video.service.VideoCategoryService
-import kim.hyunsub.video.service.VideoSearchService
+import kim.hyunsub.video.bo.VideoSearchBo
+import kim.hyunsub.video.model.dto.VideoSearchResult
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -14,22 +10,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/search")
 class VideoSearchController(
-	private val videoCategoryService: VideoCategoryService,
-	private val videoSearchService: VideoSearchService,
-	private val apiModelConverter: ApiModelConverter,
+	private val videoSearchBo: VideoSearchBo,
 ) {
 	@GetMapping("")
 	fun search(
 		user: UserAuth,
 		q: String,
-	): RestApiVideoSearchResult {
-		val categories = videoCategoryService.getAvailableCategories(user).map { it.name }
-		if (q.length < 2) {
-			throw ErrorCodeException(ErrorCode.SHORT_SEARCH_QUERY)
-		}
-
-		val result = videoSearchService.search(categories, q)
-
-		return apiModelConverter.convertVideoSearchResult(result)
+	): VideoSearchResult {
+		return videoSearchBo.search(user, q)
 	}
 }

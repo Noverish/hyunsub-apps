@@ -1,7 +1,7 @@
 package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.video.model.api.RestApiVideoGroup
+import kim.hyunsub.video.model.api.ApiVideoGroup
 import kim.hyunsub.video.repository.VideoGroupRepository
 import kim.hyunsub.video.service.ApiModelConverter
 import kim.hyunsub.video.service.VideoCategoryService
@@ -20,7 +20,7 @@ class VideoGroupController(
 	private val log = KotlinLogging.logger { }
 
 	@GetMapping("")
-	fun list(user: UserAuth): List<RestApiVideoGroup> {
+	fun list(user: UserAuth): List<ApiVideoGroup> {
 		val categories = videoCategoryService.getAvailableCategories(user)
 		log.debug("[List Video Group] categories={}", categories)
 		val categoryIds = categories.map { it.id }

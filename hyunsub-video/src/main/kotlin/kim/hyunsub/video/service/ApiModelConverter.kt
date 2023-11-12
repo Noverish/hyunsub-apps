@@ -3,13 +3,10 @@ package kim.hyunsub.video.service
 import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.util.getHumanReadableBitrate
 import kim.hyunsub.common.util.getHumanReadableSize
-import kim.hyunsub.video.model.api.RestApiVideo
-import kim.hyunsub.video.model.api.RestApiVideoGroup
-import kim.hyunsub.video.model.api.RestApiVideoMetadata
-import kim.hyunsub.video.model.api.RestApiVideoSearchResult
-import kim.hyunsub.video.model.api.RestApiVideoSubtitle
-import kim.hyunsub.video.model.api.toApi
-import kim.hyunsub.video.model.dto.VideoSearchResult
+import kim.hyunsub.video.model.api.ApiVideo
+import kim.hyunsub.video.model.api.ApiVideoGroup
+import kim.hyunsub.video.model.api.ApiVideoMetadata
+import kim.hyunsub.video.model.api.ApiVideoSubtitle
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoGroup
 import kim.hyunsub.video.repository.entity.VideoHistory
@@ -26,8 +23,8 @@ class ApiModelConverter {
 		subtitles: List<VideoSubtitle>,
 		metadata: VideoMetadata?,
 		history: VideoHistory?,
-	): RestApiVideo {
-		return RestApiVideo(
+	): ApiVideo {
+		return ApiVideo(
 			videoId = video.id,
 			videoUrl = FsPathConverter.convertToUrl(video.path),
 			thumbnailUrl = FsPathConverter.thumbnailUrl(video.thumbnail),
@@ -38,7 +35,7 @@ class ApiModelConverter {
 		)
 	}
 
-	fun convertVideoSubtitle(video: Video, subtitle: VideoSubtitle): RestApiVideoSubtitle {
+	fun convertVideoSubtitle(video: Video, subtitle: VideoSubtitle): ApiVideoSubtitle {
 		val subtitleName = Path(subtitle.path).nameWithoutExtension
 		val videoName = Path(video.path).nameWithoutExtension
 
@@ -56,14 +53,14 @@ class ApiModelConverter {
 			.let { "${it.parent}/${it.nameWithoutExtension}.vtt" }
 			.let { FsPathConverter.convertToUrl(it) }
 
-		return RestApiVideoSubtitle(
+		return ApiVideoSubtitle(
 			url = url,
 			label = label,
 			srclang = code,
 		)
 	}
 
-	fun convertVideoMetadata(metadata: VideoMetadata): RestApiVideoMetadata {
+	fun convertVideoMetadata(metadata: VideoMetadata): ApiVideoMetadata {
 		val duration = metadata.duration
 		val sec = duration % 60
 		val min = (duration / 60) % 60
@@ -73,7 +70,7 @@ class ApiModelConverter {
 		val bitrateStr = getHumanReadableBitrate(metadata.bitrate)
 		val resolution = "${metadata.width} x ${metadata.height}"
 
-		return RestApiVideoMetadata(
+		return ApiVideoMetadata(
 			duration = durationStr,
 			size = sizeStr,
 			resolution = resolution,
@@ -81,17 +78,8 @@ class ApiModelConverter {
 		)
 	}
 
-	fun convertVideoSearchResult(result: VideoSearchResult): RestApiVideoSearchResult {
-		val entries = result.entries.groupBy { it.category }
-			.mapValues { entry -> entry.value.map { it.toApi() } }
-
-		return RestApiVideoSearchResult(
-			entries = entries
-		)
-	}
-
-	fun convert(group: VideoGroup): RestApiVideoGroup {
-		return RestApiVideoGroup(
+	fun convert(group: VideoGroup): ApiVideoGroup {
+		return ApiVideoGroup(
 			id = group.id,
 			name = group.name,
 		)

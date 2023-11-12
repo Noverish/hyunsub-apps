@@ -9,7 +9,7 @@ import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.apparel.service.ApparelService
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -36,7 +36,7 @@ class ApparelController(
 	fun list(
 		userAuth: UserAuth,
 		@RequestParam(defaultValue = "0") p: Int,
-	): RestApiPageResult<RestApiApparelPreview> {
+	): ApiPageResult<RestApiApparelPreview> {
 		val userId = userAuth.idNo
 
 		val total = apparelPreviewRepository.countByUserId(userId)
@@ -44,7 +44,7 @@ class ApparelController(
 		val list = apparelPreviewRepository.findByUserId(userId, pageRequest)
 			.map { it.toDto(userId) }
 
-		return RestApiPageResult(total, p, ApparelConstants.PAGE_SIZE, list)
+		return ApiPageResult(total, p, ApparelConstants.PAGE_SIZE, list)
 	}
 
 	@GetMapping("/{apparelId}")

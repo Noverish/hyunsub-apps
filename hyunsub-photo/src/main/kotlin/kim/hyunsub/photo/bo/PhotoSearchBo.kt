@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.bo
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.mapper.PhotoMapper
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
@@ -17,12 +17,12 @@ import java.time.LocalDate
 class PhotoSearchBo(
 	private val photoMapper: PhotoMapper,
 ) {
-	fun search(userId: String, params: PhotoSearchParams): RestApiPageResult<ApiPhotoPreview> {
+	fun search(userId: String, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
 		val page = PageRequest.of(params.page ?: 0, params.pageSize ?: PhotoConstants.PAGE_SIZE)
 		return searchByDate(userId, params.date, page)
 	}
 
-	fun searchByDate(userId: String, date: LocalDate, page: Pageable): RestApiPageResult<ApiPhotoPreview> {
+	fun searchByDate(userId: String, date: LocalDate, page: Pageable): ApiPageResult<ApiPhotoPreview> {
 		val startMillis = date.atStartOfDay().toEpochMillis()
 		val endMillis = date.plusDays(1).atStartOfDay().toEpochMillis()
 
@@ -32,7 +32,7 @@ class PhotoSearchBo(
 		val total = photoMapper.count(userId, start, end)
 		val result = photoMapper.select(userId, start, end, page)
 
-		return RestApiPageResult(
+		return ApiPageResult(
 			total = total,
 			page = page.pageNumber,
 			pageSize = page.pageSize,

@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.controller
 
-import kim.hyunsub.common.model.RestApiPageResult
+import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.PhotoSearchBo
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
@@ -19,7 +19,7 @@ class PhotoSearchController(
 	fun search(
 		user: UserAuth,
 		@RequestBody params: PhotoSearchParams,
-	): RestApiPageResult<ApiPhotoPreview> {
+	): ApiPageResult<ApiPhotoPreview> {
 		return photoSearchBo.search(user.idNo, params)
 	}
 }

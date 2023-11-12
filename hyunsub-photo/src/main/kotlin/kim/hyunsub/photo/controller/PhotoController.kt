@@ -1,6 +1,6 @@
 package kim.hyunsub.photo.controller
 
-import kim.hyunsub.common.model.RestApiPagination
+import kim.hyunsub.common.model.ApiPagination
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.PhotoBo
 import kim.hyunsub.photo.model.api.ApiPhoto
@@ -31,7 +31,7 @@ class PhotoController(
 		@RequestParam photoId: String?,
 		@RequestParam prev: String?,
 		@RequestParam next: String?,
-	): RestApiPagination<ApiPhotoPreview> {
+	): ApiPagination<ApiPhotoPreview> {
 		val userId = userAuth.idNo
 		log.debug { "[List Photos] userId=$userId, photoId=$photoId, prev=$prev, next=$next" }
 

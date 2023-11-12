@@ -1,6 +1,6 @@
 package kim.hyunsub.video.model.api
 
-data class RestApiVideoGroup(
+data class ApiVideoGroup(
 	val id: String,
 	val name: String,
 )
