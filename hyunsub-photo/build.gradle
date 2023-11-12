@@ -1,5 +1,6 @@
 dependencies {
     implementation project(':hyunsub-common')
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:2.2.2'
 
     testImplementation project(':hyunsub-test')
 }

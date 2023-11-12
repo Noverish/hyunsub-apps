@@ -53,23 +53,25 @@ class AuthorityCheckAspect(
 	fun checkAuthority(joinPoint: ProceedingJoinPoint): Any? {
 		val requestAttributes = RequestContextHolder.getRequestAttributes() as ServletRequestAttributes
 		val request = requestAttributes.request
-		val originalIP = request.getHeader("X-Original-IP")
+		val originalIp = request.getHeader("X-Original-IP")
 		val originalUrl = request.getHeader("X-Original-URL")
-		val method = (joinPoint.signature as MethodSignature).method
 
-		val userAuthHeader: String? = request.getHeader(WebConstants.USER_AUTH_HEADER)
-		if (userAuthHeader == null) {
-			log.warn("[Check Authority] No User Auth: method={}, originalIP={}, originalUrl={}", method, originalIP, originalUrl)
+		val method = (joinPoint.signature as MethodSignature).method
+		val point = "${method.declaringClass.simpleName}.${method.name}"
+
+		val header: String? = request.getHeader(WebConstants.USER_AUTH_HEADER)
+		if (header == null) {
+			log.warn { "[Authority] ($point) No User Auth: originalIp=$originalIp, originalUrl=$originalUrl" }
 			throw ErrorCodeException(ErrorCode.NO_USER_AUTH)
 		}
 
 		val userAuth: UserAuth? = try {
-			mapper.readValue(userAuthHeader)
+			mapper.readValue(header)
 		} catch (ex: JsonParseException) {
 			null
 		}
 		if (userAuth == null) {
-			log.warn("[Check Authority] Invalid User Auth: method={}, userAuthHeader={}, originalIP={}, originalUrl={}", method, userAuthHeader, originalIP, originalUrl)
+			log.warn { "[Authority] ($point) Invalid User Auth: header=$header, originalIp=$originalIp, originalUrl=$originalUrl" }
 			throw ErrorCodeException(ErrorCode.INVALID_USER_AUTH)
 		}
 
@@ -88,10 +90,8 @@ class AuthorityCheckAspect(
 			appProperties.authorities?.let {
 				checkAuthorityWithAnnotation(userAuth, Authorized(it.toTypedArray()))
 			}
-
-			log.debug("[Check Authority] Success: method={}, userAuth={}", method, userAuth)
 		} catch (e: ErrorCodeException) {
-			log.warn("[Check Authority] No Authority: method={}, userAuth={}, originalIP={}, originalUrl={}", method, userAuth, originalIP, originalUrl)
+			log.warn { "[Authority] ($point) No Authority: userAuth=$userAuth, originalIp=$originalIp, originalUrl=$originalUrl" }
 			throw e
 		}
 

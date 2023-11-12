@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.service
+package kim.hyunsub.photo.bo
 
 import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.util.getHumanReadableSize
@@ -13,31 +13,37 @@ import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
 import kim.hyunsub.photo.util.PhotoPathConverter
-import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class PhotoDetailService(
+class PhotoBo(
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
 ) {
-	private val log = KotlinLogging.logger { }
+	fun detail(userId: String, photoId: String, albumId: String?): ApiPhoto {
+		return albumId?.let { detailWithAlbum(userId, photoId, it) }
+			?: detailWithoutAlbum(userId, photoId)
+	}
 
-	fun detail(userId: String, photoId: String): ApiPhoto {
+	private fun detailWithAlbum(userId: String, photoId: String, albumId: String): ApiPhoto {
+		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album owner: userId=$userId, albumId=$albumId")
+
+		val albumPhoto = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photoId))
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album photo: photoId=$photoId, albumId=$albumId")
+
+		return detailWithoutAlbum(albumPhoto.userId, photoId)
+	}
+
+	private fun detailWithoutAlbum(userId: String, photoId: String): ApiPhoto {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
-			?: run {
-				log.debug { "[Detail Photo] No such photo owner: userId=$userId, photoId=$photoId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner: userId=$userId, photoId=$photoId")
 
 		val photo = photoRepository.findByIdOrNull(photoId)
-			?: run {
-				log.error { "[Detail Photo] No such photo: $photoId" }
-				throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
-			}
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo: photoId=$photoId")
 
 		return ApiPhoto(
 			id = photo.id,
@@ -49,21 +55,5 @@ class PhotoDetailService(
 			dateType = photo.dateType,
 			original = FsPathConverter.convertToUrl(PhotoPathConverter.original(photo))
 		)
-	}
-
-	fun detailInAlbum(userId: String, albumId: String, photoId: String): ApiPhoto {
-		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
-			?: run {
-				log.debug { "[Detail Photo] No such album owner: userId=$userId, albumId=$albumId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
-
-		val albumPhoto = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photoId))
-			?: run {
-				log.debug { "[Detail Photo] No such album photo: photoId=$photoId, albumId=$albumId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
-
-		return detail(albumPhoto.userId, photoId)
 	}
 }

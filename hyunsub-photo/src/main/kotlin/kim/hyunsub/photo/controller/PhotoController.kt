@@ -2,10 +2,10 @@ package kim.hyunsub.photo.controller
 
 import kim.hyunsub.common.model.RestApiPagination
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.bo.PhotoBo
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.service.PhotoDeleteService
-import kim.hyunsub.photo.service.PhotoDetailService
 import kim.hyunsub.photo.service.PhotoListService
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -18,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v2/photos")
 class PhotoController(
+	private val photoBo: PhotoBo,
 	private val photoDeleteService: PhotoDeleteService,
 	private val photoListService: PhotoListService,
-	private val photoDetailService: PhotoDetailService,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -46,10 +46,9 @@ class PhotoController(
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable photoId: String,
+		@RequestParam(required = false) albumId: String?,
 	): ApiPhoto {
-		val userId = userAuth.idNo
-		log.debug { "[Detail Photo] userId=$userId, photoId=$photoId" }
-		return photoDetailService.detail(userId, photoId)
+		return photoBo.detail(userAuth.idNo, photoId, albumId)
 	}
 
 	@DeleteMapping("/{photoId}")

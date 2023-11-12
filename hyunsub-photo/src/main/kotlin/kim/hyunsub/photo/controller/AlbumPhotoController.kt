@@ -4,6 +4,7 @@ import kim.hyunsub.common.model.RestApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.bo.PhotoBo
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiAlbumPhotoRegisterParams
 import kim.hyunsub.photo.model.api.ApiPhoto
@@ -15,7 +16,6 @@ import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
-import kim.hyunsub.photo.service.PhotoDetailService
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.repository.findByIdOrNull
@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v2/albums/{albumId}/photos")
 class AlbumPhotoController(
+	private val photoBo: PhotoBo,
 	private val albumRepository: AlbumRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val photoDetailService: PhotoDetailService,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -75,9 +75,7 @@ class AlbumPhotoController(
 		@PathVariable albumId: String,
 		@PathVariable photoId: String,
 	): ApiPhoto {
-		val userId = userAuth.idNo
-		log.debug { "[Detail Photo] userId=$userId, albumId=$albumId photoId=$photoId" }
-		return photoDetailService.detailInAlbum(userId, albumId, photoId)
+		return photoBo.detail(userAuth.idNo, photoId, albumId)
 	}
 
 	@GetMapping("/metadata")
