@@ -29,24 +29,29 @@ class DiarySearchController(
 	fun search(
 		user: UserAuth,
 		@CookieValue(WebConstants.TOKEN_COOKIE_NAME) token: String,
-		@RequestBody params: DiarySearchParams,
+		@RequestBody(required = false) params: DiarySearchParams?,
 	): RestApiPageResult<ApiDiaryPreview> {
+		val dates = params?.dates
+		val query = params?.query ?: ""
+		val page = params?.page ?: 0
+		val pageSize = params?.pageSize ?: 10
+
 		val userId = user.idNo
-		val page = PageRequest.of(params.page, params.pageSize)
+		val pageRequest = PageRequest.of(page, pageSize)
 
 		val (total, result) = when {
-			params.dates != null -> searchByDates(userId, page, params.dates)
-			else -> searchByQuery(userId, page, params.query ?: "")
+			dates != null -> searchByDates(userId, pageRequest, dates)
+			else -> searchByQuery(userId, pageRequest, query)
 		}
 
-		val dates = result.map { it.date }
-		val dateFriendsMap = friendServiceClient.searchMeetFriends(token, ApiMeetFriendSearchParams(dates))
+		val resultDates = result.map { it.date }
+		val dateFriendsMap = friendServiceClient.searchMeetFriends(token, ApiMeetFriendSearchParams(resultDates))
 			.associate { it.date to it.friends }
 
 		return RestApiPageResult(
 			total = total,
-			page = page.pageNumber,
-			pageSize = page.pageSize,
+			page = pageRequest.pageNumber,
+			pageSize = pageRequest.pageSize,
 			data = result.map {
 				it.toApiPreview(dateFriendsMap[it.date] ?: emptyList())
 			},

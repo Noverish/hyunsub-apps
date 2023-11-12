@@ -74,13 +74,13 @@ class FriendController(
 	}
 
 	@GetMapping("/{friendId}")
-	fun get(
+	fun detail(
 		userAuth: UserAuth,
 		@PathVariable friendId: String,
-	): ApiFriend {
+	): ApiFriend? {
 		val userId = userAuth.idNo
 		val friend = friendRepository.selectOne(friendId, userId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			?: return null
 
 		val tags = friendTagRepository.selectTag(userId, friendId)
 

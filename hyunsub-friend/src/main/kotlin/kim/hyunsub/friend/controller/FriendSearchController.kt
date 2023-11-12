@@ -20,17 +20,22 @@ class FriendSearchController(
 	@PostMapping("")
 	fun search(
 		userAuth: UserAuth,
-		@RequestBody params: FriendSearchParams,
+		@RequestBody(required = false) params: FriendSearchParams?,
 	): RestApiPageResult<ApiFriendPreview> {
-		val query = params.query ?: ""
+		val query = params?.query ?: ""
+		val page = params?.page ?: 0
+		val pageSize = params?.pageSize ?: 10
+
 		val userId = userAuth.idNo
-		val pageRequest = PageRequest.of(params.page, params.pageSize)
+		val pageRequest = PageRequest.of(page, pageSize)
+
 		val total = friendRepository.searchCount(userId, query)
 		val result = friendRepository.search(userId, query, pageRequest)
+
 		return RestApiPageResult(
 			total = total,
-			page = params.page,
-			pageSize = params.pageSize,
+			page = page,
+			pageSize = pageSize,
 			data = result.map { it.toApiPreview() },
 		)
 	}
