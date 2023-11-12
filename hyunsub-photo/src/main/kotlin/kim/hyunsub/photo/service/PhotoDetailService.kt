@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.service
 
+import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -11,6 +12,7 @@ import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
+import kim.hyunsub.photo.util.PhotoPathConverter
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
@@ -45,6 +47,7 @@ class PhotoDetailService(
 			regDt = photoOwner.regDt,
 			fileName = photoOwner.name,
 			dateType = photo.dateType,
+			original = FsPathConverter.convertToUrl(PhotoPathConverter.original(photo))
 		)
 	}
 

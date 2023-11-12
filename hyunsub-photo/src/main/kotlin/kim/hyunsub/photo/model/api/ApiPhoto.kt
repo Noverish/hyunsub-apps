@@ -12,4 +12,5 @@ data class ApiPhoto(
 	val fileName: String,
 	val regDt: LocalDateTime,
 	val dateType: PhotoDateType,
+	val original: String,
 )
