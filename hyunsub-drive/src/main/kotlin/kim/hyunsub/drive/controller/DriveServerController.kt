@@ -7,7 +7,7 @@ import kim.hyunsub.common.fs.model.FsRsyncParams
 import kim.hyunsub.common.fs.model.UserDeleteParams
 import kim.hyunsub.common.fs.model.UserInitParams
 import kim.hyunsub.common.web.annotation.Authorized
-import kim.hyunsub.common.web.model.SimpleResponse2
+import kim.hyunsub.common.web.model.SimpleResponse
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,7 +23,7 @@ class DriveServerController(
 	private val log = KotlinLogging.logger { }
 
 	@PostMapping("/user/init")
-	fun userInit(@RequestBody params: UserInitParams): SimpleResponse2 {
+	fun userInit(@RequestBody params: UserInitParams): SimpleResponse {
 		log.debug { "[User Init] params=$params" }
 
 		if (!params.dryRun) {
@@ -35,15 +35,15 @@ class DriveServerController(
 			)
 		}
 
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 
 	@PostMapping("/user/delete")
-	fun userDelete(@RequestBody params: UserDeleteParams): SimpleResponse2 {
+	fun userDelete(@RequestBody params: UserDeleteParams): SimpleResponse {
 		log.debug { "[User Delete] params=$params" }
 
 		fsClient.remove("/hyunsub/drive/${params.userId}")
 
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 }

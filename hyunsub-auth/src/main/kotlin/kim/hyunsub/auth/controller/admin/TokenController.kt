@@ -8,7 +8,7 @@ import kim.hyunsub.auth.service.UserAuthService
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.common.web.model.SimpleResponse2
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -29,7 +29,7 @@ class TokenController(
 	private val log = KotlinLogging.logger { }
 
 	@PostMapping("/issue")
-	fun encrypt(@RequestBody params: TokenIssueParams): SimpleResponse2 {
+	fun encrypt(@RequestBody params: TokenIssueParams): SimpleResponse {
 		log.info { "[Token Issue] params=$params" }
 		val duration = Duration.parse(params.duration)
 		val user = userRepository.findByIdOrNull(params.idNo)
@@ -37,7 +37,7 @@ class TokenController(
 		log.info { "[Token Issue] user=$user" }
 		val token = tokenService.issue(user, duration)
 		log.info { "[Token Issue] token=$token" }
-		return SimpleResponse2(token)
+		return SimpleResponse(token)
 	}
 
 	@PostMapping("/verify")

@@ -65,7 +65,7 @@ class DriveController(
 	}
 
 	@PostMapping("/remove-bulk")
-	fun remove(
+	fun removeBulk(
 		userAuth: UserAuth,
 		@RequestBody params: DriveRemoveBulkParams,
 	): SimpleResponse {

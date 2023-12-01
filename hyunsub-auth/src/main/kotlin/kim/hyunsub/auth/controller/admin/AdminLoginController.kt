@@ -6,7 +6,7 @@ import kim.hyunsub.auth.service.TokenService
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.common.web.model.SimpleResponse2
+import kim.hyunsub.common.web.model.SimpleResponse
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -23,12 +23,12 @@ class AdminLoginController(
 	private val cookieGenerator: CookieGenerator,
 ) {
 	@PostMapping("")
-	fun login(response: HttpServletResponse, @PathVariable idNo: String): SimpleResponse2 {
+	fun login(response: HttpServletResponse, @PathVariable idNo: String): SimpleResponse {
 		val user = userRepository.findByIdOrNull(idNo)
 			?: throw ErrorCodeException(ErrorCode.NOT_EXIST_USER)
 		val token = tokenService.issue(user)
 		val cookie = cookieGenerator.generateLoginCookie(token, true)
 		response.addCookie(cookie)
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 }

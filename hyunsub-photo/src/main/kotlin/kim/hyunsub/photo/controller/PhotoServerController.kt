@@ -4,7 +4,7 @@ import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.fs.model.UserDeleteParams
 import kim.hyunsub.common.fs.model.UserInitParams
 import kim.hyunsub.common.web.annotation.Authorized
-import kim.hyunsub.common.web.model.SimpleResponse2
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -33,7 +33,7 @@ class PhotoServerController(
 	private val log = KotlinLogging.logger { }
 
 	@PostMapping("/user/init")
-	fun userInit(@RequestBody params: UserInitParams): SimpleResponse2 {
+	fun userInit(@RequestBody params: UserInitParams): SimpleResponse {
 		log.debug { "[User Init] params=$params" }
 
 		val fromUserId = AppConstants.INIT_FROM_USER_ID
@@ -89,11 +89,11 @@ class PhotoServerController(
 			photoOwnerRepository.saveAll(newPhotoOwners)
 		}
 
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 
 	@PostMapping("/user/delete")
-	fun userDelete(@RequestBody params: UserDeleteParams): SimpleResponse2 {
+	fun userDelete(@RequestBody params: UserDeleteParams): SimpleResponse {
 		log.debug { "[User Delete] params=$params" }
 
 		val userId = params.userId
@@ -115,6 +115,6 @@ class PhotoServerController(
 			photoOwnerRepository.deleteAll(photoOwners)
 		}
 
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 }

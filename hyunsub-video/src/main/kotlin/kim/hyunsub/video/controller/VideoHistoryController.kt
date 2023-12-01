@@ -2,7 +2,7 @@ package kim.hyunsub.video.controller
 
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.config.userAuth
-import kim.hyunsub.common.web.model.SimpleResponse2
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.video.model.api.ApiVideoHistory
 import kim.hyunsub.video.model.api.toApi
@@ -54,7 +54,7 @@ class VideoHistoryController(
 	fun deleteBulk(
 		user: UserAuth,
 		@RequestBody params: VideoHistoryDeleteBulkParams,
-	): SimpleResponse2 {
+	): SimpleResponse {
 		val userId = user.idNo
 
 		videoHistoryRepository.deleteAllById(
@@ -63,14 +63,14 @@ class VideoHistoryController(
 			}
 		)
 
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 
 	@DeleteMapping("/api/v1/histories/:videoId")
 	fun delete(
 		user: UserAuth,
 		@RequestParam videoId: String,
-	): SimpleResponse2 {
+	): SimpleResponse {
 		val userId = user.idNo
 
 		videoHistoryRepository.deleteById(
@@ -80,7 +80,7 @@ class VideoHistoryController(
 			)
 		)
 
-		return SimpleResponse2()
+		return SimpleResponse()
 	}
 
 	@MessageMapping("/v1/histories")
