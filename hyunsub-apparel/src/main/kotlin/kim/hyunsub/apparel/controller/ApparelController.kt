@@ -1,16 +1,12 @@
 package kim.hyunsub.apparel.controller
 
+import kim.hyunsub.apparel.bo.ApparelDetailBo
 import kim.hyunsub.apparel.config.ApparelConstants
 import kim.hyunsub.apparel.model.ApiApparel
 import kim.hyunsub.apparel.model.ApiApparelPreview
 import kim.hyunsub.apparel.model.toApi
-import kim.hyunsub.apparel.model.toApiInfo
-import kim.hyunsub.apparel.repository.ApparelImageRepository
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
-import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.common.model.ApiPageResult
-import kim.hyunsub.common.web.error.ErrorCode
-import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
 import org.springframework.web.bind.annotation.GetMapping
@@ -22,9 +18,8 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/apparels")
 class ApparelController(
-	private val apparelRepository: ApparelRepository,
 	private val apparelPreviewRepository: ApparelPreviewRepository,
-	private val apparelImageRepository: ApparelImageRepository,
+	private val apparelDetailBo: ApparelDetailBo,
 ) {
 	@GetMapping("")
 	fun list(
@@ -45,18 +40,7 @@ class ApparelController(
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable apparelId: String,
-	): ApiApparel {
-		val userId = userAuth.idNo
-
-		val apparel = apparelRepository.findByIdAndUserId(apparelId, userId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
-
-		val images = apparelImageRepository.findByApparelIdOrderByRegDt(apparelId)
-
-		return ApiApparel(
-			id = apparelId,
-			info = apparel.toApiInfo(),
-			images = images.map { it.toApi(userId) }
-		)
+	): ApiApparel? {
+		return apparelDetailBo.detail(userAuth.idNo, apparelId)
 	}
 }
