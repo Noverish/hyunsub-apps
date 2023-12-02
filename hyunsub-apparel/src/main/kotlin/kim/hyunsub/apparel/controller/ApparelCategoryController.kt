@@ -1,7 +1,7 @@
 package kim.hyunsub.apparel.controller
 
-import kim.hyunsub.apparel.model.RestApiApparelPreview
-import kim.hyunsub.apparel.model.toDto
+import kim.hyunsub.apparel.model.ApiApparelPreview
+import kim.hyunsub.apparel.model.toApi
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
 import kim.hyunsub.apparel.repository.ApparelRepository
 import kim.hyunsub.common.model.ApiPageResult
@@ -29,14 +29,14 @@ class ApparelCategoryController(
 		userAuth: UserAuth,
 		@RequestParam(defaultValue = "0") p: Int,
 		@PathVariable category: String,
-	): ApiPageResult<RestApiApparelPreview> {
+	): ApiPageResult<ApiApparelPreview> {
 		val userId = userAuth.idNo
 
 		val total = apparelPreviewRepository.countByCategoryAndUserId(category, userId)
 		val pageRequest = PageRequest.of(p, 48)
 
 		val list = apparelPreviewRepository.findByCategoryAndUserId(category, userAuth.idNo, pageRequest)
-			.map { it.toDto(userId) }
+			.map { it.toApi(userId) }
 
 		return ApiPageResult(total, p, 48, list)
 	}

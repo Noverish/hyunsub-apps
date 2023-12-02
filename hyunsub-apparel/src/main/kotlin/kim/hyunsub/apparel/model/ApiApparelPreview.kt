@@ -4,13 +4,13 @@ import kim.hyunsub.apparel.repository.entity.ApparelPreview
 import kim.hyunsub.apparel.service.ApparelPathConverter
 import kim.hyunsub.common.fs.FsPathConverter
 
-data class RestApiApparelPreview(
+data class ApiApparelPreview(
 	val id: String,
 	val name: String,
 	val thumbnail: String,
 )
 
-fun ApparelPreview.toDto(userId: String) = RestApiApparelPreview(
+fun ApparelPreview.toApi(userId: String) = ApiApparelPreview(
 	id = id,
 	name = name,
 	thumbnail = fileName

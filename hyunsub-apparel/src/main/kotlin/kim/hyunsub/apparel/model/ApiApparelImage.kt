@@ -4,13 +4,13 @@ import kim.hyunsub.apparel.repository.entity.ApparelImage
 import kim.hyunsub.apparel.service.ApparelPathConverter
 import kim.hyunsub.common.fs.FsPathConverter
 
-data class RestApiApparelImage(
+data class ApiApparelImage(
 	val imageId: String,
 	val apparelId: String,
 	val url: String,
 )
 
-fun ApparelImage.toDto(userId: String) = RestApiApparelImage(
+fun ApparelImage.toApi(userId: String) = ApiApparelImage(
 	imageId = id,
 	apparelId = apparelId,
 	url = ApparelPathConverter.imagePath(userId, apparelId, fileName)

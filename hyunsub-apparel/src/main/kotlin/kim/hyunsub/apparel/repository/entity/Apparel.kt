@@ -60,7 +60,7 @@ data class Apparel(
 	val imageId: String?,
 
 	@Column(nullable = false)
-	val regDt: LocalDateTime = LocalDateTime.now(),
+	val regDt: LocalDateTime,
 
 	@Column
 	val discardDt: LocalDateTime?,
