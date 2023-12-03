@@ -4,12 +4,12 @@ import kim.hyunsub.common.fs.client.FriendServiceClient
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.diary.model.api.ApiDiary
-import kim.hyunsub.diary.model.api.toApi
 import kim.hyunsub.diary.model.dto.DiaryCreateParams
 import kim.hyunsub.diary.model.dto.DiaryUpdateParams
 import kim.hyunsub.diary.repository.DiaryRepository
 import kim.hyunsub.diary.repository.entity.Diary
 import kim.hyunsub.diary.repository.findByIdOrNull
+import kim.hyunsub.diary.service.ApiDiaryService
 import kim.hyunsub.friend.model.dto.MeetFriendBulkUpdateParams
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -18,6 +18,7 @@ import java.time.LocalDate
 class DiaryMutateBo(
 	private val diaryRepository: DiaryRepository,
 	private val friendServiceClient: FriendServiceClient,
+	private val apiDiaryService: ApiDiaryService,
 ) {
 	fun create(userId: String, token: String, params: DiaryCreateParams): ApiDiary {
 		if (diaryRepository.findByIdOrNull(userId, params.date) != null) {
@@ -36,7 +37,7 @@ class DiaryMutateBo(
 		val meetParams = MeetFriendBulkUpdateParams(params.friendIds)
 		val friends = friendServiceClient.updateMeetFriendsBulk(token, diary.date, meetParams)
 
-		return diary.toApi(friends)
+		return apiDiaryService.detail(token, diary, friends)
 	}
 
 	fun update(userId: String, token: String, date: LocalDate, params: DiaryUpdateParams): ApiDiary {
@@ -53,7 +54,7 @@ class DiaryMutateBo(
 		val meetParams = MeetFriendBulkUpdateParams(params.friendIds)
 		val friends = friendServiceClient.updateMeetFriendsBulk(token, date, meetParams)
 
-		return newDiary.toApi(friends)
+		return apiDiaryService.detail(token, diary, friends)
 	}
 
 	fun delete(userId: String, token: String, date: LocalDate): ApiDiary {
@@ -62,8 +63,6 @@ class DiaryMutateBo(
 
 		diaryRepository.delete(diary)
 
-		val friends = friendServiceClient.selectMeetFriends(token, date)
-
-		return diary.toApi(friends)
+		return apiDiaryService.detail(token, diary)
 	}
 }
