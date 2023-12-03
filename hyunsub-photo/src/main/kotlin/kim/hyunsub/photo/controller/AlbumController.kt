@@ -4,12 +4,13 @@ import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
+import kim.hyunsub.photo.bo.AlbumDeleteBo
+import kim.hyunsub.photo.bo.AlbumDetailBo
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiAlbum
 import kim.hyunsub.photo.model.api.ApiAlbumCreateParams
 import kim.hyunsub.photo.model.api.ApiAlbumPreview
 import kim.hyunsub.photo.model.api.ApiAlbumThumbnailParams
-import kim.hyunsub.photo.model.api.toApiPreview
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -33,6 +34,8 @@ class AlbumController(
 	private val albumRepository: AlbumRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
+	private val albumDetailBo: AlbumDetailBo,
+	private val albumDeleteBo: AlbumDeleteBo,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -86,50 +89,16 @@ class AlbumController(
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-	): ApiAlbum {
-		val userId = userAuth.idNo
-		log.debug { "[Detail Album] userId=$userId, albumId=$albumId" }
-
-		val album = albumRepository.findByAlbumIdAndUserId(albumId, userId)
-			?: run {
-				log.debug { "[Detail Album] No such album: userId=$userId, albumId=$albumId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
-
-		val total = albumPhotoRepository.countByAlbumId(albumId)
-
-		val page = PageRequest.ofSize(PhotoConstants.PAGE_SIZE)
-		val photos = albumPhotoRepository.findByAlbumId(albumId, page).map { it.toApiPreview() }
-
-		return ApiAlbum(
-			id = album.id,
-			name = album.name,
-			photos = ApiPageResult(
-				total = total,
-				page = 0,
-				pageSize = PhotoConstants.PAGE_SIZE,
-				data = photos,
-			),
-		)
+	): ApiAlbum? {
+		return albumDetailBo.detail(userAuth.idNo, albumId)
 	}
 
 	@DeleteMapping("/{albumId}")
 	fun delete(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-	): ApiAlbumPreview {
-		val userId = userAuth.idNo
-		log.debug { "[Delete Album] userId=$userId, albumId=$albumId" }
-
-		val album = albumRepository.findByAlbumIdAndUserId(albumId, userId)
-			?: run {
-				log.debug { "[Detail Album] No such album: userId=$userId, albumId=$albumId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
-
-		albumRepository.deleteById(albumId)
-
-		return album.toPreview()
+	): ApiAlbum {
+		return albumDeleteBo.delete(userAuth.idNo, albumId)
 	}
 
 	@PostMapping("/{albumId}/thumbnail")

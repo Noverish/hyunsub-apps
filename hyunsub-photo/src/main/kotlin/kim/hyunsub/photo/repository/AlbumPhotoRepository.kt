@@ -50,4 +50,6 @@ interface AlbumPhotoRepository : JpaRepository<AlbumPhoto, AlbumPhotoId> {
 	@Modifying
 	@Query("UPDATE AlbumPhoto SET photoId = :to WHERE photoId = :from")
 	fun updatePhotoId(from: String, to: String): Int
+
+	fun deleteByAlbumId(albumId: String): Int
 }
