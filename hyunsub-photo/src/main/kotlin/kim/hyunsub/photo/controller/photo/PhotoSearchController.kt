@@ -1,8 +1,8 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.photo
 
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.photo.bo.PhotoSearchBo
+import kim.hyunsub.photo.bo.photo.PhotoSearchBo
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.model.dto.PhotoSearchParams
 import org.springframework.web.bind.annotation.PostMapping

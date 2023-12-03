@@ -2,30 +2,9 @@ package kim.hyunsub.photo.repository
 
 import kim.hyunsub.common.util.generateId
 import kim.hyunsub.photo.repository.entity.Album
-import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Query
 
 interface AlbumRepository : JpaRepository<Album, String> {
-	@Query(
-		"""
-			SELECT b FROM AlbumOwner a
-			INNER JOIN Album b ON b.id = a.albumId
-			WHERE a.userId = :userId
-			ORDER BY b.regDt DESC
-		"""
-	)
-	fun findByUserId(userId: String, page: Pageable = Pageable.unpaged()): List<Album>
-
-	@Query(
-		"""
-			SELECT b FROM AlbumOwner a
-			INNER JOIN Album b ON b.id = a.albumId
-			WHERE a.albumId = :albumId AND a.userId = :userId
-		"""
-	)
-	fun findByAlbumIdAndUserId(albumId: String, userId: String): Album?
-
 	fun findByThumbnailPhotoId(photoId: String): List<Album>
 }
 

@@ -1,5 +1,5 @@
 package kim.hyunsub.photo.model.dto
 
-data class AlbumOwnerCreateParams(
+data class AlbumOwnerParams(
 	val userId: String,
 )

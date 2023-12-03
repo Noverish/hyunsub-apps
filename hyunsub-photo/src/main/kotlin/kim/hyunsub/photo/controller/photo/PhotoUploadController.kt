@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.photo
 
 import kim.hyunsub.common.web.config.userAuth
 import kim.hyunsub.common.web.model.UserAuth

@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.bo
+package kim.hyunsub.photo.bo.photo
 
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.client.remove
@@ -12,6 +12,7 @@ import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
+import kim.hyunsub.photo.service.AlbumThumbnailService
 import kim.hyunsub.photo.util.PhotoPathConverter
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -23,6 +24,7 @@ class PhotoDeleteBo(
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
+	private val albumThumbnailService: AlbumThumbnailService,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -32,10 +34,10 @@ class PhotoDeleteBo(
 
 	fun delete(userId: String, photoId: String): ApiPhoto {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner: $userId, $photoId")
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner")
 
 		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo: $photoId")
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
 		log.debug { "[Delete Photo] Delete photo owner: $photoOwner" }
 		photoOwnerRepository.delete(photoOwner)
@@ -44,9 +46,11 @@ class PhotoDeleteBo(
 		log.debug { "[Delete Photo] Delete album photos: $albumPhotos" }
 		albumPhotoRepository.deleteAll(albumPhotos)
 
+		albumThumbnailService.delete(photoId)
+
 		val numberOfOwner = photoOwnerRepository.countByPhotoId(photoId)
 		if (numberOfOwner == 0) {
-			log.debug { "[Delete Photo] Delete photo: $photo" }
+			log.debug { "[Delete Photo] Delete photo file: $photo" }
 			deleteFile(photo)
 		}
 

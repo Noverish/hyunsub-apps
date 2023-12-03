@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.admin
 
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.photo.repository.PhotoRepository

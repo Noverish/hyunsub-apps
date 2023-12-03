@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.bo
+package kim.hyunsub.photo.bo.photo
 
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.photo.config.PhotoConstants

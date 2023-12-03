@@ -1,10 +1,11 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.admin
 
 import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.fs.model.UserDeleteParams
 import kim.hyunsub.common.fs.model.UserInitParams
 import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.model.SimpleResponse
+import kim.hyunsub.photo.mapper.AlbumMapper
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -25,6 +26,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/api/v1/server")
 class PhotoServerController(
+	private val albumMapper: AlbumMapper,
 	private val albumRepository: AlbumRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
 	private val albumPhotoRepository: AlbumPhotoRepository,
@@ -39,7 +41,7 @@ class PhotoServerController(
 		val fromUserId = AppConstants.INIT_FROM_USER_ID
 		val toUserId = params.userId
 
-		val albums = albumRepository.findByUserId(fromUserId)
+		val albums = albumMapper.selectList(fromUserId)
 		val albumOwners = albumOwnerRepository.findByUserId(fromUserId)
 		val albumPhotos = albumPhotoRepository.findByAlbumIdIn(albums.map { it.id })
 		val photoOwners = photoOwnerRepository.findByUserId(fromUserId)
@@ -98,7 +100,7 @@ class PhotoServerController(
 
 		val userId = params.userId
 
-		val albums = albumRepository.findByUserId(userId)
+		val albums = albumMapper.selectList(userId)
 		val albumOwners = albumOwnerRepository.findByUserId(userId)
 		val albumPhotos = albumPhotoRepository.findByAlbumIdIn(albums.map { it.id })
 		val photoOwners = photoOwnerRepository.findByUserId(userId)

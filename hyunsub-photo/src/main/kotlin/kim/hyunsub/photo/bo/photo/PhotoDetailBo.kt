@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.bo
+package kim.hyunsub.photo.bo.photo
 
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -15,7 +15,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class PhotoBo(
+class PhotoDetailBo(
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
@@ -28,20 +28,20 @@ class PhotoBo(
 
 	private fun detailWithAlbum(userId: String, photoId: String, albumId: String): ApiPhoto {
 		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album owner: userId=$userId, albumId=$albumId")
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album owner")
 
 		val albumPhoto = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photoId))
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album photo: photoId=$photoId, albumId=$albumId")
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album photo")
 
 		return detailWithoutAlbum(albumPhoto.userId, photoId)
 	}
 
 	private fun detailWithoutAlbum(userId: String, photoId: String): ApiPhoto {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner: userId=$userId, photoId=$photoId")
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner")
 
 		val photo = photoRepository.findByIdOrNull(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo: photoId=$photoId")
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
 		return photo.toApi(photoOwner)
 	}

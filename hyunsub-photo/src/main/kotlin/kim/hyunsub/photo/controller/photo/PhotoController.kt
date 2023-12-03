@@ -1,8 +1,8 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.photo
 
 import kim.hyunsub.common.model.ApiPagination
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.photo.bo.PhotoBo
+import kim.hyunsub.photo.bo.photo.PhotoDetailBo
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.service.PhotoListService
@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v2/photos")
+@RequestMapping("/api/v1/photos")
 class PhotoController(
-	private val photoBo: PhotoBo,
+	private val photoDetailBo: PhotoDetailBo,
 	private val photoListService: PhotoListService,
 ) {
 	private val log = KotlinLogging.logger { }
@@ -45,6 +45,6 @@ class PhotoController(
 		@PathVariable photoId: String,
 		@RequestParam(required = false) albumId: String?,
 	): ApiPhoto {
-		return photoBo.detail(userAuth.idNo, photoId, albumId)
+		return photoDetailBo.detail(userAuth.idNo, photoId, albumId)
 	}
 }

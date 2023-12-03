@@ -1,4 +1,4 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.admin
 
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException

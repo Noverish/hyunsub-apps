@@ -1,7 +1,7 @@
-package kim.hyunsub.photo.controller
+package kim.hyunsub.photo.controller.photo
 
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.photo.bo.PhotoDeleteBo
+import kim.hyunsub.photo.bo.photo.PhotoDeleteBo
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.dto.PhotoDeleteBulkParams
 import org.springframework.web.bind.annotation.DeleteMapping
