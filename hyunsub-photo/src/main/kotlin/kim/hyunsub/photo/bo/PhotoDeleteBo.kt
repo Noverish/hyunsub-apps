@@ -1,9 +1,12 @@
-package kim.hyunsub.photo.service
+package kim.hyunsub.photo.bo
 
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.photo.model.api.ApiPhoto
+import kim.hyunsub.photo.model.api.toApi
+import kim.hyunsub.photo.model.dto.PhotoDeleteBulkParams
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
 import kim.hyunsub.photo.repository.PhotoRepository
@@ -15,7 +18,7 @@ import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
-class PhotoDeleteService(
+class PhotoDeleteBo(
 	private val fsClient: FsClient,
 	private val photoRepository: PhotoRepository,
 	private val photoOwnerRepository: PhotoOwnerRepository,
@@ -23,18 +26,16 @@ class PhotoDeleteService(
 ) {
 	private val log = KotlinLogging.logger { }
 
-	fun delete(userId: String, photoId: String): Photo {
+	fun deleteBulk(userId: String, params: PhotoDeleteBulkParams): List<ApiPhoto> {
+		return params.photoIds.map { delete(userId, it) }
+	}
+
+	fun delete(userId: String, photoId: String): ApiPhoto {
 		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
-			?: run {
-				log.debug { "[Delete Photo] No such photo owner: $userId, $photoId" }
-				throw ErrorCodeException(ErrorCode.NOT_FOUND)
-			}
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner: $userId, $photoId")
 
 		val photo = photoRepository.findByIdOrNull(photoId)
-			?: run {
-				log.error { "[Delete Photo] No such photo: $photoId" }
-				throw ErrorCodeException(ErrorCode.INTERNAL_SERVER_ERROR)
-			}
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo: $photoId")
 
 		log.debug { "[Delete Photo] Delete photo owner: $photoOwner" }
 		photoOwnerRepository.delete(photoOwner)
@@ -44,13 +45,12 @@ class PhotoDeleteService(
 		albumPhotoRepository.deleteAll(albumPhotos)
 
 		val numberOfOwner = photoOwnerRepository.countByPhotoId(photoId)
-		if (numberOfOwner > 0) {
-			return photo
+		if (numberOfOwner == 0) {
+			log.debug { "[Delete Photo] Delete photo: $photo" }
+			deleteFile(photo)
 		}
 
-		log.debug { "[Delete Photo] Delete photo: $photo" }
-		deleteFile(photo)
-		return photo
+		return photo.toApi(photoOwner)
 	}
 
 	private fun deleteFile(photo: Photo) {
@@ -63,10 +63,7 @@ class PhotoDeleteService(
 
 		if (photo.isVideo) {
 			val videoPath = PhotoPathConverter.video(photoId)
-			try {
-				fsClient.remove(videoPath)
-			} catch (_: Exception) {
-			}
+			fsClient.remove(videoPath)
 		}
 
 		photoRepository.deleteById(photoId)

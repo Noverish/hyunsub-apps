@@ -1,10 +1,9 @@
 package kim.hyunsub.photo.bo
 
-import kim.hyunsub.common.fs.FsPathConverter
-import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.api.ApiPhoto
+import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.repository.AlbumOwnerRepository
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.PhotoOwnerRepository
@@ -12,7 +11,6 @@ import kim.hyunsub.photo.repository.PhotoRepository
 import kim.hyunsub.photo.repository.entity.AlbumOwnerId
 import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.PhotoOwnerId
-import kim.hyunsub.photo.util.PhotoPathConverter
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
@@ -45,15 +43,6 @@ class PhotoBo(
 		val photo = photoRepository.findByIdOrNull(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo: photoId=$photoId")
 
-		return ApiPhoto(
-			id = photo.id,
-			imageSize = "${photo.width} x ${photo.height}",
-			fileSize = getHumanReadableSize(photo.size.toLong()),
-			date = photo.date,
-			regDt = photoOwner.regDt,
-			fileName = photoOwner.name,
-			dateType = photo.dateType,
-			original = FsPathConverter.convertToUrl(PhotoPathConverter.original(photo))
-		)
+		return photo.toApi(photoOwner)
 	}
 }
