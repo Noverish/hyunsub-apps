@@ -7,6 +7,7 @@ import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.SimpleResponse
+import kim.hyunsub.video.bo.VideoSubtitleBo
 import kim.hyunsub.video.model.dto.VideoEncodeParams
 import kim.hyunsub.video.model.dto.VideoRenameParams
 import kim.hyunsub.video.model.dto.VideoSubtitleParams
@@ -17,13 +18,14 @@ import kim.hyunsub.video.repository.entity.VideoSubtitle
 import kim.hyunsub.video.service.VideoEncodeApiCaller
 import kim.hyunsub.video.service.VideoMetadataService
 import kim.hyunsub.video.service.VideoRenameService
-import kim.hyunsub.video.service.VideoSubtitleService
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @Authorized(["admin"])
@@ -33,7 +35,7 @@ class VideoManageController(
 	private val encodeApiCaller: VideoEncodeApiCaller,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataService: VideoMetadataService,
-	private val videoSubtitleService: VideoSubtitleService,
+	private val videoSubtitleBo: VideoSubtitleBo,
 	private val videoRenameService: VideoRenameService,
 	private val fsVideoClient: FsVideoClient,
 ) {
@@ -85,7 +87,15 @@ class VideoManageController(
 		params: VideoSubtitleParams,
 	): VideoSubtitle {
 		log.debug { "[Video Subtitle] videoId=$videoId, params=$params" }
-		return videoSubtitleService.uploadSubtitle(videoId, params)
+		return videoSubtitleBo.uploadSubtitle(videoId, params)
+	}
+
+	@DeleteMapping("/subtitle")
+	fun deleteSubtitle(
+		@PathVariable videoId: String,
+		@RequestParam subtitleId: String,
+	): VideoSubtitle {
+		return videoSubtitleBo.deleteSubtitle(subtitleId)
 	}
 
 	@PostMapping("/rename")

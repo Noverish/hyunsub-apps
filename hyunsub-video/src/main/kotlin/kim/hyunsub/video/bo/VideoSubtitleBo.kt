@@ -1,7 +1,8 @@
-package kim.hyunsub.video.service
+package kim.hyunsub.video.bo
 
 import kim.hyunsub.common.fs.client.FsClient
-import kim.hyunsub.common.fs.client.FsUploadClient
+import kim.hyunsub.common.fs.client.FsUploadBinaryClient
+import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
@@ -17,9 +18,9 @@ import kotlin.io.path.Path
 import kotlin.io.path.extension
 
 @Service
-class VideoSubtitleService(
+class VideoSubtitleBo(
 	private val fsClient: FsClient,
-	private val fsUploadClient: FsUploadClient,
+	private val fsUploadClient: FsUploadBinaryClient,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
 ) {
@@ -72,5 +73,16 @@ class VideoSubtitleService(
 		videoSubtitleRepository.save(videoSubtitle)
 
 		return videoSubtitle
+	}
+
+	fun deleteSubtitle(subtitleId: String): VideoSubtitle {
+		val subtitle = videoSubtitleRepository.findByIdOrNull(subtitleId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such subtitle")
+
+		videoSubtitleRepository.delete(subtitle)
+
+		fsClient.remove(subtitle.path)
+
+		return subtitle
 	}
 }
