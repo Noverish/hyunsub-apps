@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query
 interface VideoRepository : JpaRepository<Video, String> {
 	fun findByEntryIdIn(entryIds: List<String>): List<Video>
 	fun findByEntryId(entryId: String): List<Video>
+	fun findByPath(path: String): Video?
 
 	@Query(
 		"""
