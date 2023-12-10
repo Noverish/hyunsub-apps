@@ -34,7 +34,7 @@ class PhotoUpdateService(
 	private val mapper = jacksonObjectMapper()
 
 	@Transactional
-	fun updateId(photo: Photo, newId: String) {
+	fun updateId(photo: Photo, newId: String): Photo {
 		val oldId = photo.id
 		val newPhoto = photo.copy(id = newId)
 
@@ -64,6 +64,8 @@ class PhotoUpdateService(
 		val photoMetadata = photoMetadataRepository.updatePhotoId(oldId, newId)
 
 		log.debug { "[Update Photo Id] albums=${albums.size} photo=$photoResult, photoOwner=$photoOwner, albumPhoto=$albumPhoto, photoMetadata=$photoMetadata" }
+
+		return newPhoto
 	}
 
 	@Transactional

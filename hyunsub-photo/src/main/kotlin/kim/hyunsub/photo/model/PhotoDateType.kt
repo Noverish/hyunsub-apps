@@ -4,4 +4,5 @@ enum class PhotoDateType {
 	EXIF,
 	NAME,
 	FILE,
+	USER,
 }

@@ -42,7 +42,7 @@ data class Photo(
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
-	val dateType: PhotoDateType,
+	var dateType: PhotoDateType,
 
 	@Column
 	val pairPhotoId: String? = null,

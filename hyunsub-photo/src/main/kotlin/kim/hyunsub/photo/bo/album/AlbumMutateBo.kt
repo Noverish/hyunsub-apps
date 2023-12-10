@@ -12,10 +12,10 @@ import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
 import kim.hyunsub.photo.repository.generateId
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
-@RestController
+@Service
 class AlbumMutateBo(
 	private val albumRepository: AlbumRepository,
 	private val albumOwnerRepository: AlbumOwnerRepository,
