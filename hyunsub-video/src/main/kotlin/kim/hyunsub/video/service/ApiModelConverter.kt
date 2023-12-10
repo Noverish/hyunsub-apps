@@ -6,7 +6,7 @@ import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.video.model.api.ApiVideo
 import kim.hyunsub.video.model.api.ApiVideoGroup
 import kim.hyunsub.video.model.api.ApiVideoMetadata
-import kim.hyunsub.video.model.api.ApiVideoSubtitle
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.repository.entity.Video
 import kim.hyunsub.video.repository.entity.VideoGroup
 import kim.hyunsub.video.repository.entity.VideoHistory
@@ -29,34 +29,9 @@ class ApiModelConverter {
 			videoUrl = FsPathConverter.convertToUrl(video.path),
 			thumbnailUrl = FsPathConverter.thumbnailUrl(video.thumbnail),
 			title = Path(video.path).nameWithoutExtension,
-			subtitles = subtitles.map { convertVideoSubtitle(video, it) },
+			subtitles = subtitles.map { it.toApi() },
 			metadata = metadata?.let { convertVideoMetadata(it) },
 			time = history?.time ?: 0,
-		)
-	}
-
-	fun convertVideoSubtitle(video: Video, subtitle: VideoSubtitle): ApiVideoSubtitle {
-		val subtitleName = Path(subtitle.path).nameWithoutExtension
-		val videoName = Path(video.path).nameWithoutExtension
-
-		val code = subtitleName.replace(videoName, "")
-			.replace(".", "")
-			.ifEmpty { "ko" }
-
-		val label = code
-			.replace("en", "English ")
-			.replace("ko", "Korean ")
-			.replace("ja", "Japanese ")
-			.trim()
-
-		val url = Path(subtitle.path)
-			.let { "${it.parent}/${it.nameWithoutExtension}.vtt" }
-			.let { FsPathConverter.convertToUrl(it) }
-
-		return ApiVideoSubtitle(
-			url = url,
-			label = label,
-			srclang = code,
 		)
 	}
 

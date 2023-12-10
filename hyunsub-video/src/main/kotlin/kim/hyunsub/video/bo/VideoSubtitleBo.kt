@@ -1,12 +1,17 @@
 package kim.hyunsub.video.bo
 
 import kim.hyunsub.common.fs.client.FsClient
+import kim.hyunsub.common.fs.client.FsSubtitleClient
 import kim.hyunsub.common.fs.client.FsUploadBinaryClient
 import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.client.rename
+import kim.hyunsub.common.fs.model.SubtitleSyncParams
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.video.model.api.ApiVideoSubtitle
+import kim.hyunsub.video.model.api.toApi
 import kim.hyunsub.video.model.dto.VideoSubtitleParams
+import kim.hyunsub.video.model.dto.VideoSubtitleSyncParams
 import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.VideoSubtitleRepository
 import kim.hyunsub.video.repository.entity.VideoSubtitle
@@ -21,12 +26,13 @@ import kotlin.io.path.extension
 class VideoSubtitleBo(
 	private val fsClient: FsClient,
 	private val fsUploadClient: FsUploadBinaryClient,
+	private val fsSubtitleClient: FsSubtitleClient,
 	private val videoRepository: VideoRepository,
 	private val videoSubtitleRepository: VideoSubtitleRepository,
 ) {
 	private val log = KotlinLogging.logger { }
 
-	fun uploadSubtitle(videoId: String, params: VideoSubtitleParams): VideoSubtitle {
+	fun upload(videoId: String, params: VideoSubtitleParams): ApiVideoSubtitle {
 		val (lang, file, path, override) = params
 
 		val video = videoRepository.findByIdOrNull(videoId)
@@ -61,7 +67,7 @@ class VideoSubtitleBo(
 		}
 
 		if (subtitle != null) {
-			return subtitle
+			return subtitle.toApi()
 		}
 
 		val videoSubtitle = VideoSubtitle(
@@ -72,10 +78,23 @@ class VideoSubtitleBo(
 		log.debug("[Upload Video Subtitle] new subtitle={}", videoSubtitle)
 		videoSubtitleRepository.save(videoSubtitle)
 
-		return videoSubtitle
+		return videoSubtitle.toApi()
 	}
 
-	fun deleteSubtitle(subtitleId: String): VideoSubtitle {
+	fun sync(subtitleId: String, params: VideoSubtitleSyncParams): ApiVideoSubtitle {
+		val subtitle = videoSubtitleRepository.findByIdOrNull(subtitleId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such subtitle")
+
+		if (!subtitle.path.endsWith(".srt")) {
+			throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "This is not srt")
+		}
+
+		fsSubtitleClient.sync(SubtitleSyncParams(subtitle.path, params.ms))
+
+		return subtitle.toApi()
+	}
+
+	fun delete(subtitleId: String): ApiVideoSubtitle {
 		val subtitle = videoSubtitleRepository.findByIdOrNull(subtitleId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such subtitle")
 
@@ -83,6 +102,6 @@ class VideoSubtitleBo(
 
 		fsClient.remove(subtitle.path)
 
-		return subtitle
+		return subtitle.toApi()
 	}
 }
