@@ -7,6 +7,7 @@ import kim.hyunsub.common.web.annotation.Authorized
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.SimpleResponse
+import kim.hyunsub.video.bo.VideoRenameBo
 import kim.hyunsub.video.model.dto.VideoEncodeParams
 import kim.hyunsub.video.model.dto.VideoRenameParams
 import kim.hyunsub.video.model.dto.VideoThumbnailParams
@@ -14,7 +15,6 @@ import kim.hyunsub.video.repository.VideoRepository
 import kim.hyunsub.video.repository.entity.VideoMetadata
 import kim.hyunsub.video.service.VideoEncodeApiCaller
 import kim.hyunsub.video.service.VideoMetadataService
-import kim.hyunsub.video.service.VideoRenameService
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PathVariable
@@ -30,7 +30,7 @@ class VideoManageController(
 	private val encodeApiCaller: VideoEncodeApiCaller,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataService: VideoMetadataService,
-	private val videoRenameService: VideoRenameService,
+	private val videoRenameBo: VideoRenameBo,
 	private val fsVideoClient: FsVideoClient,
 ) {
 	private val log = KotlinLogging.logger { }
@@ -80,7 +80,6 @@ class VideoManageController(
 		@PathVariable videoId: String,
 		@RequestBody params: VideoRenameParams,
 	): List<FsRenameBulkData> {
-		log.debug { "[Video Rename] videoId=$videoId, params=$params" }
-		return videoRenameService.rename(videoId, params)
+		return videoRenameBo.rename(videoId, params)
 	}
 }

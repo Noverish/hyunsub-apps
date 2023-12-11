@@ -1,4 +1,4 @@
-package kim.hyunsub.video.service
+package kim.hyunsub.video.bo
 
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.model.FsRenameBulkData
@@ -18,7 +18,7 @@ import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
 
 @Service
-class VideoRenameService(
+class VideoRenameBo(
 	private val fsClient: FsClient,
 	private val videoRepository: VideoRepository,
 	private val videoMetadataRepository: VideoMetadataRepository,
@@ -31,7 +31,8 @@ class VideoRenameService(
 		val renames = mutableListOf<FsRenameBulkData>()
 
 		val video = videoRepository.findByIdOrNull(videoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such video")
+
 		val newVideo = video.copy(
 			path = replaceFileName(video.path, params, renames),
 			thumbnail = video.thumbnail?.let { replaceFileName(it, params, renames) },
