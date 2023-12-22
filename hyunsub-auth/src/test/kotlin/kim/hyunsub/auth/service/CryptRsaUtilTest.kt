@@ -3,7 +3,7 @@ package kim.hyunsub.auth.service
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
-import org.springframework.util.Base64Utils
+import java.util.Base64
 
 class CryptRsaUtilTest : FreeSpec({
 	val keyPair = CryptRsaUtil.generateKeyPair()
@@ -27,8 +27,8 @@ class CryptRsaUtilTest : FreeSpec({
 	}
 
 	"crypt with base64 key" {
-		val privateKeyBase64 = Base64Utils.encodeToString(keyPair.private.encoded)
-		val publicKeyBase64 = Base64Utils.encodeToString(keyPair.public.encoded)
+		val privateKeyBase64 = Base64.getEncoder().encodeToString(keyPair.private.encoded)
+		val publicKeyBase64 = Base64.getEncoder().encodeToString(keyPair.public.encoded)
 		val privateKey = CryptRsaUtil.retrievePrivateKey(privateKeyBase64)
 		val publicKey = CryptRsaUtil.retrievePublicKey(publicKeyBase64)
 

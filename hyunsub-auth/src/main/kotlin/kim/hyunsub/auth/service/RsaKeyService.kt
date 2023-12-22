@@ -1,9 +1,9 @@
 package kim.hyunsub.auth.service
 
 import org.springframework.stereotype.Service
-import org.springframework.util.Base64Utils
 import java.security.KeyPair
 import java.security.KeyPairGenerator
+import java.util.Base64
 
 @Service
 class RsaKeyService {
@@ -12,7 +12,7 @@ class RsaKeyService {
 		.generateKeyPair()
 
 	fun getPublicKeyBase64(): String =
-		Base64Utils.encodeToString(keyPair.public.encoded)
+		Base64.getEncoder().encodeToString(keyPair.public.encoded)
 
 	fun decrypt(ciphertext: String): String =
 		CryptRsaUtil.decrypt(ciphertext, keyPair.private)

@@ -1,5 +1,6 @@
 package kim.hyunsub.video.service
 
+import jakarta.transaction.Transactional
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.model.FsRenameBulkData
 import kim.hyunsub.common.fs.model.FsRenameBulkParams
@@ -18,7 +19,6 @@ import kim.hyunsub.video.repository.entity.VideoSubtitle
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 import kotlin.io.path.Path
 import kotlin.io.path.relativeTo
 

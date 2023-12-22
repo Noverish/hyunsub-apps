@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.service
 
+import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Service
-import javax.servlet.http.HttpServletResponse
 
 @Service
 class LogoutService(

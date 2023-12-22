@@ -15,11 +15,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 class SessionConfiguration {
 	@Bean
 	fun sessionRedisTemplate(redisConnectionFactory: RedisConnectionFactory): RedisTemplate<String, LoginFailureSession> {
-		val serializer = Jackson2JsonRedisSerializer(LoginFailureSession::class.java)
-		serializer.setObjectMapper(jacksonObjectMapper())
+		val serializer = Jackson2JsonRedisSerializer(jacksonObjectMapper(), LoginFailureSession::class.java)
 
 		val redisTemplate: RedisTemplate<String, LoginFailureSession> = RedisTemplate<String, LoginFailureSession>()
-		redisTemplate.connectionFactory = redisConnectionFactory
+		redisTemplate.setConnectionFactory(redisConnectionFactory)
 		redisTemplate.keySerializer = StringRedisSerializer.UTF_8
 		redisTemplate.valueSerializer = serializer
 		return redisTemplate

@@ -1,13 +1,13 @@
 package kim.hyunsub.photo.repository.entity
 
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.photo.model.api.ApiAlbumPreview
 import kim.hyunsub.photo.util.PhotoPathConverter
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
 @Entity
 @Table(name = "album")

@@ -6,7 +6,9 @@ import kim.hyunsub.auth.config.SessionConfiguration
 import kim.hyunsub.auth.model.LoginFailureSession
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 
+@ActiveProfiles("session_test")
 @SpringBootTest(classes = [RedisAutoConfiguration::class, SessionConfiguration::class, LoginFailureSessionService::class])
 class LoginFailureSessionServiceTest(val service: LoginFailureSessionService) : FreeSpec({
 	val remoteAddr = "127.0.0.1"

@@ -1,6 +1,5 @@
 package kim.hyunsub.auth.service
 
-import org.springframework.util.Base64Utils
 import java.nio.charset.StandardCharsets
 import java.security.Key
 import java.security.KeyFactory
@@ -11,6 +10,7 @@ import java.security.PublicKey
 import java.security.Signature
 import java.security.spec.PKCS8EncodedKeySpec
 import java.security.spec.X509EncodedKeySpec
+import java.util.Base64
 import javax.crypto.Cipher
 import kotlin.reflect.KClass
 import kotlin.reflect.full.declaredMemberProperties
@@ -28,21 +28,21 @@ object CryptRsaUtil {
 		Cipher.getInstance(ALGORITHM)
 			.apply { init(Cipher.ENCRYPT_MODE, key) }
 			.doFinal(plaintext.toByteArray(StandardCharsets.UTF_8))
-			.let { Base64Utils.encodeToString(it) }
+			.let { Base64.getEncoder().encodeToString(it) }
 
 	fun decrypt(ciphertext: String, key: Key): String =
 		Cipher.getInstance(ALGORITHM)
 			.apply { init(Cipher.DECRYPT_MODE, key) }
-			.doFinal(Base64Utils.decodeFromString(ciphertext))
+			.doFinal(Base64.getDecoder().decode(ciphertext))
 			.let { String(it, StandardCharsets.UTF_8) }
 
 	fun retrievePrivateKey(privateKeyBase64: String): PrivateKey {
-		val bytes = Base64Utils.decodeFromString(privateKeyBase64)
+		val bytes = Base64.getDecoder().decode(privateKeyBase64)
 		return KeyFactory.getInstance(ALGORITHM).generatePrivate(PKCS8EncodedKeySpec(bytes))
 	}
 
 	fun retrievePublicKey(privateKeyBase64: String): PublicKey {
-		val bytes = Base64Utils.decodeFromString(privateKeyBase64)
+		val bytes = Base64.getDecoder().decode(privateKeyBase64)
 		return KeyFactory.getInstance(ALGORITHM).generatePublic(X509EncodedKeySpec(bytes))
 	}
 
@@ -85,11 +85,11 @@ object CryptRsaUtil {
 			.apply { initSign(key) }
 			.apply { update(text.toByteArray()) }
 			.sign()
-			.let { Base64Utils.encodeToString(it) }
+			.let { Base64.getEncoder().encodeToString(it) }
 
 	fun verify(text: String, signature: String, key: PublicKey): Boolean =
 		Signature.getInstance("SHA256withRSA")
 			.apply { initVerify(key) }
 			.apply { update(text.toByteArray()) }
-			.verify(Base64Utils.decodeFromString(signature))
+			.verify(Base64.getDecoder().decode(signature))
 }

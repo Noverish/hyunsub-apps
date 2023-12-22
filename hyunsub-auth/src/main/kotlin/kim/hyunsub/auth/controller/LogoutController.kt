@@ -1,5 +1,6 @@
 package kim.hyunsub.auth.controller
 
+import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.auth.model.LogoutResult
 import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.common.annotation.HyunsubCors
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import javax.servlet.http.HttpServletResponse
 
 @IgnoreAuthorize
 @RestController

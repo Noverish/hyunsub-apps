@@ -1,6 +1,7 @@
 package kim.hyunsub.auth.controller
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.model.Profile
 import kim.hyunsub.auth.model.dto.ProfileUpdateParams
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/v1/profile")

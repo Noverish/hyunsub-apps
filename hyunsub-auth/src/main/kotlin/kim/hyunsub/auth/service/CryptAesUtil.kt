@@ -1,9 +1,9 @@
 package kim.hyunsub.auth.service
 
-import org.springframework.util.Base64Utils
 import java.nio.charset.StandardCharsets
 import java.security.Key
 import java.security.SecureRandom
+import java.util.Base64
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
@@ -25,22 +25,22 @@ object CryptAesUtil {
 			.let { IvParameterSpec(it) }
 
 	fun retrieveKey(keyBase64: String): SecretKeySpec {
-		return SecretKeySpec(Base64Utils.decodeFromString(keyBase64), ALGORITHM)
+		return SecretKeySpec(Base64.getDecoder().decode(keyBase64), ALGORITHM)
 	}
 
 	fun retrieveIv(ivBase64: String): IvParameterSpec {
-		return IvParameterSpec(Base64Utils.decodeFromString(ivBase64))
+		return IvParameterSpec(Base64.getDecoder().decode(ivBase64))
 	}
 
 	fun encrypt(plaintext: String, key: Key, iv: IvParameterSpec? = null): String =
 		Cipher.getInstance(TRANSFORMATION)
 			.also { it.init(Cipher.ENCRYPT_MODE, key, iv) }
 			.doFinal(plaintext.toByteArray(StandardCharsets.UTF_8))
-			.run { Base64Utils.encodeToString(this) }
+			.run { Base64.getEncoder().encodeToString(this) }
 
 	fun decrypt(ciphertext: String, key: Key, iv: IvParameterSpec? = null): String =
 		Cipher.getInstance(TRANSFORMATION)
 			.also { it.init(Cipher.DECRYPT_MODE, key, iv) }
-			.doFinal(Base64Utils.decodeFromString(ciphertext))
+			.doFinal(Base64.getDecoder().decode(ciphertext))
 			.let { String(it, StandardCharsets.UTF_8) }
 }

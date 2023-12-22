@@ -2,6 +2,7 @@ package kim.hyunsub.common.web.config
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import jakarta.servlet.http.HttpServletRequest
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.common.web.model.UserAuth
@@ -10,7 +11,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
-import javax.servlet.http.HttpServletRequest
 
 class UserAuthArgumentResolver : HandlerMethodArgumentResolver {
 	private val mapper = jacksonObjectMapper()

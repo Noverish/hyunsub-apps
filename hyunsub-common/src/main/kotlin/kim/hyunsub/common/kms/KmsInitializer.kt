@@ -2,21 +2,31 @@ package kim.hyunsub.common.kms
 
 import mu.KotlinLogging
 import org.springframework.core.env.ConfigurableEnvironment
+import org.springframework.core.env.EnumerablePropertySource
 import org.springframework.core.env.Environment
 
 class KmsInitializer(
 	environment: Environment,
-	kmsProperties: KmsProperties,
 ) {
 	private val log = KotlinLogging.logger { }
 
 	init {
-		val profile = kmsProperties.profile
-		val keyId = kmsProperties.keyId
+		init(environment as ConfigurableEnvironment)
+	}
 
-		val properties = kmsProperties.properties.values.flatMap { it.split(",") }
+	private fun init(env: ConfigurableEnvironment) {
+		val profile = env.getProperty("kms.profile") ?: return
+		val keyId = env.getProperty("kms.key-id") ?: return
+		val properties = env.propertySources
+			.mapNotNull { it as? EnumerablePropertySource }
+			.flatMap { it.propertyNames.toList() }
+			.filter { it.startsWith("kms.properties.") }
+			.mapNotNull { env.getProperty(it) }
+			.flatMap { it.split(",") }
+			.map { it.trim() }
+
 		for (property in properties) {
-			val encrypted = (environment as? ConfigurableEnvironment)?.getProperty(property) ?: continue
+			val encrypted = env.getProperty(property) ?: continue
 			log.debug("KMS Properties: {} - {}", property, encrypted)
 			val decrypted = KmsEncryptor.decrypt(profile, keyId, encrypted)
 			log.debug("KMS Properties: {} - {}", property, decrypted)

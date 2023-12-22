@@ -1,5 +1,7 @@
 package kim.hyunsub.common.web.interceptor
 
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import mu.KotlinLogging
 import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.util.ContentCachingRequestWrapper
@@ -7,8 +9,6 @@ import org.springframework.web.util.ContentCachingResponseWrapper
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream
 import java.io.InputStreamReader
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 class WebLoggingInterceptor : HandlerInterceptor {
 	private val log = KotlinLogging.logger { }

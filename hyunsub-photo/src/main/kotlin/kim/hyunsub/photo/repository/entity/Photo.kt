@@ -1,5 +1,11 @@
 package kim.hyunsub.photo.repository.entity
 
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
@@ -9,12 +15,6 @@ import kim.hyunsub.photo.util.isVideo
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.EnumType
-import javax.persistence.Enumerated
-import javax.persistence.Id
-import javax.persistence.Table
 
 @Entity
 @Table(name = "photo")

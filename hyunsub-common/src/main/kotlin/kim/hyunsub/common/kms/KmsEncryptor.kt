@@ -5,9 +5,9 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.kms.AWSKMSClientBuilder
 import com.amazonaws.services.kms.model.DecryptRequest
 import com.amazonaws.services.kms.model.EncryptRequest
-import org.springframework.util.Base64Utils
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
+import java.util.Base64
 
 object KmsEncryptor {
 	fun encrypt(profile: String, keyId: String, text: String): String {
@@ -21,7 +21,7 @@ object KmsEncryptor {
 		request.withPlaintext(ByteBuffer.wrap(text.toByteArray(StandardCharsets.UTF_8)))
 
 		val cipherBytes = kmsClient.encrypt(request).ciphertextBlob.array()
-		return Base64Utils.encodeToString(cipherBytes)
+		return Base64.getEncoder().encodeToString(cipherBytes)
 	}
 
 	fun decrypt(profile: String, keyId: String, cipher: String): String {
@@ -32,7 +32,7 @@ object KmsEncryptor {
 
 		val request = DecryptRequest()
 		request.withKeyId(keyId)
-		request.withCiphertextBlob(ByteBuffer.wrap(Base64Utils.decodeFromString(cipher)))
+		request.withCiphertextBlob(ByteBuffer.wrap(Base64.getDecoder().decode(cipher)))
 
 		val textBytes = kmsClient.decrypt(request).plaintext.array()
 		return String(textBytes)

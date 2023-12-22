@@ -1,11 +1,11 @@
 package kim.hyunsub.auth.service
 
+import jakarta.servlet.http.Cookie
 import kim.hyunsub.auth.config.AuthConstants
 import kim.hyunsub.auth.config.TokenProperties
 import kim.hyunsub.auth.model.UserLanguage
 import kim.hyunsub.common.web.config.WebConstants
 import org.springframework.stereotype.Service
-import javax.servlet.http.Cookie
 
 @Service
 class CookieGenerator(

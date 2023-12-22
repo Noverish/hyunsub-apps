@@ -1,5 +1,6 @@
 package kim.hyunsub.auth.controller.auth
 
+import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.auth.model.LoginApiParams
 import kim.hyunsub.auth.model.LoginParams
 import kim.hyunsub.auth.model.LoginResult
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletResponse
 
 @IgnoreAuthorize
 @RestController

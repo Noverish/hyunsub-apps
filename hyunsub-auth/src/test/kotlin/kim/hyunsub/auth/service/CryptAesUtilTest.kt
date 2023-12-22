@@ -2,7 +2,7 @@ package kim.hyunsub.auth.service
 
 import io.kotest.core.spec.style.FreeSpec
 import io.kotest.matchers.shouldBe
-import org.springframework.util.Base64Utils
+import java.util.Base64
 
 class CryptAesUtilTest : FreeSpec({
 	val key = CryptAesUtil.generateKey()
@@ -22,8 +22,8 @@ class CryptAesUtilTest : FreeSpec({
 	}
 
 	"base64" {
-		val keyBase64 = Base64Utils.encodeToString(key.encoded)
-		val ivBase64 = Base64Utils.encodeToString(iv.iv)
+		val keyBase64 = Base64.getEncoder().encodeToString(key.encoded)
+		val ivBase64 = Base64.getEncoder().encodeToString(iv.iv)
 		val retrievedKey = CryptAesUtil.retrieveKey(keyBase64)
 		val retrievedIv = CryptAesUtil.retrieveIv(ivBase64)
 

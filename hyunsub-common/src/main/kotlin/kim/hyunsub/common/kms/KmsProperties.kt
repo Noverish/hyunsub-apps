@@ -1,8 +1,9 @@
 package kim.hyunsub.common.kms
 
-// TODO make properties to `val`
+import org.springframework.boot.context.properties.ConfigurationProperties
+
+@ConfigurationProperties("kms")
 data class KmsProperties(
-	var profile: String = "",
-	var keyId: String = "",
-	var properties: Map<String, String> = mutableMapOf(),
+	val profile: String,
+	val keyId: String,
 )

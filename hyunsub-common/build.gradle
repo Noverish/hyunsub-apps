@@ -1,5 +1,6 @@
 dependencies {
-    implementation 'com.amazonaws:aws-java-sdk-kms:1.12.233'
+    implementation 'com.amazonaws:aws-java-sdk-kms:1.12.429'
+    implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359' // 없으면 KMS 에서 Warning 이 나온다.
 
     testImplementation project(':hyunsub-test')
 }

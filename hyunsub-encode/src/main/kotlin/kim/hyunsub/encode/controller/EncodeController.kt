@@ -1,5 +1,6 @@
 package kim.hyunsub.encode.controller
 
+import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.common.fs.model.EncodeParams
 import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.encode.model.EncodeStatus
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Sinks
-import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api/v1/encode")

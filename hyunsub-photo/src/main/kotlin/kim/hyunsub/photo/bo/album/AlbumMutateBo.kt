@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.bo.album
 
+import jakarta.transaction.Transactional
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.mapper.AlbumMapper
@@ -13,7 +14,6 @@ import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
 import kim.hyunsub.photo.repository.generateId
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 
 @Service
 class AlbumMutateBo(

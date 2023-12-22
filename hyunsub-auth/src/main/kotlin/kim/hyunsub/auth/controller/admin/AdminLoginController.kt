@@ -1,5 +1,6 @@
 package kim.hyunsub.auth.controller.admin
 
+import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.service.CookieGenerator
 import kim.hyunsub.auth.service.TokenService
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import javax.servlet.http.HttpServletResponse
 
 @Authorized(["admin"])
 @RestController

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JacksonException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.security.SignatureException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.auth.repository.UserRepository
 import kim.hyunsub.auth.service.TokenService
 import kim.hyunsub.auth.service.UserAuthService
@@ -26,8 +28,6 @@ import java.net.URL
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
 
 @IgnoreAuthorize
 @RestController
@@ -50,7 +50,7 @@ class NginxAuthController(
 		@RequestHeader("X-Original-IP") originalIp: String,
 		@RequestHeader("X-Original-Method", required = false) originalMethod: String?,
 	) {
-		if (HttpMethod.OPTIONS.name.equals(originalMethod, ignoreCase = true)) {
+		if (HttpMethod.OPTIONS.name().equals(originalMethod, ignoreCase = true)) {
 			response.status = HttpStatus.OK.value()
 			response.setHeader(WebConstants.USER_AUTH_HEADER, "")
 			return
@@ -98,7 +98,7 @@ class NginxAuthController(
 		@RequestHeader("X-Original-Method", required = false) originalMethod: String?,
 		@RequestHeader("X-Original-Referer", required = false) originalReferer: String?,
 	) {
-		if (HttpMethod.OPTIONS.name.equals(originalMethod, ignoreCase = true)) {
+		if (HttpMethod.OPTIONS.name().equals(originalMethod, ignoreCase = true)) {
 			response.status = HttpStatus.OK.value()
 			response.setHeader(WebConstants.USER_AUTH_HEADER, "")
 			return

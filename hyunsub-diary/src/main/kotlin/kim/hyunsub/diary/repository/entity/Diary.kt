@@ -1,13 +1,12 @@
 package kim.hyunsub.diary.repository.entity
 
-import org.hibernate.annotations.Type
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.IdClass
+import jakarta.persistence.Table
 import java.io.Serializable
 import java.time.LocalDate
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.IdClass
-import javax.persistence.Table
 
 @Entity
 @Table(name = "diary")
@@ -22,7 +21,6 @@ data class Diary(
 	@Column(nullable = false)
 	val summary: String,
 
-	@Type(type = "text")
 	@Column(nullable = false)
 	val content: String,
 

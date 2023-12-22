@@ -2,12 +2,11 @@ package kim.hyunsub.photo.repository.entity
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import org.hibernate.annotations.Type
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import java.time.LocalDateTime
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.Id
-import javax.persistence.Table
 
 @Entity
 @Table(name = "photo_metadata")
@@ -42,7 +41,6 @@ data class PhotoMetadata(
 	@Column
 	val OffsetTimeDigitized: String?,
 
-	@Type(type = "text")
 	@Column(nullable = false)
 	val raw: String,
 

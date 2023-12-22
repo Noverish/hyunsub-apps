@@ -1,7 +1,7 @@
 package kim.hyunsub.auth.repository.converter
 
+import jakarta.persistence.AttributeConverter
 import kim.hyunsub.auth.model.UserLanguage
-import javax.persistence.AttributeConverter
 
 class UserLanguageConverter : AttributeConverter<UserLanguage, String> {
 	override fun convertToDatabaseColumn(attribute: UserLanguage?): String? =

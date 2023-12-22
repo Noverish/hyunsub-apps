@@ -1,5 +1,6 @@
 package kim.hyunsub.video.service
 
+import jakarta.transaction.Transactional
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.web.error.ErrorCode
@@ -12,7 +13,6 @@ import kim.hyunsub.video.repository.VideoSubtitleRepository
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import javax.transaction.Transactional
 
 @Service
 class EntryMoveService(

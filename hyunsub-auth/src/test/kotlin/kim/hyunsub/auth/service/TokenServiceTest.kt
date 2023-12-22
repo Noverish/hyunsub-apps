@@ -9,15 +9,15 @@ import io.mockk.mockk
 import kim.hyunsub.auth.config.TokenProperties
 import kim.hyunsub.auth.repository.entity.User
 import kim.hyunsub.test.monkey
-import org.springframework.util.Base64Utils
 import java.time.Duration
+import java.util.Base64
 
 class TokenServiceTest : FreeSpec({
 	val userAuthService: UserAuthService = mockk()
 	val keyPair = CryptEccUtil.generateKeyPair()
 	val tokenProperties = TokenProperties(
-		private = Base64Utils.encodeToString(keyPair.private.encoded),
-		public = Base64Utils.encodeToString(keyPair.public.encoded),
+		private = Base64.getEncoder().encodeToString(keyPair.private.encoded),
+		public = Base64.getEncoder().encodeToString(keyPair.public.encoded),
 		duration = Duration.ofHours(1),
 	)
 	val service = TokenService(tokenProperties, userAuthService)

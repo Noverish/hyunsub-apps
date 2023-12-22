@@ -3,7 +3,7 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <springProperty name="logging.file.path" source="logging.file.path"/>
-    <springProperty name="logging.level.kim.hyunsub" source="logging.level.kim.hyunsub"/>
+    <springProperty name="logging.level.kim.hyunsub.common.kms" source="logging.level.kim.hyunsub.common.kms"/>
     <springProperty name="logging.log.appender" source="logging.log.appender"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -27,7 +27,11 @@
         <appender-ref ref="${logging.log.appender}"/>
     </logger>
 
-    <logger name="kim.hyunsub" level="${logging.level.kim.hyunsub}" additivity="false">
+    <logger name="kim.hyunsub" level="DEBUG" additivity="false">
+        <appender-ref ref="${logging.log.appender}"/>
+    </logger>
+
+    <logger name="kim.hyunsub.common.kms" level="${logging.level.kim.hyunsub.common.kms}" additivity="false">
         <appender-ref ref="${logging.log.appender}"/>
     </logger>
 
