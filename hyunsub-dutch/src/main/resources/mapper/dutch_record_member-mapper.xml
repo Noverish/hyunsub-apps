@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.dutch.mapper.DutchRecordMemberMapper">
+    <select id="selectList" resultType="DutchRecordMember">
+        SELECT *
+        FROM dutch_record_member
+        WHERE record_id = #{recordId}
+    </select>
+
+    <select id="selectOne" resultType="DutchRecordMember">
+        SELECT *
+        FROM dutch_record_member
+        WHERE record_id = #{recordId} AND member_id = #{memberId}
+    </select>
+
+    <delete id="deleteByTripId">
+        DELETE a
+        FROM dutch_record_member a
+        INNER JOIN dutch_record b ON b.id = a.record_id
+        WHERE b.trip_id = #{tripId}
+    </delete>
+
+    <delete id="deleteByRecordId">
+        DELETE
+        FROM dutch_record_member
+        WHERE record_id = #{recordId}
+    </delete>
+</mapper>
