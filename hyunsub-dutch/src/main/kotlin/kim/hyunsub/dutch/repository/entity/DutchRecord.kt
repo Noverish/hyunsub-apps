@@ -2,8 +2,11 @@ package kim.hyunsub.dutch.repository.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import kim.hyunsub.dutch.model.DutchCurrency
 import java.time.LocalDateTime
 
 @Entity
@@ -19,7 +22,8 @@ data class DutchRecord(
 	val location: String,
 
 	@Column(nullable = false)
-	val currency: String,
+	@Enumerated(EnumType.STRING)
+	val currency: DutchCurrency,
 
 	@Column(nullable = false)
 	val date: LocalDateTime,

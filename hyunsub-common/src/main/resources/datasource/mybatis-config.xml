@@ -5,4 +5,7 @@
     <settings>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+    <typeHandlers>
+        <typeHandler handler="kim.hyunsub.dutch.model.DutchCurrencyTypeHandler"/>
+    </typeHandlers>
 </configuration>
