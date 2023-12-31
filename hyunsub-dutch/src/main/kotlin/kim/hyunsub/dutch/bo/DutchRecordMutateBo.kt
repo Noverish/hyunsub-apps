@@ -56,11 +56,6 @@ class DutchRecordMutateBo(
 		return record.toApi()
 	}
 
-	fun deleteAll(tripId: String) {
-		dutchRecordMemberMapper.deleteByTripId(tripId)
-		dutchRecordMapper.deleteByTripId(tripId)
-	}
-
 	fun delete(tripId: String, recordId: String): ApiDutchRecord {
 		val record = dutchRecordMapper.selectOne(tripId, recordId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such record: $recordId")

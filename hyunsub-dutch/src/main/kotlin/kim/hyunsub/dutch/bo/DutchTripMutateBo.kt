@@ -28,6 +28,7 @@ class DutchTripMutateBo(
 		val trip = DutchTrip(
 			id = dutchTripRepository.generateId(),
 			name = params.name,
+			currency = params.currency,
 		)
 
 		val members = params.members.map {
