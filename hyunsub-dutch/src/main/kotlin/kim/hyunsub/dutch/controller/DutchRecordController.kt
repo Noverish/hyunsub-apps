@@ -1,5 +1,6 @@
 package kim.hyunsub.dutch.controller
 
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchRecordMutateBo
 import kim.hyunsub.dutch.mapper.DutchRecordMapper
@@ -26,6 +27,15 @@ class DutchRecordController(
 		@PathVariable tripId: String,
 	): List<ApiDutchRecord> {
 		return dutchRecordMapper.selectList(tripId).map { it.toApi() }
+	}
+
+	@DeleteMapping("")
+	fun deleteAll(
+		userAuth: UserAuth,
+		@PathVariable tripId: String,
+	): SimpleResponse {
+		dutchRecordMutateBo.deleteAll(tripId)
+		return SimpleResponse()
 	}
 
 	@GetMapping("/{recordId}")

@@ -6,6 +6,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.IdClass
 import jakarta.persistence.Table
 import java.io.Serializable
+import java.math.BigDecimal
 import java.time.LocalDateTime
 
 @Entity
@@ -18,11 +19,11 @@ data class DutchRecordMember(
 	@Id
 	val memberId: String,
 
-	@Column(nullable = false)
-	val actual: Int,
+	@Column(nullable = false, precision = 12, scale = 2)
+	val actual: BigDecimal,
 
-	@Column(nullable = false)
-	val should: Int,
+	@Column(nullable = false, precision = 12, scale = 2)
+	val should: BigDecimal,
 
 	@Column(nullable = false)
 	val regDt: LocalDateTime = LocalDateTime.now().withNano(0),

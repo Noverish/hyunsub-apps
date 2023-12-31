@@ -15,6 +15,7 @@ import kim.hyunsub.dutch.repository.generateId
 import kim.hyunsub.dutch.service.DutchMemberService
 import kim.hyunsub.dutch.service.DutchRecordMemberService
 import org.springframework.stereotype.Service
+import java.math.BigDecimal
 
 @Service
 class DutchRecordMutateBo(
@@ -38,19 +39,26 @@ class DutchRecordMutateBo(
 			tripId = tripId,
 		)
 
-		val members = params.members.map {
-			DutchRecordMember(
-				recordId = record.id,
-				memberId = it.memberId,
-				actual = it.actual,
-				should = it.should,
-			)
-		}
+		val members = params.members
+			.filter { it.actual != 0.0 || it.should != 0.0 }
+			.map {
+				DutchRecordMember(
+					recordId = record.id,
+					memberId = it.memberId,
+					actual = BigDecimal(it.actual),
+					should = BigDecimal(it.should),
+				)
+			}
 
 		dutchRecordRepository.save(record)
 		dutchRecordMemberRepository.saveAll(members)
 
 		return record.toApi()
+	}
+
+	fun deleteAll(tripId: String) {
+		dutchRecordMemberMapper.deleteByTripId(tripId)
+		dutchRecordMapper.deleteByTripId(tripId)
 	}
 
 	fun delete(tripId: String, recordId: String): ApiDutchRecord {

@@ -14,6 +14,14 @@
         WHERE record_id = #{recordId} AND member_id = #{memberId}
     </select>
 
+    <select id="settle" resultType="DutchSettleMemberTempResult">
+        SELECT a.member_id, SUM(a.actual) AS actual, SUM(a.should) AS should
+        FROM dutch_record_member a
+        INNER JOIN dutch_record b ON b.id = a.record_id
+        WHERE b.trip_id = #{tripId}
+        GROUP BY a.member_id;
+    </select>
+
     <delete id="deleteByTripId">
         DELETE a
         FROM dutch_record_member a

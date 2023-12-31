@@ -7,7 +7,7 @@ import org.apache.ibatis.type.MappedTypes
 
 enum class DutchCurrency : DatabaseEnum {
 	KRW,
-	JPN,
+	JPY,
 	USD,
 	CNY,
 	TWD,
