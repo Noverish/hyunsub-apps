@@ -32,7 +32,7 @@
         GROUP BY a.member_id;
     </select>
 
-    <insert id="insert">
+    <insert id="insertAll">
         INSERT INTO dutch_record_member
         (record_id, member_id, actual, should, reg_dt) VALUES
         <foreach collection="entities" item="v" separator=",">
