@@ -14,6 +14,31 @@
         WHERE id = #{recordId} AND trip_id = #{tripId}
     </select>
 
+    <select id="count" resultType="Int">
+        SELECT COUNT(*)
+        FROM dutch_record
+        <trim prefix="WHERE" prefixOverrides="AND">
+            trip_id = #{tripId}
+            <if test="query != null">
+                <bind name="pattern" value="'%' + query + '%'" />
+                AND (content LIKE #{pattern} OR location LIKE #{pattern})
+            </if>
+        </trim>
+    </select>
+
+    <select id="search" resultType="DutchRecord">
+        SELECT *
+        FROM dutch_record
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="query != null">
+                <bind name="pattern" value="'%' + query + '%'" />
+                AND (content LIKE #{pattern} OR location LIKE #{pattern})
+            </if>
+        </trim>
+        ORDER BY `date` DESC
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
     <delete id="deleteByTripId">
         DELETE
         FROM dutch_record

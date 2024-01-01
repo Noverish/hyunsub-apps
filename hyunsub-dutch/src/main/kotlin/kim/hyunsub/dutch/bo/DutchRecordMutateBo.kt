@@ -5,26 +5,24 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchRecordMapper
 import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
 import kim.hyunsub.dutch.model.api.ApiDutchRecord
-import kim.hyunsub.dutch.model.api.toApi
 import kim.hyunsub.dutch.model.dto.DutchRecordCreateParams
-import kim.hyunsub.dutch.repository.DutchRecordMemberRepository
 import kim.hyunsub.dutch.repository.DutchRecordRepository
 import kim.hyunsub.dutch.repository.entity.DutchRecord
 import kim.hyunsub.dutch.repository.entity.DutchRecordMember
 import kim.hyunsub.dutch.repository.generateId
 import kim.hyunsub.dutch.service.DutchMemberService
 import kim.hyunsub.dutch.service.DutchRecordMemberService
+import kim.hyunsub.dutch.service.DutchRecordService
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 
 @Service
 class DutchRecordMutateBo(
 	private val dutchRecordRepository: DutchRecordRepository,
 	private val dutchRecordMapper: DutchRecordMapper,
-	private val dutchRecordMemberRepository: DutchRecordMemberRepository,
 	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
 	private val dutchMemberService: DutchMemberService,
 	private val dutchRecordMemberService: DutchRecordMemberService,
+	private val dutchRecordService: DutchRecordService,
 ) {
 	fun create(tripId: String, params: DutchRecordCreateParams): ApiDutchRecord {
 		dutchMemberService.validateMemberIds(tripId, params.members.map { it.memberId })
@@ -45,15 +43,15 @@ class DutchRecordMutateBo(
 				DutchRecordMember(
 					recordId = record.id,
 					memberId = it.memberId,
-					actual = BigDecimal(it.actual),
-					should = BigDecimal(it.should),
+					actual = it.actual,
+					should = it.should,
 				)
 			}
 
 		dutchRecordRepository.save(record)
-		dutchRecordMemberRepository.saveAll(members)
+		dutchRecordMemberMapper.insertAll(members)
 
-		return record.toApi()
+		return dutchRecordService.convertToApi(record)
 	}
 
 	fun delete(tripId: String, recordId: String): ApiDutchRecord {
@@ -63,6 +61,6 @@ class DutchRecordMutateBo(
 		dutchRecordMemberMapper.deleteByRecordId(recordId)
 		dutchRecordRepository.delete(record)
 
-		return record.toApi()
+		return dutchRecordService.convertToApi(record)
 	}
 }

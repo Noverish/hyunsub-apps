@@ -2,16 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.dutch.mapper.DutchRecordMemberMapper">
-    <select id="selectList" resultType="DutchRecordMember">
-        SELECT *
-        FROM dutch_record_member
-        WHERE record_id = #{recordId}
+    <select id="selectByRecordId" resultType="DutchRecordMemberWithName">
+        SELECT a.*, b.name
+        FROM dutch_record_member a
+        INNER JOIN dutch_member b ON b.id = a.member_id
+        WHERE a.record_id = #{recordId}
     </select>
 
-    <select id="selectOne" resultType="DutchRecordMember">
-        SELECT *
-        FROM dutch_record_member
-        WHERE record_id = #{recordId} AND member_id = #{memberId}
+    <select id="selectByRecordIds" resultType="DutchRecordMemberWithName">
+        SELECT a.*, b.name
+        FROM dutch_record_member a
+        INNER JOIN dutch_member b ON b.id = a.member_id
+        WHERE a.record_id IN
+        <foreach collection="recordIds" item="v" separator="," open="(" close=")">#{v}</foreach>
+    </select>
+
+    <select id="selectOne" resultType="DutchRecordMemberWithName">
+        SELECT a.*, b.name
+        FROM dutch_record_member a
+        INNER JOIN dutch_member b ON b.id = a.member_id
+        WHERE a.record_id = #{recordId} AND a.member_id = #{memberId}
     </select>
 
     <select id="settle" resultType="DutchSettleMemberTempResult">
@@ -21,6 +31,14 @@
         WHERE b.trip_id = #{tripId}
         GROUP BY a.member_id;
     </select>
+
+    <insert id="insert">
+        INSERT INTO dutch_record_member
+        (record_id, member_id, actual, should, reg_dt) VALUES
+        <foreach collection="entities" item="v" separator=",">
+            (#{v.recordId}, #{v.memberId}, #{v.actual}, #{v.should}, NOW())
+        </foreach>
+    </insert>
 
     <delete id="deleteByTripId">
         DELETE a

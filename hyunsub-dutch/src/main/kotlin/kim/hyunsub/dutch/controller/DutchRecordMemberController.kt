@@ -2,7 +2,7 @@ package kim.hyunsub.dutch.controller
 
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
-import kim.hyunsub.dutch.repository.entity.DutchRecordMember
+import kim.hyunsub.dutch.repository.entity.DutchRecordMemberWithName
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,8 +17,8 @@ class DutchRecordMemberController(
 	fun list(
 		userAuth: UserAuth,
 		@PathVariable recordId: String,
-	): List<DutchRecordMember> {
-		return dutchRecordMemberMapper.selectList(recordId)
+	): List<DutchRecordMemberWithName> {
+		return dutchRecordMemberMapper.selectByRecordId(recordId)
 	}
 
 	@GetMapping("/{memberId}")
@@ -26,7 +26,7 @@ class DutchRecordMemberController(
 		userAuth: UserAuth,
 		@PathVariable recordId: String,
 		@PathVariable memberId: String,
-	): DutchRecordMember? {
+	): DutchRecordMemberWithName? {
 		return dutchRecordMemberMapper.selectOne(recordId, memberId)
 	}
 }
