@@ -3,7 +3,8 @@ package kim.hyunsub.dutch.controller
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchRecordSearchBo
-import kim.hyunsub.dutch.model.api.ApiDutchRecord
+import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
+import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
 import kim.hyunsub.dutch.model.dto.DutchSearchParams
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +20,7 @@ class DutchRecordSearchController(
 	fun search(
 		userAuth: UserAuth,
 		@RequestBody params: DutchSearchParams,
-	): ApiPageResult<ApiDutchRecord> {
+	): ApiPageResult<ApiDutchRecordPreview> {
 		return dutchRecordSearchBo.search(params)
 	}
 
@@ -28,7 +29,7 @@ class DutchRecordSearchController(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 		@PathVariable recordId: String,
-	): ApiDutchRecord? {
+	): ApiDutchRecordDetail? {
 		return dutchRecordSearchBo.detail(tripId, recordId)
 	}
 }

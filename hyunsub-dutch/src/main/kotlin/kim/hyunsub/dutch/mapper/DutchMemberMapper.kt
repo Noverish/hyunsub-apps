@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface DutchMemberMapper {
-	fun selectList(tripId: String): List<DutchMember>
+	fun selectByTripId(tripId: String): List<DutchMember>
+	fun selectByIds(ids: List<String>): List<DutchMember>
+
 	fun deleteByTripId(tripId: String): Int
 }

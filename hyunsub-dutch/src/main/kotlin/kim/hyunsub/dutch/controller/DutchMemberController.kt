@@ -19,6 +19,6 @@ class DutchMemberController(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 	): List<ApiDutchMember> {
-		return dutchMemberMapper.selectList(tripId).map { it.toApi() }
+		return dutchMemberMapper.selectByTripId(tripId).map { it.toApi() }
 	}
 }

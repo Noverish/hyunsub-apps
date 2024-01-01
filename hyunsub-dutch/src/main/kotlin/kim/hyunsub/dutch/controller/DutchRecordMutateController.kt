@@ -2,7 +2,8 @@ package kim.hyunsub.dutch.controller
 
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchRecordMutateBo
-import kim.hyunsub.dutch.model.api.ApiDutchRecord
+import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
+import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
 import kim.hyunsub.dutch.model.dto.DutchRecordCreateParams
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -21,7 +22,7 @@ class DutchRecordMutateController(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 		@RequestBody params: DutchRecordCreateParams,
-	): ApiDutchRecord {
+	): ApiDutchRecordDetail {
 		return dutchRecordMutateBo.create(tripId, params)
 	}
 
@@ -30,7 +31,7 @@ class DutchRecordMutateController(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 		@PathVariable recordId: String,
-	): ApiDutchRecord {
+	): ApiDutchRecordPreview {
 		return dutchRecordMutateBo.delete(tripId, recordId)
 	}
 }
