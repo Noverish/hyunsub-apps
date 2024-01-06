@@ -6,6 +6,6 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
     <typeHandlers>
-        <typeHandler handler="kim.hyunsub.dutch.model.DutchCurrencyTypeHandler"/>
+        <package name="kim.hyunsub.*.model"/>
     </typeHandlers>
 </configuration>
