@@ -8,7 +8,7 @@ import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
 import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
 import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
 import kim.hyunsub.dutch.model.api.toApi
-import kim.hyunsub.dutch.model.dto.DutchSearchParams
+import kim.hyunsub.dutch.model.dto.DutchRecordSearchParams
 import kim.hyunsub.dutch.repository.DutchTripRepository
 import kim.hyunsub.dutch.service.DutchRecordService
 import org.springframework.data.repository.findByIdOrNull
@@ -21,7 +21,7 @@ class DutchRecordSearchBo(
 	private val dutchRecordService: DutchRecordService,
 	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
 ) {
-	fun search(params: DutchSearchParams): ApiPageResult<ApiDutchRecordPreview> {
+	fun search(params: DutchRecordSearchParams): ApiPageResult<ApiDutchRecordPreview> {
 		dutchTripRepository.findByIdOrNull(params.tripId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such trip: ${params.tripId}")
 

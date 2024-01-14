@@ -5,7 +5,7 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchRecordSearchBo
 import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
 import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
-import kim.hyunsub.dutch.model.dto.DutchSearchParams
+import kim.hyunsub.dutch.model.dto.DutchRecordSearchParams
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -19,7 +19,7 @@ class DutchRecordSearchController(
 	@PostMapping("/api/v1/search/records")
 	fun search(
 		userAuth: UserAuth,
-		@RequestBody params: DutchSearchParams,
+		@RequestBody params: DutchRecordSearchParams,
 	): ApiPageResult<ApiDutchRecordPreview> {
 		return dutchRecordSearchBo.search(params)
 	}

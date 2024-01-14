@@ -13,8 +13,15 @@
         SELECT a.*, b.name
         FROM dutch_record_member a
         INNER JOIN dutch_member b ON b.id = a.member_id
-        WHERE a.record_id IN
-        <foreach collection="recordIds" item="v" separator="," open="(" close=")">#{v}</foreach>
+        WHERE
+        <choose>
+            <when test="recordIds.isEmpty()">
+                1 = 0
+            </when>
+            <otherwise>
+                a.record_id IN <foreach collection="recordIds" item="v" separator="," open="(" close=")">#{v}</foreach>
+            </otherwise>
+        </choose>
     </select>
 
     <select id="selectOne" resultType="DutchRecordMemberWithName">

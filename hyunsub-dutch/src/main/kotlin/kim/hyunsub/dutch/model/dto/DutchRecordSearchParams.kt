@@ -1,8 +1,11 @@
 package kim.hyunsub.dutch.model.dto
 
-data class DutchSearchParams(
+import kim.hyunsub.dutch.model.DutchCurrency
+
+data class DutchRecordSearchParams(
 	val tripId: String,
 	val query: String?,
+	val currency: DutchCurrency?,
 	val page: Int?,
 	val pageSize: Int?,
 ) {

@@ -18,6 +18,7 @@
         SELECT COUNT(*)
         FROM dutch_record
         WHERE trip_id = #{tripId}
+        <if test="currency != null">AND currency = #{currency}</if>
         <if test="query != null">
             <bind name="pattern" value="'%' + query + '%'" />
             AND (content LIKE #{pattern} OR location LIKE #{pattern})
@@ -28,6 +29,7 @@
         SELECT *
         FROM dutch_record
         WHERE trip_id = #{tripId}
+        <if test="currency != null">AND currency = #{currency}</if>
         <if test="query != null">
             <bind name="pattern" value="'%' + query + '%'" />
             AND (content LIKE #{pattern} OR location LIKE #{pattern})
