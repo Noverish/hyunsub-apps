@@ -4,13 +4,12 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchRecordMapper
 import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
+import kim.hyunsub.dutch.mapper.generateId
 import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
 import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
 import kim.hyunsub.dutch.model.dto.DutchRecordParams
-import kim.hyunsub.dutch.repository.DutchRecordRepository
 import kim.hyunsub.dutch.repository.entity.DutchRecord
 import kim.hyunsub.dutch.repository.entity.DutchRecordMember
-import kim.hyunsub.dutch.repository.generateId
 import kim.hyunsub.dutch.service.DutchMemberService
 import kim.hyunsub.dutch.service.DutchRecordMemberService
 import kim.hyunsub.dutch.service.DutchRecordService
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class DutchRecordMutateBo(
-	private val dutchRecordRepository: DutchRecordRepository,
 	private val dutchRecordMapper: DutchRecordMapper,
 	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
 	private val dutchMemberService: DutchMemberService,
@@ -30,7 +28,7 @@ class DutchRecordMutateBo(
 		dutchRecordMemberService.validateRecordMember(params.members)
 
 		val record = DutchRecord(
-			id = dutchRecordRepository.generateId(),
+			id = dutchRecordMapper.generateId(),
 			content = params.content,
 			location = params.location,
 			currency = params.currency,
@@ -49,7 +47,7 @@ class DutchRecordMutateBo(
 				)
 			}
 
-		dutchRecordRepository.save(record)
+		dutchRecordMapper.insert(record)
 		dutchRecordMemberMapper.insertAll(members)
 
 		return ApiDutchRecordDetail(
@@ -62,7 +60,7 @@ class DutchRecordMutateBo(
 		dutchMemberService.validateMemberIds(tripId, params.members.map { it.memberId })
 		dutchRecordMemberService.validateRecordMember(params.members)
 
-		val record = dutchRecordMapper.selectOne(tripId, recordId)
+		val record = dutchRecordMapper.select(tripId, recordId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such record: $recordId")
 
 		val newRecord = record.copy(
@@ -83,7 +81,7 @@ class DutchRecordMutateBo(
 				)
 			}
 
-		dutchRecordRepository.save(newRecord)
+		dutchRecordMapper.update(newRecord)
 		dutchRecordMemberMapper.deleteByRecordId(recordId)
 		dutchRecordMemberMapper.insertAll(members)
 
@@ -94,11 +92,11 @@ class DutchRecordMutateBo(
 	}
 
 	fun delete(tripId: String, recordId: String): ApiDutchRecordPreview {
-		val record = dutchRecordMapper.selectOne(tripId, recordId)
+		val record = dutchRecordMapper.select(tripId, recordId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such record: $recordId")
 
 		dutchRecordMemberMapper.deleteByRecordId(recordId)
-		dutchRecordRepository.delete(record)
+		dutchRecordMapper.delete(record)
 
 		return dutchRecordService.convertToApi(record)
 	}

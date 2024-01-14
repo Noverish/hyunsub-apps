@@ -25,7 +25,7 @@ class DutchRecordSearchBo(
 		dutchTripRepository.findByIdOrNull(params.tripId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such trip: ${params.tripId}")
 
-		val total = dutchRecordMapper.count(params)
+		val total = dutchRecordMapper.searchCount(params)
 		val data = dutchRecordMapper.search(params)
 			.let { dutchRecordService.convertToApi(it) }
 
@@ -38,7 +38,7 @@ class DutchRecordSearchBo(
 	}
 
 	fun detail(tripId: String, recordId: String): ApiDutchRecordDetail? {
-		val preview = dutchRecordMapper.selectOne(tripId, recordId)
+		val preview = dutchRecordMapper.select(tripId, recordId)
 			?.let { dutchRecordService.convertToApi(it) }
 			?: return null
 

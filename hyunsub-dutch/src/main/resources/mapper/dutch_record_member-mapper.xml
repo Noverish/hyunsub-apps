@@ -16,7 +16,7 @@
         WHERE
         <choose>
             <when test="recordIds.isEmpty()">
-                1 = 0
+                FALSE
             </when>
             <otherwise>
                 a.record_id IN <foreach collection="recordIds" item="v" separator="," open="(" close=")">#{v}</foreach>
@@ -41,7 +41,8 @@
 
     <insert id="insertAll">
         INSERT INTO dutch_record_member
-        (record_id, member_id, actual, should, reg_dt) VALUES
+        (record_id, member_id, actual, should, reg_dt)
+        VALUES
         <foreach collection="entities" item="v" separator=",">
             (#{v.recordId}, #{v.memberId}, #{v.actual}, #{v.should}, NOW())
         </foreach>

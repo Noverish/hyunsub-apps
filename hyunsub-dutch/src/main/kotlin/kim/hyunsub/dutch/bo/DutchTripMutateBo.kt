@@ -5,10 +5,10 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchMemberMapper
 import kim.hyunsub.dutch.mapper.DutchRecordMapper
 import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
+import kim.hyunsub.dutch.mapper.generateId
 import kim.hyunsub.dutch.model.api.ApiDutchTrip
 import kim.hyunsub.dutch.model.api.toApi
 import kim.hyunsub.dutch.model.dto.DutchTripCreateParams
-import kim.hyunsub.dutch.repository.DutchMemberRepository
 import kim.hyunsub.dutch.repository.DutchTripRepository
 import kim.hyunsub.dutch.repository.entity.DutchMember
 import kim.hyunsub.dutch.repository.entity.DutchTrip
@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service
 @Service
 class DutchTripMutateBo(
 	private val dutchTripRepository: DutchTripRepository,
-	private val dutchMemberRepository: DutchMemberRepository,
 	private val dutchMemberMapper: DutchMemberMapper,
 	private val dutchRecordMapper: DutchRecordMapper,
 	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
@@ -33,14 +32,14 @@ class DutchTripMutateBo(
 
 		val members = params.members.map {
 			DutchMember(
-				id = dutchMemberRepository.generateId(),
+				id = dutchMemberMapper.generateId(),
 				name = it,
 				tripId = trip.id,
 			)
 		}
 
 		dutchTripRepository.save(trip)
-		dutchMemberRepository.saveAll(members)
+		dutchMemberMapper.insertAll(members)
 
 		return trip.toApi()
 	}

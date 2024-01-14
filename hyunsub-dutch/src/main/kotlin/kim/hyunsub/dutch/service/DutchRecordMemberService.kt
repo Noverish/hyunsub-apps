@@ -33,7 +33,6 @@ class DutchRecordMemberService(
 				memberId = it.memberId,
 				actual = it.actual,
 				should = it.should,
-				regDt = it.regDt,
 				name = memberNameMap[it.memberId] ?: "",
 			).toApi()
 		}

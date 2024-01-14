@@ -2,19 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.dutch.mapper.DutchRecordMapper">
+    <select id="count">
+        SELECT COUNT(*)
+        FROM dutch_record
+        WHERE id = #{id}
+    </select>
+
+    <select id="select" resultType="DutchRecord">
+        SELECT *
+        FROM dutch_record
+        WHERE id = #{recordId} AND trip_id = #{tripId}
+    </select>
+
     <select id="selectList" resultType="DutchRecord">
         SELECT *
         FROM dutch_record
         WHERE trip_id = #{tripId}
     </select>
 
-    <select id="selectOne" resultType="DutchRecord">
-        SELECT *
-        FROM dutch_record
-        WHERE id = #{recordId} AND trip_id = #{tripId}
-    </select>
-
-    <select id="count" resultType="Int">
+    <select id="searchCount">
         SELECT COUNT(*)
         FROM dutch_record
         WHERE trip_id = #{tripId}
@@ -37,6 +43,28 @@
         ORDER BY `date` DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
+
+    <insert id="insert">
+        INSERT INTO dutch_record
+        (id, content, location, currency, date, trip_id, reg_dt)
+        VALUES
+        (#{id}, #{content}, #{location}, #{currency}, #{date}, #{tripId}, NOW())
+    </insert>
+
+    <update id="update">
+        UPDATE dutch_record
+        SET content = #{content},
+            location = #{location},
+            currency = #{currency},
+            date = #{date}
+        WHERE id = #{id} AND trip_id = #{tripId}
+    </update>
+
+    <delete id="delete">
+        DELETE
+        FROM dutch_record
+        WHERE id = #{id} AND trip_id = #{tripId}
+    </delete>
 
     <delete id="deleteByTripId">
         DELETE

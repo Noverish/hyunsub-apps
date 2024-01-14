@@ -2,6 +2,12 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.dutch.mapper.DutchMemberMapper">
+    <select id="count">
+        SELECT COUNT(*)
+        FROM dutch_member
+        WHERE id = #{id}
+    </select>
+
     <select id="selectByTripId">
         SELECT *
         FROM dutch_member
@@ -11,9 +17,25 @@
     <select id="selectByIds">
         SELECT *
         FROM dutch_member
-        WHERE id IN
-        <foreach collection="ids" item="id" separator="," open="(" close=")">#{id}</foreach>
+        WHERE
+        <choose>
+            <when test="ids.isEmpty()">
+                FALSE
+            </when>
+            <otherwise>
+                id IN <foreach collection="ids" item="id" separator="," open="(" close=")">#{id}</foreach>
+            </otherwise>
+        </choose>
     </select>
+
+    <insert id="insertAll">
+        INSERT INTO dutch_member
+        (id, name, trip_id, reg_dt)
+        VALUES
+        <foreach collection="entities" item="v" separator=",">
+            (#{v.id}, #{v.name}, #{v.tripId}, NOW())
+        </foreach>
+    </insert>
 
     <delete id="deleteByTripId">
         DELETE
