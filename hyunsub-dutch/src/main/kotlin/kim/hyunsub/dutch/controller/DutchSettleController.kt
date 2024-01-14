@@ -20,7 +20,7 @@ class DutchSettleController(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 		@RequestBody params: DutchSettleParams,
-	): DutchSettleResult {
+	): List<DutchSettleResult> {
 		return dutchSettleBo.settle(tripId, params)
 	}
 }
