@@ -5,7 +5,7 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchMemberMapper
 import kim.hyunsub.dutch.model.api.ApiDutchRecordMember
 import kim.hyunsub.dutch.model.api.toApi
-import kim.hyunsub.dutch.model.dto.DutchRecordMemberCreateParams
+import kim.hyunsub.dutch.model.dto.DutchRecordMemberParams
 import kim.hyunsub.dutch.repository.entity.DutchRecordMember
 import kim.hyunsub.dutch.repository.entity.DutchRecordMemberWithName
 import org.springframework.stereotype.Service
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 class DutchRecordMemberService(
 	private val dutchMemberMapper: DutchMemberMapper,
 ) {
-	fun validateRecordMember(members: List<DutchRecordMemberCreateParams>) {
+	fun validateRecordMember(members: List<DutchRecordMemberParams>) {
 		val actualSum = members.sumOf { it.actual }
 		val shouldSum = members.sumOf { it.should }
 		if (actualSum != shouldSum) {
