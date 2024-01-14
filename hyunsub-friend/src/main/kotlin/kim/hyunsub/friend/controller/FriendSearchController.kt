@@ -24,7 +24,7 @@ class FriendSearchController(
 	): ApiPageResult<ApiFriendPreview> {
 		val query = params?.query ?: ""
 		val page = params?.page ?: 0
-		val pageSize = params?.pageSize ?: 10
+		val pageSize = params?.pageSize ?: 48
 
 		val userId = userAuth.idNo
 		val pageRequest = PageRequest.of(page, pageSize)
