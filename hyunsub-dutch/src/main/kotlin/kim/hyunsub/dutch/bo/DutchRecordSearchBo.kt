@@ -5,24 +5,23 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchRecordMapper
 import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
+import kim.hyunsub.dutch.mapper.DutchTripMapper
 import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
 import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
 import kim.hyunsub.dutch.model.api.toApi
 import kim.hyunsub.dutch.model.dto.DutchRecordSearchParams
-import kim.hyunsub.dutch.repository.DutchTripRepository
 import kim.hyunsub.dutch.service.DutchRecordService
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class DutchRecordSearchBo(
-	private val dutchTripRepository: DutchTripRepository,
+	private val dutchTripMapper: DutchTripMapper,
 	private val dutchRecordMapper: DutchRecordMapper,
 	private val dutchRecordService: DutchRecordService,
 	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
 ) {
 	fun search(params: DutchRecordSearchParams): ApiPageResult<ApiDutchRecordPreview> {
-		dutchTripRepository.findByIdOrNull(params.tripId)
+		dutchTripMapper.select(params.tripId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such trip: ${params.tripId}")
 
 		val total = dutchRecordMapper.searchCount(params)

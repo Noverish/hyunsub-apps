@@ -1,12 +1,9 @@
 package kim.hyunsub.dutch.controller
 
 import kim.hyunsub.common.web.model.UserAuth
-import kim.hyunsub.dutch.bo.DutchTripMutateBo
+import kim.hyunsub.dutch.bo.DutchTripBo
 import kim.hyunsub.dutch.model.api.ApiDutchTrip
-import kim.hyunsub.dutch.model.api.toApi
 import kim.hyunsub.dutch.model.dto.DutchTripCreateParams
-import kim.hyunsub.dutch.repository.DutchTripRepository
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,15 +15,14 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/trips")
 class DutchTripController(
-	private val dutchTripRepository: DutchTripRepository,
-	private val dutchTripMutateBo: DutchTripMutateBo,
+	private val dutchTripBo: DutchTripBo,
 ) {
 	@GetMapping("/{tripId}")
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 	): ApiDutchTrip? {
-		return dutchTripRepository.findByIdOrNull(tripId)?.toApi()
+		return dutchTripBo.delete(tripId)
 	}
 
 	@PostMapping("")
@@ -34,7 +30,7 @@ class DutchTripController(
 		userAuth: UserAuth,
 		@RequestBody params: DutchTripCreateParams,
 	): ApiDutchTrip {
-		return dutchTripMutateBo.create(params)
+		return dutchTripBo.create(params)
 	}
 
 	@DeleteMapping("/{tripId}")
@@ -42,6 +38,6 @@ class DutchTripController(
 		userAuth: UserAuth,
 		@PathVariable tripId: String,
 	): ApiDutchTrip {
-		return dutchTripMutateBo.delete(tripId)
+		return dutchTripBo.delete(tripId)
 	}
 }

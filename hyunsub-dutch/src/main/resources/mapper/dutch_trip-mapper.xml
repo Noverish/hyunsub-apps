@@ -13,4 +13,16 @@
         FROM dutch_trip
         WHERE id = #{tripId}
     </select>
+
+    <insert id="insert">
+        INSERT INTO dutch_trip
+        (id, name, currency, reg_dt)
+        VALUES
+        (#{id}, #{name}, #{currency}, NOW())
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM dutch_trip
+        WHERE id = #{tripId}
+    </delete>
 </mapper>
