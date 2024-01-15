@@ -8,6 +8,13 @@
         WHERE id = #{id}
     </select>
 
+    <select id="select">
+        SELECT *
+        FROM dutch_member
+        WHERE id = #{memberId}
+        <if test="tripId != null">AND trip_id = #{tripId}</if>
+    </select>
+
     <select id="selectByTripId">
         SELECT *
         FROM dutch_member
@@ -36,6 +43,13 @@
             (#{v.id}, #{v.name}, #{v.tripId}, NOW())
         </foreach>
     </insert>
+
+    <delete id="delete">
+        DELETE
+        FROM dutch_member
+        WHERE id = #{memberId}
+        <if test="tripId != null">AND trip_id = #{tripId}</if>
+    </delete>
 
     <delete id="deleteByTripId">
         DELETE

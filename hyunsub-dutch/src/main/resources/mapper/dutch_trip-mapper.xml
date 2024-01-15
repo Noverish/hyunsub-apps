@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.dutch.mapper.DutchTripMapper">
+    <select id="count">
+        SELECT COUNT(*)
+        FROM dutch_trip
+        WHERE id = #{id}
+    </select>
+
+    <select id="select">
+        SELECT *
+        FROM dutch_trip
+        WHERE id = #{tripId}
+    </select>
+</mapper>
