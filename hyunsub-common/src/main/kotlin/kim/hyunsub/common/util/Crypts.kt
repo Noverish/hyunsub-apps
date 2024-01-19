@@ -11,7 +11,7 @@ fun String.hashWithMD5(): String {
 	return md.digest().toHex()
 }
 
-// byte array <-> hex
+// hex
 fun ByteArray.toHex(): String = joinToString(separator = "") { eachByte -> "%02x".format(eachByte) }
 
 fun String.decodeHex(): ByteArray {
@@ -22,10 +22,10 @@ fun String.decodeHex(): ByteArray {
 		.toByteArray()
 }
 
-// byte array <-> base64
-fun ByteArray.toBase64(): String = Base64.getUrlEncoder().encodeToString(this)
+// base64
+fun ByteArray.toBase64(): String = Base64.getEncoder().encodeToString(this)
 
-fun String.decodeBase64(): ByteArray = Base64.getUrlDecoder().decode(this)
+fun String.decodeBase64(): ByteArray = Base64.getDecoder().decode(this)
 
 // byte array <-> long
 fun Long.toByteArray(bytes: Int = java.lang.Long.BYTES): ByteArray =

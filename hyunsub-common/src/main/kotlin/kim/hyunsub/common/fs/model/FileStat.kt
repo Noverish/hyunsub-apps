@@ -1,8 +1,7 @@
 package kim.hyunsub.common.fs.model
 
-import java.time.Instant
+import kim.hyunsub.common.util.toLdt
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 data class FileStat(
 	val path: String,
@@ -11,5 +10,5 @@ data class FileStat(
 	val isDir: Boolean?,
 ) {
 	val mDate: LocalDateTime
-		get() = mtime.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime() }
+		get() = mtime.toLdt()
 }

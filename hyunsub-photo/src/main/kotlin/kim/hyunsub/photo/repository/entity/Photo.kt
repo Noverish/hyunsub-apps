@@ -10,9 +10,9 @@ import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
 import kim.hyunsub.common.util.toLong
+import kim.hyunsub.common.util.toOdt
 import kim.hyunsub.photo.model.PhotoDateType
 import kim.hyunsub.photo.util.isVideo
-import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
@@ -63,11 +63,11 @@ data class Photo(
 
 		fun parseYear(id: String): Int {
 			val millis = restoreMillis(id)
-			return Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).year
+			return millis.toOdt(ZoneOffset.UTC).year
 		}
 
 		fun parseDate(id: String, offset: Int): OffsetDateTime =
-			OffsetDateTime.ofInstant(Instant.ofEpochMilli(restoreMillis(id)), ZoneOffset.ofTotalSeconds(offset))
+			restoreMillis(id).toOdt(ZoneOffset.ofTotalSeconds(offset))
 	}
 
 	val millis: Long

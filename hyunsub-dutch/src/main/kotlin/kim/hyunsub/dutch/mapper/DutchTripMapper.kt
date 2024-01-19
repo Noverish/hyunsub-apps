@@ -1,7 +1,7 @@
 package kim.hyunsub.dutch.mapper
 
 import kim.hyunsub.common.database.MapperBase
-import kim.hyunsub.common.util.generateId
+import kim.hyunsub.common.database.generateId
 import kim.hyunsub.dutch.repository.entity.DutchTrip
 import org.apache.ibatis.annotations.Mapper
 

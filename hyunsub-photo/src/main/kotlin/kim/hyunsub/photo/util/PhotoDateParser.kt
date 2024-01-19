@@ -1,9 +1,9 @@
 package kim.hyunsub.photo.util
 
 import com.fasterxml.jackson.databind.JsonNode
+import kim.hyunsub.common.util.toOdt
 import kim.hyunsub.photo.model.PhotoDateType
 import mu.KotlinLogging
-import java.time.Instant
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 import java.time.ZoneId
@@ -60,7 +60,7 @@ object PhotoDateParser {
 			return Result(date, PhotoDateType.NAME)
 		}
 
-		val date = OffsetDateTime.ofInstant(Instant.ofEpochMilli(millis), ZoneId.systemDefault())
+		val date = millis.toOdt()
 		log.debug { "[Parse Photo Date] $fileName: $date from FILE - $millis" }
 		return Result(date, PhotoDateType.FILE)
 	}
@@ -118,7 +118,7 @@ object PhotoDateParser {
 
 		for (format in listOf(ldtFormat1, ldtFormat2, ldtFormat3, ldtFormat4, ldtFormat5)) {
 			try {
-				val data = LocalDateTime.parse(str, format).atZone(offset).toOffsetDateTime()
+				val data = LocalDateTime.parse(str, format).toOdt(offset)
 				return ParseResult(
 					sourceFields = (offsetResult?.sourceFields ?: emptyList()) + listOf(field),
 					sourceValues = (offsetResult?.sourceValues ?: emptyList()) + listOf(str),
@@ -135,9 +135,7 @@ object PhotoDateParser {
 		for ((regex, pattern) in nameFormatMap) {
 			val str = Regex(regex).find(fileName)?.value ?: continue
 
-			val data = LocalDateTime.parse(str, DateTimeFormatter.ofPattern(pattern))
-				.atZone(ZoneId.systemDefault())
-				.toOffsetDateTime()
+			val data = LocalDateTime.parse(str, DateTimeFormatter.ofPattern(pattern)).toOdt()
 
 			return ParseResult(
 				sourceFields = listOf(pattern),
@@ -147,7 +145,7 @@ object PhotoDateParser {
 		}
 
 		val str = Regex("1\\d{12}").find(fileName)?.value ?: return null
-		val data = Instant.ofEpochMilli(str.toLong()).atZone(ZoneId.systemDefault()).toOffsetDateTime()
+		val data = str.toLong().toOdt()
 
 		return ParseResult(
 			sourceFields = listOf("millis"),

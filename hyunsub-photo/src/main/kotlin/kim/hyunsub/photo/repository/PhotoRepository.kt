@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.repository
 
+import kim.hyunsub.common.util.toMillis
 import kim.hyunsub.photo.repository.entity.Photo
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -57,7 +58,7 @@ interface PhotoRepository : JpaRepository<Photo, String> {
 
 fun PhotoRepository.generateId(date: OffsetDateTime, hash: String): String {
 	for (i in 0 until 3) {
-		val id = Photo.generateId(date.toInstant().toEpochMilli(), hash, i)
+		val id = Photo.generateId(date.toMillis(), hash, i)
 		if (!this.existsById(id)) {
 			return id
 		}

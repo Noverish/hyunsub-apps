@@ -7,6 +7,7 @@ import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
+import kim.hyunsub.common.util.toLdt
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
 import kim.hyunsub.photo.repository.AlbumPhotoRepository
 import kim.hyunsub.photo.repository.AlbumRepository
@@ -27,9 +28,7 @@ import kim.hyunsub.photo.util.isVideo
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 import kotlin.io.path.Path
 import kotlin.io.path.extension
 import kotlin.io.path.nameWithoutExtension
@@ -127,7 +126,7 @@ class PhotoUploadService(
 			userId = userId,
 			photoId = photo.id,
 			name = params.name,
-			fileDt = LocalDateTime.ofInstant(Instant.ofEpochMilli(params.millis), ZoneId.systemDefault()),
+			fileDt = params.millis.toLdt(),
 			regDt = LocalDateTime.now(),
 		)
 		photoOwnerRepository.save(photoOwner)
