@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.dutch.mapper.DutchSpendMapper">
+    <select id="count">
+        SELECT COUNT(*)
+        FROM dutch_record a
+        INNER JOIN dutch_record_member b ON b.record_id = a.id
+        WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
+    </select>
+
+    <select id="select" resultType="DutchSpend">
+        SELECT a.id AS record_id, a.content, a.location, a.date, a.currency, b.should, b.actual
+        FROM dutch_record a
+        INNER JOIN dutch_record_member b ON b.record_id = a.id
+        WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
+        ORDER BY a.date DESC
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+    </select>
+
+    <select id="sum" resultType="DutchSpendSum">
+        SELECT a.currency, SUM(b.should) AS should, SUM(b.actual) AS actual
+        FROM dutch_record a
+        INNER JOIN dutch_record_member b ON b.record_id = a.id
+        WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
+        GROUP BY a.currency;
+    </select>
+</mapper>

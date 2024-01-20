@@ -1,7 +1,7 @@
 package kim.hyunsub.dutch.controller
 
-import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchSettleBo
+import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.model.dto.DutchSettleParams
 import kim.hyunsub.dutch.model.dto.DutchSettleResult
 import org.springframework.web.bind.annotation.PathVariable
@@ -17,7 +17,7 @@ class DutchSettleController(
 ) {
 	@PostMapping("")
 	fun settle(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 		@RequestBody params: DutchSettleParams,
 	): List<DutchSettleResult> {

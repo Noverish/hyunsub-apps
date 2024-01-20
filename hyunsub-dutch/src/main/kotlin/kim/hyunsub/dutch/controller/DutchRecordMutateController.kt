@@ -1,7 +1,7 @@
 package kim.hyunsub.dutch.controller
 
-import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchRecordMutateBo
+import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.model.api.ApiDutchRecordDetail
 import kim.hyunsub.dutch.model.api.ApiDutchRecordPreview
 import kim.hyunsub.dutch.model.dto.DutchRecordParams
@@ -20,7 +20,7 @@ class DutchRecordMutateController(
 ) {
 	@PostMapping("")
 	fun create(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 		@RequestBody params: DutchRecordParams,
 	): ApiDutchRecordDetail {
@@ -29,7 +29,7 @@ class DutchRecordMutateController(
 
 	@PutMapping("/{recordId}")
 	fun update(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 		@PathVariable recordId: String,
 		@RequestBody params: DutchRecordParams,
@@ -39,7 +39,7 @@ class DutchRecordMutateController(
 
 	@DeleteMapping("/{recordId}")
 	fun delete(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 		@PathVariable recordId: String,
 	): ApiDutchRecordPreview {

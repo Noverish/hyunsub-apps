@@ -1,7 +1,7 @@
 package kim.hyunsub.dutch.controller
 
-import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
+import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.model.api.ApiDutchRecordMember
 import kim.hyunsub.dutch.model.api.toApi
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,13 +10,14 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/records/{recordId}/members")
+@RequestMapping("/api/v1/trips/{tripId}/records/{recordId}/members")
 class DutchRecordMemberController(
 	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
 ) {
 	@GetMapping("")
 	fun list(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
+		@PathVariable tripId: String,
 		@PathVariable recordId: String,
 	): List<ApiDutchRecordMember> {
 		return dutchRecordMemberMapper.selectByRecordId(recordId)
@@ -25,7 +26,8 @@ class DutchRecordMemberController(
 
 	@GetMapping("/{memberId}")
 	fun detail(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
+		@PathVariable tripId: String,
 		@PathVariable recordId: String,
 		@PathVariable memberId: String,
 	): ApiDutchRecordMember? {

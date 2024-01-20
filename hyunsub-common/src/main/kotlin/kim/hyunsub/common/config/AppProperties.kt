@@ -6,4 +6,5 @@ import org.springframework.boot.context.properties.ConfigurationProperties
 data class AppProperties(
 	val host: String,
 	val authorities: List<String>?,
+	val useAuth: Boolean = true,
 )

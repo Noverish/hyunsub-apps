@@ -1,11 +1,11 @@
 package kim.hyunsub.apparel.controller
 
 import kim.hyunsub.apparel.bo.ApparelDetailBo
-import kim.hyunsub.apparel.config.ApparelConstants
 import kim.hyunsub.apparel.model.ApiApparel
 import kim.hyunsub.apparel.model.ApiApparelPreview
 import kim.hyunsub.apparel.model.toApi
 import kim.hyunsub.apparel.repository.ApparelPreviewRepository
+import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.data.domain.PageRequest
@@ -29,11 +29,11 @@ class ApparelController(
 		val userId = userAuth.idNo
 
 		val total = apparelPreviewRepository.countByUserId(userId)
-		val pageRequest = PageRequest.of(p, ApparelConstants.PAGE_SIZE)
+		val pageRequest = PageRequest.of(p, AppConstants.PAGE_SIZE)
 		val list = apparelPreviewRepository.findByUserId(userId, pageRequest)
 			.map { it.toApi(userId) }
 
-		return ApiPageResult(total, p, ApparelConstants.PAGE_SIZE, list)
+		return ApiPageResult(total, p, AppConstants.PAGE_SIZE, list)
 	}
 
 	@GetMapping("/{apparelId}")

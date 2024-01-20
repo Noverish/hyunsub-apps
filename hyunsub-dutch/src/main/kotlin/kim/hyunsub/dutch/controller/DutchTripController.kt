@@ -1,7 +1,7 @@
 package kim.hyunsub.dutch.controller
 
-import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.dutch.bo.DutchTripBo
+import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.model.api.ApiDutchTrip
 import kim.hyunsub.dutch.model.dto.DutchTripCreateParams
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -19,7 +19,7 @@ class DutchTripController(
 ) {
 	@GetMapping("/{tripId}")
 	fun detail(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 	): ApiDutchTrip? {
 		return dutchTripBo.delete(tripId)
@@ -27,7 +27,7 @@ class DutchTripController(
 
 	@PostMapping("")
 	fun create(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@RequestBody params: DutchTripCreateParams,
 	): ApiDutchTrip {
 		return dutchTripBo.create(params)
@@ -35,7 +35,7 @@ class DutchTripController(
 
 	@DeleteMapping("/{tripId}")
 	fun delete(
-		userAuth: UserAuth,
+		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 	): ApiDutchTrip {
 		return dutchTripBo.delete(tripId)

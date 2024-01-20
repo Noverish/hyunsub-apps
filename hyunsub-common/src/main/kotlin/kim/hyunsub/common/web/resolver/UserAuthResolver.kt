@@ -1,10 +1,7 @@
-package kim.hyunsub.common.web.config
+package kim.hyunsub.common.web.resolver
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import jakarta.servlet.http.HttpServletRequest
-import kim.hyunsub.common.web.error.ErrorCode
-import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.common.web.interceptor.UserAuthInterceptor
 import kim.hyunsub.common.web.model.UserAuth
 import org.springframework.core.MethodParameter
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -12,9 +9,7 @@ import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 
-class UserAuthArgumentResolver : HandlerMethodArgumentResolver {
-	private val mapper = jacksonObjectMapper()
-
+class UserAuthResolver : HandlerMethodArgumentResolver {
 	override fun supportsParameter(parameter: MethodParameter): Boolean =
 		parameter.parameterType == UserAuth::class.java
 
@@ -23,10 +18,8 @@ class UserAuthArgumentResolver : HandlerMethodArgumentResolver {
 		mavContainer: ModelAndViewContainer?,
 		webRequest: NativeWebRequest,
 		binderFactory: WebDataBinderFactory?,
-	): Any {
-		val request = webRequest.getNativeRequest(HttpServletRequest::class.java)!!
-		val header = request.getHeader(WebConstants.USER_AUTH_HEADER)
-			?: throw ErrorCodeException(ErrorCode.NO_USER_AUTH)
-		return mapper.readValue<UserAuth>(header)
+	): Any? {
+		return webRequest.getNativeRequest(HttpServletRequest::class.java)
+			?.getAttribute(UserAuthInterceptor.USER_AUTH_ATTR)
 	}
 }
