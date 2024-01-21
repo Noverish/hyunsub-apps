@@ -9,5 +9,6 @@ data class DutchSettleResult(
 
 data class DutchSettleResultShare(
 	val memberId: String,
-	val amount: Double,
+	val should: Double,
+	val actual: Double,
 )
