@@ -1,6 +1,7 @@
 package kim.hyunsub.dutch.controller
 
 import kim.hyunsub.dutch.bo.DutchMemberBo
+import kim.hyunsub.dutch.config.DutchIgnoreAuthorize
 import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.model.api.ApiDutchMember
 import kim.hyunsub.dutch.model.dto.DutchMemberCreateParams
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController
 class DutchMemberController(
 	private val dutchMemberBo: DutchMemberBo,
 ) {
+	@DutchIgnoreAuthorize
 	@GetMapping("")
 	fun list(
 		@PathVariable tripId: String,

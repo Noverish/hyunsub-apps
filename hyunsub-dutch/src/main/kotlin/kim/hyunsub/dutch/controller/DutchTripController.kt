@@ -1,6 +1,7 @@
 package kim.hyunsub.dutch.controller
 
 import kim.hyunsub.dutch.bo.DutchTripBo
+import kim.hyunsub.dutch.config.DutchIgnoreAuthorize
 import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.model.api.ApiDutchTrip
 import kim.hyunsub.dutch.model.dto.DutchTripCreateParams
@@ -25,9 +26,9 @@ class DutchTripController(
 		return dutchTripBo.detail(tripId)
 	}
 
+	@DutchIgnoreAuthorize
 	@PostMapping("")
 	fun create(
-		memberAuth: DutchMemberAuth,
 		@RequestBody params: DutchTripCreateParams,
 	): ApiDutchTrip {
 		return dutchTripBo.create(params)

@@ -3,6 +3,7 @@ package kim.hyunsub.dutch.controller
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kim.hyunsub.dutch.bo.DutchBridgeBo
+import kim.hyunsub.dutch.config.DutchIgnoreAuthorize
 import kim.hyunsub.dutch.model.DutchMemberAuth
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.PathVariable
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam
 class DutchBridgeController(
 	private val dutchBridgeBo: DutchBridgeBo,
 ) {
+	@DutchIgnoreAuthorize
 	@RequestMapping("/bridge/entry/{tripId}")
 	fun entry(
 		dutchMemberAuth: DutchMemberAuth?,
@@ -22,6 +24,7 @@ class DutchBridgeController(
 		return "redirect:$redirect"
 	}
 
+	@DutchIgnoreAuthorize
 	@RequestMapping("/bridge/entry/{tripId}/member")
 	fun memberSelect(
 		req: HttpServletRequest,
