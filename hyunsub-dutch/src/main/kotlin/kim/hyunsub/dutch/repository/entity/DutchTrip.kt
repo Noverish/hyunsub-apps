@@ -5,5 +5,6 @@ import kim.hyunsub.dutch.model.DutchCurrency
 data class DutchTrip(
 	val id: String,
 	val name: String,
-	val currency: DutchCurrency,
+	val tripCurrency: DutchCurrency,
+	val settleCurrency: DutchCurrency,
 )

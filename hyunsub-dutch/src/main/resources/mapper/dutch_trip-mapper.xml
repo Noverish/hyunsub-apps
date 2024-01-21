@@ -16,9 +16,9 @@
 
     <insert id="insert">
         INSERT INTO dutch_trip
-        (id, name, currency, reg_dt)
+        (id, name, trip_currency, settle_currency, reg_dt)
         VALUES
-        (#{id}, #{name}, #{currency}, NOW())
+        (#{id}, #{name}, #{tripCurrency}, #{settleCurrency}, NOW())
     </insert>
 
     <delete id="delete">

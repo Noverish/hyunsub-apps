@@ -22,7 +22,7 @@ class DutchTripController(
 		memberAuth: DutchMemberAuth,
 		@PathVariable tripId: String,
 	): ApiDutchTrip? {
-		return dutchTripBo.delete(tripId)
+		return dutchTripBo.detail(tripId)
 	}
 
 	@PostMapping("")

@@ -29,7 +29,8 @@ class DutchTripBo(
 		val trip = DutchTrip(
 			id = dutchTripMapper.generateId(),
 			name = params.name,
-			currency = params.currency,
+			tripCurrency = params.tripCurrency,
+			settleCurrency = params.settleCurrency,
 		)
 
 		val members = params.members.map {

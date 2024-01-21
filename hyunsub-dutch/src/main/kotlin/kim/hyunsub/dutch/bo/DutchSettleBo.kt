@@ -1,6 +1,6 @@
 package kim.hyunsub.dutch.bo
 
-import kim.hyunsub.dutch.mapper.DutchRecordMemberMapper
+import kim.hyunsub.dutch.mapper.DutchSettleMapper
 import kim.hyunsub.dutch.model.dto.DutchSettleParams
 import kim.hyunsub.dutch.model.dto.DutchSettleResult
 import kim.hyunsub.dutch.model.dto.DutchSettleResultShare
@@ -9,10 +9,10 @@ import org.springframework.stereotype.Service
 
 @Service
 class DutchSettleBo(
-	private val dutchRecordMemberMapper: DutchRecordMemberMapper,
+	private val dutchSettleMapper: DutchSettleMapper,
 ) {
 	fun settle(tripId: String, params: DutchSettleParams): List<DutchSettleResult> {
-		return dutchRecordMemberMapper.settle(tripId)
+		return dutchSettleMapper.settle(tripId)
 			.groupBy { it.currency }
 			.map {
 				DutchSettleResult(
