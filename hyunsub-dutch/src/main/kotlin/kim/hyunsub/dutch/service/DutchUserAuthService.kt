@@ -35,7 +35,7 @@ class DutchUserAuthService {
 		val cookie = Cookie(USER_AUTH_COOKIE, encoded).apply {
 			domain = "hyunsub.kim"
 			path = "/"
-			maxAge = Int.MAX_VALUE
+			maxAge = 365 * 86400
 		}
 		res.addCookie(cookie)
 	}
