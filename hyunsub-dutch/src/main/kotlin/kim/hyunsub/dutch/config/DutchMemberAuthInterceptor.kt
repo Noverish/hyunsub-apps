@@ -9,8 +9,8 @@ import kim.hyunsub.common.util.getAnnotation
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.service.DutchUserAuthService
+import org.springframework.messaging.handler.HandlerMethod
 import org.springframework.stereotype.Component
-import org.springframework.web.method.HandlerMethod
 import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.servlet.HandlerMapping
 
@@ -25,21 +25,19 @@ class DutchMemberAuthInterceptor(
 	}
 
 	override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
-		val method = (handler as? HandlerMethod)?.method ?: return false
-
-		val ignoreAuthorize = method.getAnnotation<DutchIgnoreAuthorize>()
-		if (ignoreAuthorize != null) {
-			return true
-		}
-
 		val pathVariableAttr = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE)
 		val pathVariableNode = mapper.convertValue<JsonNode>(pathVariableAttr)
 		val tripId = pathVariableNode["tripId"]?.asText() ?: return true
 
 		val memberAuth = dutchUserAuthService.parse(request, tripId)
-			?: throw ErrorCodeException(ErrorCode.NO_USER_AUTH)
+		if (memberAuth != null) {
+			request.setAttribute(DUTCH_MEMBER_AUTH_ATTR, memberAuth)
+			return true
+		}
 
-		request.setAttribute(DUTCH_MEMBER_AUTH_ATTR, memberAuth)
+		val method = (handler as? HandlerMethod)?.method ?: return true
+		method.getAnnotation<DutchIgnoreAuthorize>()
+			?: throw ErrorCodeException(ErrorCode.NO_USER_AUTH)
 
 		return true
 	}
