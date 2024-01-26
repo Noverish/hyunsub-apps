@@ -32,6 +32,7 @@ class DutchRecordMutateBo(
 			content = params.content,
 			location = params.location,
 			currency = params.currency,
+			payment = params.payment,
 			date = params.date,
 			tripId = tripId,
 		)
@@ -67,6 +68,7 @@ class DutchRecordMutateBo(
 			content = params.content,
 			location = params.location,
 			currency = params.currency,
+			payment = params.payment,
 			date = params.date,
 		)
 

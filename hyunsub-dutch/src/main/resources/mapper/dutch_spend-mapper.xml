@@ -9,7 +9,7 @@
         WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
     </select>
 
-    <select id="select" resultType="DutchSpend">
+    <select id="select">
         SELECT a.id AS record_id, a.content, a.location, a.date, a.currency, b.should, b.actual
         FROM dutch_record a
         INNER JOIN dutch_record_member b ON b.record_id = a.id
@@ -18,7 +18,7 @@
         LIMIT #{page.pageSize} OFFSET #{page.offset}
     </select>
 
-    <select id="sum" resultType="DutchSpendSum">
+    <select id="sum">
         SELECT a.currency, SUM(b.should) AS should, SUM(b.actual) AS actual
         FROM dutch_record a
         INNER JOIN dutch_record_member b ON b.record_id = a.id
