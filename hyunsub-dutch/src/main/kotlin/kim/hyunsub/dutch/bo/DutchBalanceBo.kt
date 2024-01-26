@@ -3,7 +3,7 @@ package kim.hyunsub.dutch.bo
 import kim.hyunsub.dutch.mapper.DutchBalanceMapper
 import kim.hyunsub.dutch.mapper.DutchSpendMapper
 import kim.hyunsub.dutch.model.api.ApiDutchBalance
-import kim.hyunsub.dutch.model.dto.DutchBalanceCreateParams
+import kim.hyunsub.dutch.model.dto.DutchBalanceUpdateBulkParams
 import kim.hyunsub.dutch.model.dto.DutchSpendSearchQuery
 import kim.hyunsub.dutch.repository.entity.DutchBalance
 import org.springframework.stereotype.Service
@@ -30,15 +30,24 @@ class DutchBalanceBo(
 		}
 	}
 
-	fun create(memberId: String, params: DutchBalanceCreateParams): ApiDutchBalance {
-		val balance = DutchBalance(
-			memberId = memberId,
-			currency = params.currency,
-			amount = params.amount,
-		)
+	fun updateBulk(memberId: String, params: DutchBalanceUpdateBulkParams): List<ApiDutchBalance> {
+		val balanceMap = dutchBalanceMapper.selectByMemberId(memberId).associateBy { it.currency }
 
-		dutchBalanceMapper.insert(balance)
+		for (item in params.data) {
+			val exist = balanceMap[item.currency]
+			if (exist != null) {
+				val newBalance = exist.copy(amount = item.amount)
+				dutchBalanceMapper.update(newBalance)
+			} else {
+				val balance = DutchBalance(
+					memberId = memberId,
+					currency = item.currency,
+					amount = item.amount,
+				)
+				dutchBalanceMapper.insert(balance)
+			}
+		}
 
-		return list(memberId).first { it.currency == params.currency }
+		return list(memberId)
 	}
 }

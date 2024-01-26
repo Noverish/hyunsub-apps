@@ -20,4 +20,10 @@
         VALUES
         (#{memberId}, #{currency}, #{amount}, NOW())
     </insert>
+
+    <update id="update">
+        UPDATE dutch_balance
+        SET amount = #{amount}
+        WHERE member_id = #{memberId} AND currency = #{currency}
+    </update>
 </mapper>

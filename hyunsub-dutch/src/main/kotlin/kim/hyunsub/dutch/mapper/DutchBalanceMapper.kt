@@ -10,4 +10,5 @@ interface DutchBalanceMapper {
 	fun selectByMemberId(memberId: String): List<DutchBalance>
 
 	fun insert(entity: DutchBalance): Int
+	fun update(entity: DutchBalance): Int
 }
