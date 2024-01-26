@@ -17,12 +17,4 @@
         ORDER BY a.date DESC
         LIMIT #{page.pageSize} OFFSET #{page.offset}
     </select>
-
-    <select id="sum">
-        SELECT a.currency, SUM(b.should) AS should, SUM(b.actual) AS actual
-        FROM dutch_record a
-        INNER JOIN dutch_record_member b ON b.record_id = a.id
-        WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
-        GROUP BY a.currency;
-    </select>
 </mapper>

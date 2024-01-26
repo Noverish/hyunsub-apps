@@ -4,7 +4,6 @@ import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.dutch.mapper.DutchSpendMapper
 import kim.hyunsub.dutch.repository.entity.DutchSpend
-import kim.hyunsub.dutch.repository.entity.DutchSpendSum
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
@@ -23,9 +22,5 @@ class DutchSpendBo(
 			pageSize = page.pageSize,
 			data = data,
 		)
-	}
-
-	fun sum(tripId: String, memberId: String): List<DutchSpendSum> {
-		return dutchSpendMapper.sum(tripId, memberId)
 	}
 }

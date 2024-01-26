@@ -4,7 +4,6 @@ import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.dutch.bo.DutchSpendBo
 import kim.hyunsub.dutch.model.DutchMemberAuth
 import kim.hyunsub.dutch.repository.entity.DutchSpend
-import kim.hyunsub.dutch.repository.entity.DutchSpendSum
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -23,13 +22,5 @@ class DutchSpendController(
 		@RequestParam page: Int?,
 	): ApiPageResult<DutchSpend> {
 		return dutchSpendBo.list(tripId, memberAuth.memberId, page)
-	}
-
-	@GetMapping("/spend-sum")
-	fun sum(
-		memberAuth: DutchMemberAuth,
-		@PathVariable tripId: String,
-	): List<DutchSpendSum> {
-		return dutchSpendBo.sum(tripId, memberAuth.memberId)
 	}
 }
