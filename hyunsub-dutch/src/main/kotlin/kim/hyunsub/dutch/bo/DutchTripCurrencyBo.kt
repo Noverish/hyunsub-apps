@@ -1,25 +1,22 @@
 package kim.hyunsub.dutch.bo
 
-import kim.hyunsub.common.web.error.ErrorCode
-import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchRecordMapper
 import kim.hyunsub.dutch.mapper.DutchTripCurrencyMapper
-import kim.hyunsub.dutch.mapper.DutchTripMapper
 import kim.hyunsub.dutch.model.DutchCurrency
 import kim.hyunsub.dutch.model.api.ApiDutchTripCurrency
 import kim.hyunsub.dutch.model.dto.DutchTripCurrencyUpdateParams
 import kim.hyunsub.dutch.repository.entity.DutchTripCurrency
+import kim.hyunsub.dutch.service.DutchTripDao
 import org.springframework.stereotype.Service
 
 @Service
 class DutchTripCurrencyBo(
-	private val dutchTripMapper: DutchTripMapper,
+	private val dutchTripDao: DutchTripDao,
 	private val dutchTripCurrencyMapper: DutchTripCurrencyMapper,
 	private val dutchRecordMapper: DutchRecordMapper,
 ) {
 	fun list(tripId: String): List<ApiDutchTripCurrency> {
-		val trip = dutchTripMapper.select(tripId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such trip")
+		val trip = dutchTripDao.selectOrThrow(tripId)
 
 		val tripCurrencyMap = dutchTripCurrencyMapper.selectByTripId(tripId)
 			.associateBy { it.currency }

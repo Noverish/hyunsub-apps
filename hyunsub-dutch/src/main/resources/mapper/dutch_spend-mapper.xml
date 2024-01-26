@@ -4,17 +4,23 @@
 <mapper namespace="kim.hyunsub.dutch.mapper.DutchSpendMapper">
     <select id="count">
         SELECT COUNT(*)
-        FROM dutch_record a
-        INNER JOIN dutch_record_member b ON b.record_id = a.id
-        WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
+        FROM dutch_record_member b
+        INNER JOIN dutch_record a ON a.id = b.record_id
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="memberId != null">AND b.member_id = #{memberId}</if>
+        </trim>
     </select>
 
-    <select id="select">
-        SELECT a.id AS record_id, a.content, a.location, a.date, a.currency, b.should, b.actual
-        FROM dutch_record a
-        INNER JOIN dutch_record_member b ON b.record_id = a.id
-        WHERE a.trip_id = #{tripId} AND b.member_id = #{memberId}
+    <select id="search">
+        SELECT a.id AS record_id, a.content, a.location, a.date, a.currency, a.payment, b.should, b.actual
+        FROM dutch_record_member b
+        INNER JOIN dutch_record a ON a.id = b.record_id
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="memberId != null">AND b.member_id = #{memberId}</if>
+        </trim>
         ORDER BY a.date DESC
-        LIMIT #{page.pageSize} OFFSET #{page.offset}
+        <if test="page != null">
+            LIMIT #{page.pageSize} OFFSET #{page.offset}
+        </if>
     </select>
 </mapper>

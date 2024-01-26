@@ -3,6 +3,7 @@ package kim.hyunsub.dutch.bo
 import kim.hyunsub.common.config.AppConstants
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.dutch.mapper.DutchSpendMapper
+import kim.hyunsub.dutch.model.dto.DutchSpendSearchQuery
 import kim.hyunsub.dutch.repository.entity.DutchSpend
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -11,10 +12,11 @@ import org.springframework.stereotype.Service
 class DutchSpendBo(
 	private val dutchSpendMapper: DutchSpendMapper,
 ) {
-	fun list(tripId: String, memberId: String, p: Int?): ApiPageResult<DutchSpend> {
+	fun list(memberId: String, p: Int?): ApiPageResult<DutchSpend> {
 		val page = PageRequest.of(p ?: 0, AppConstants.PAGE_SIZE)
-		val total = dutchSpendMapper.count(tripId, memberId)
-		val data = dutchSpendMapper.select(tripId, memberId, page)
+		val query = DutchSpendSearchQuery(memberId, page)
+		val total = dutchSpendMapper.count(query)
+		val data = dutchSpendMapper.search(query)
 
 		return ApiPageResult(
 			total = total,

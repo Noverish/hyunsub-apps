@@ -21,6 +21,6 @@ class DutchSpendController(
 		@PathVariable tripId: String,
 		@RequestParam page: Int?,
 	): ApiPageResult<DutchSpend> {
-		return dutchSpendBo.list(tripId, memberAuth.memberId, page)
+		return dutchSpendBo.list(memberAuth.memberId, page)
 	}
 }

@@ -4,10 +4,10 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.dutch.mapper.DutchSettleMapper
 import kim.hyunsub.dutch.mapper.DutchTripCurrencyMapper
-import kim.hyunsub.dutch.mapper.DutchTripMapper
 import kim.hyunsub.dutch.model.dto.DutchSettleParams
 import kim.hyunsub.dutch.model.dto.DutchSettleResult
 import kim.hyunsub.dutch.model.dto.DutchSettleResultShare
+import kim.hyunsub.dutch.service.DutchTripDao
 import org.springframework.stereotype.Service
 import kotlin.math.roundToInt
 
@@ -15,7 +15,7 @@ import kotlin.math.roundToInt
 class DutchSettleBo(
 	private val dutchSettleMapper: DutchSettleMapper,
 	private val dutchTripCurrencyMapper: DutchTripCurrencyMapper,
-	private val dutchTripMapper: DutchTripMapper,
+	private val dutchTripDao: DutchTripDao,
 ) {
 	fun settleEach(tripId: String): List<DutchSettleResult> {
 		return dutchSettleMapper.settle(tripId)
@@ -35,7 +35,7 @@ class DutchSettleBo(
 	}
 
 	fun settle(tripId: String, params: DutchSettleParams): Map<String, Int> {
-		val trip = dutchTripMapper.select(tripId) ?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such trip")
+		val trip = dutchTripDao.selectOrThrow(tripId)
 
 		val settleResults = dutchSettleMapper.settle(tripId)
 
