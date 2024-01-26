@@ -8,6 +8,7 @@
         INNER JOIN dutch_record a ON a.id = b.record_id
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="memberId != null">AND b.member_id = #{memberId}</if>
+            <if test="payment != null">AND a.payment = #{payment}</if>
         </trim>
     </select>
 
@@ -17,6 +18,7 @@
         INNER JOIN dutch_record a ON a.id = b.record_id
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="memberId != null">AND b.member_id = #{memberId}</if>
+            <if test="payment != null">AND a.payment = #{payment}</if>
         </trim>
         ORDER BY a.date DESC
         <if test="page != null">

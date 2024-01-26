@@ -14,7 +14,7 @@ class DutchSpendBo(
 ) {
 	fun list(memberId: String, p: Int?): ApiPageResult<DutchSpend> {
 		val page = PageRequest.of(p ?: 0, AppConstants.PAGE_SIZE)
-		val query = DutchSpendSearchQuery(memberId, page)
+		val query = DutchSpendSearchQuery(memberId = memberId, page = page)
 		val total = dutchSpendMapper.count(query)
 		val data = dutchSpendMapper.search(query)
 

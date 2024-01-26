@@ -2,6 +2,7 @@ package kim.hyunsub.dutch.bo
 
 import kim.hyunsub.dutch.mapper.DutchBalanceMapper
 import kim.hyunsub.dutch.mapper.DutchSpendMapper
+import kim.hyunsub.dutch.model.DutchPayment
 import kim.hyunsub.dutch.model.api.ApiDutchBalance
 import kim.hyunsub.dutch.model.dto.DutchBalanceUpdateBulkParams
 import kim.hyunsub.dutch.model.dto.DutchSpendSearchQuery
@@ -14,7 +15,7 @@ class DutchBalanceBo(
 	private val dutchSpendMapper: DutchSpendMapper,
 ) {
 	fun list(memberId: String): List<ApiDutchBalance> {
-		val query = DutchSpendSearchQuery(memberId = memberId)
+		val query = DutchSpendSearchQuery(memberId = memberId, payment = DutchPayment.CASH)
 		val spendMap = dutchSpendMapper.search(query).groupBy { it.currency }
 		val balanceMap = dutchBalanceMapper.selectByMemberId(memberId).associateBy { it.currency }
 
