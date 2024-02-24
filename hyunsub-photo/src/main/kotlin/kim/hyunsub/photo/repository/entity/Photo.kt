@@ -1,11 +1,5 @@
 package kim.hyunsub.photo.repository.entity
 
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
-import jakarta.persistence.Table
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
@@ -16,35 +10,15 @@ import kim.hyunsub.photo.util.isVideo
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
-@Entity
-@Table(name = "photo")
 data class Photo(
-	@Id
 	val id: String,
-
-	@Column(nullable = false)
 	val hash: String,
-
-	@Column(nullable = false)
 	val width: Int,
-
-	@Column(nullable = false)
 	val height: Int,
-
-	@Column(nullable = false)
 	val size: Int,
-
-	@Column(nullable = false)
 	val offset: Int,
-
-	@Column(nullable = false)
 	val ext: String,
-
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	var dateType: PhotoDateType,
-
-	@Column
+	val dateType: PhotoDateType,
 	val pairPhotoId: String? = null,
 ) {
 	companion object {

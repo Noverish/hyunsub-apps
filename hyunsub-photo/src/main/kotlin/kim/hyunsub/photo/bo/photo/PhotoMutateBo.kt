@@ -5,28 +5,26 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.PhotoDateUpdateParams
-import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoRepository
-import kim.hyunsub.photo.repository.entity.PhotoOwnerId
-import kim.hyunsub.photo.repository.generateId
+import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
+import kim.hyunsub.photo.repository.mapper.generateId
 import kim.hyunsub.photo.service.PhotoUpdateService
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class PhotoMutateBo(
-	private val photoOwnerRepository: PhotoOwnerRepository,
-	private val photoRepository: PhotoRepository,
+	private val photoOwnerMapper: PhotoOwnerMapper,
+	private val photoMapper: PhotoMapper,
 	private val photoUpdateService: PhotoUpdateService,
 ) {
 	fun updatePhotoDate(userId: String, photoId: String, params: PhotoDateUpdateParams): ApiPhoto {
-		val photoOwner = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photoId))
+		val photoOwner = photoOwnerMapper.selectOne(userId = userId, photoId = photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner")
 
-		val photo = photoRepository.findByIdOrNull(photoId)
+		val photo = photoMapper.selectOne(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
-		val newId = photoRepository.generateId(params.date, photo.hash)
+		val newId = photoMapper.generateId(params.date, photo.hash)
 
 		val newPhoto = photoUpdateService.updateId(photo, newId)
 

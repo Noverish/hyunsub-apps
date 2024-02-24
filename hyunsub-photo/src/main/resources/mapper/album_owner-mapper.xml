@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper">
+    <select id="select" resultType="AlbumOwner">
+        SELECT *
+        FROM album_owner
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="userId != null">AND user_id = #{userId}</if>
+        </trim>
+    </select>
+
+    <select id="count">
+        SELECT COUNT(*)
+        FROM album_owner
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="userId != null">AND user_id = #{userId}</if>
+        </trim>
+    </select>
+
+    <select id="selectOne" resultType="AlbumOwner">
+        SELECT *
+        FROM album_owner
+        WHERE album_id = #{albumId} AND user_id = #{userId}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO album_owner
+        (album_id, user_id, owner)
+        VALUES
+        (#{albumId}, #{userId}, #{owner})
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO album_owner
+        (album_id, user_id, owner)
+        VALUES
+        <foreach collection="entities" item="v" separator=",">
+            (#{v.albumId}, #{v.userId}, #{v.owner})
+        </foreach>
+    </insert>
+
+    <delete id="delete">
+        DELETE FROM album_owner
+        WHERE album_id = #{albumId} AND user_id = #{userId}
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM album_owner
+        WHERE
+        <foreach collection="entities" item="v" separator="OR">
+            (album_id = #{v.albumId} AND user_id = #{v.userId})
+        </foreach>
+    </delete>
+
+    <delete id="deleteByAlbumId">
+        DELETE FROM album_owner
+        WHERE album_id = #{albumId}
+    </delete>
+</mapper>

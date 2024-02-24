@@ -9,13 +9,11 @@ import kim.hyunsub.photo.model.api.ApiRescanPhotoDateParams
 import kim.hyunsub.photo.model.api.ApiRescanPhotoDateResult
 import kim.hyunsub.photo.model.api.ApiUpdateAlbumOffsetParams
 import kim.hyunsub.photo.model.api.ApiUpdatePhotoOffsetParams
-import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumRepository
-import kim.hyunsub.photo.repository.PhotoRepository
-import kim.hyunsub.photo.repository.generateId
+import kim.hyunsub.photo.repository.mapper.AlbumMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.generateId
 import kim.hyunsub.photo.service.PhotoUpdateService
 import mu.KotlinLogging
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -25,10 +23,9 @@ import java.time.ZoneOffset
 @RestController
 @RequestMapping("/api/v1/admin")
 class PhotoAdminController(
-	private val photoRepository: PhotoRepository,
+	private val photoMapper: PhotoMapper,
 	private val photoUpdateService: PhotoUpdateService,
-	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val albumRepository: AlbumRepository,
+	private val albumMapper: AlbumMapper,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -40,52 +37,52 @@ class PhotoAdminController(
 
 	@PostMapping("/rescan-album-date")
 	fun rescanAlbumDate(@RequestBody params: ApiRescanAlbumDateParams): ApiRescanAlbumDateResult {
-		albumRepository.findByIdOrNull(params.albumId)
+		albumMapper.selectOne(params.albumId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val photos = albumPhotoRepository.findByAlbumId(params.albumId)
+		val photos = photoMapper.selectByAlbumId(params.albumId)
 		val results = photos.mapNotNull { photoUpdateService.rescanPhotoDate(it.id) }
 		return ApiRescanAlbumDateResult(results)
 	}
 
 	@PostMapping("/update-offset-same-local")
 	fun updateOffsetSameLocal(@RequestBody params: ApiUpdatePhotoOffsetParams): SimpleResponse {
-		val photo = photoRepository.findByIdOrNull(params.photoId)
+		val photo = photoMapper.selectOne(params.photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val newDate = photo.date.withOffsetSameLocal(ZoneOffset.ofHours(params.hour))
 
-		val newId = photoRepository.generateId(newDate, photo.hash)
+		val newId = photoMapper.generateId(newDate, photo.hash)
 		log.debug { "[Rescan Photo Date] ${photo.id} -> $newId : ${photo.date} -> $newDate" }
 		photoUpdateService.updateId(photo, newId)
 
 		val newPhoto = photo.copy(id = newId, offset = params.hour * 3600)
-		photoRepository.save(newPhoto)
+		photoMapper.insert(newPhoto)
 
 		return SimpleResponse()
 	}
 
 	@PostMapping("/update-offset-same-instant")
 	fun updateOffsetSameInstant(@RequestBody params: ApiUpdatePhotoOffsetParams): SimpleResponse {
-		val photo = photoRepository.findByIdOrNull(params.photoId)
+		val photo = photoMapper.selectOne(params.photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val newPhoto = photo.copy(offset = params.hour * 3600)
-		photoRepository.save(newPhoto)
+		photoMapper.insert(newPhoto)
 
 		return SimpleResponse()
 	}
 
 	@PostMapping("/update-offset-same-instant-of-album")
 	fun updateOffsetSameInstantOfAlbum(@RequestBody params: ApiUpdateAlbumOffsetParams): SimpleResponse {
-		albumRepository.findByIdOrNull(params.albumId)
+		photoMapper.selectOne(params.albumId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val photos = albumPhotoRepository.findByAlbumId(params.albumId)
+		val photos = photoMapper.selectByAlbumId(params.albumId)
 
 		val newPhotos = photos.map { it.copy(offset = params.hour * 3600) }
 
-		photoRepository.saveAll(newPhotos)
+		photoMapper.insertAll(newPhotos)
 
 		return SimpleResponse()
 	}

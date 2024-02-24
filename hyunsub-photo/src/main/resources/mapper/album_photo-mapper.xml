@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper">
+    <select id="select" resultType="AlbumPhoto">
+        SELECT *
+        FROM album_photo
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="albumId != null">AND album_id = #{albumId}</if>
+            <if test="photoId != null">AND photo_id = #{photoId}</if>
+            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="albumIds != null">
+                AND album_id IN <foreach collection="albumIds" item="v" separator="," open="(" close=")">#{v}</foreach>
+            </if>
+        </trim>
+    </select>
+
+    <select id="count">
+        SELECT COUNT(*)
+        FROM album_photo
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="albumId != null">AND album_id = #{albumId}</if>
+            <if test="photoId != null">AND photo_id = #{photoId}</if>
+            <if test="userId != null">AND user_id = #{userId}</if>
+        </trim>
+    </select>
+
+    <select id="selectOne" resultType="AlbumPhoto">
+        SELECT *
+        FROM album_photo
+        WHERE album_id = #{albumId} AND photo_id = #{photoId}
+    </select>
+
+    <select id="indexOfPhoto">
+        SELECT COUNT(*)
+        FROM album_photo
+        WHERE album_id = #{albumId} AND photo_id &lt; #{photoId}
+    </select>
+
+    <insert id="insert">
+        INSERT INTO album_photo
+        (album_id, photo_id, user_id)
+        VALUES
+        (#{albumId}, #{photoId}, #{userId})
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO album_photo
+        (album_id, photo_id, user_id)
+        VALUES
+        <foreach collection="entities" item="v" separator=",">
+            (#{v.albumId}, #{v.photoId}, #{v.userId})
+        </foreach>
+    </insert>
+
+    <update id="updatePhotoId">
+        UPDATE album_photo
+        SET photo_id = #{to}
+        WHERE photo_id = #{from}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM album_photo
+        WHERE album_id = #{albumId} AND photo_id = #{photoId}
+    </delete>
+
+    <delete id="deleteAll">
+        DELETE FROM album_photo
+        WHERE
+        <foreach collection="entities" item="v" separator="OR">
+            (album_id = #{v.albumId} AND photo_id = #{photoId})
+        </foreach>
+    </delete>
+
+    <delete id="deleteByAlbumId">
+        DELETE FROM album_photo
+        WHERE album_id = #{albumId}
+    </delete>
+</mapper>

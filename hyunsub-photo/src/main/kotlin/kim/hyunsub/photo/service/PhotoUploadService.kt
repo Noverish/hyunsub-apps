@@ -9,24 +9,23 @@ import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.common.util.toLdt
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
-import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumRepository
-import kim.hyunsub.photo.repository.PhotoMetadataRepository
-import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.condition.PhotoCondition
+import kim.hyunsub.photo.repository.condition.PhotoOwnerCondition
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
-import kim.hyunsub.photo.repository.entity.AlbumPhotoId
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoMetadata
 import kim.hyunsub.photo.repository.entity.PhotoOwner
-import kim.hyunsub.photo.repository.entity.PhotoOwnerId
-import kim.hyunsub.photo.repository.generateId
+import kim.hyunsub.photo.repository.mapper.AlbumMapper
+import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
+import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
+import kim.hyunsub.photo.repository.mapper.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isImage
 import kim.hyunsub.photo.util.isVideo
 import mu.KotlinLogging
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import kotlin.io.path.Path
@@ -39,12 +38,12 @@ class PhotoUploadService(
 	private val fsClient: FsClient,
 	private val fsImageClient: FsImageClient,
 	private val encodeApiCaller: PhotoEncodeApiCaller,
-	private val photoRepository: PhotoRepository,
 	private val thumbnailService: ThumbnailService,
-	private val photoOwnerRepository: PhotoOwnerRepository,
-	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val albumRepository: AlbumRepository,
-	private val photoMetadataRepository: PhotoMetadataRepository,
+	private val photoOwnerMapper: PhotoOwnerMapper,
+	private val albumMapper: AlbumMapper,
+	private val photoMetadataMapper: PhotoMetadataMapper,
+	private val photoMapper: PhotoMapper,
+	private val albumPhotoMapper: AlbumPhotoMapper,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -67,7 +66,7 @@ class PhotoUploadService(
 
 		val hash = fsClient.hash(tmpPath).result.decodeHex().toBase64()
 
-		val exist = photoRepository.findByHash(hash)
+		val exist = photoMapper.select(PhotoCondition(hash = hash)).firstOrNull()
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist photo: $exist" }
 			fsClient.remove(tmpPath)
@@ -78,7 +77,7 @@ class PhotoUploadService(
 		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
 		val date = parseResult.date
 		val dateType = parseResult.type
-		val id = photoRepository.generateId(date, hash)
+		val id = photoMapper.generateId(date, hash)
 
 		val photo = Photo(
 			id = id,
@@ -107,16 +106,16 @@ class PhotoUploadService(
 		}
 
 		// save photo
-		photoRepository.save(photo)
+		photoMapper.insert(photo)
 
 		// save metadata
-		photoMetadataRepository.save(PhotoMetadata.from(id, exif))
+		photoMetadataMapper.upsert(PhotoMetadata.from(id, exif))
 
 		return photo
 	}
 
 	private fun getOrCreatePhotoOwner(userId: String, photo: Photo, params: ApiPhotoUploadParams): PhotoOwner {
-		val exist = photoOwnerRepository.findByIdOrNull(PhotoOwnerId(userId, photo.id))
+		val exist = photoOwnerMapper.selectOne(userId = userId, photoId = photo.id)
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist photo owner: $exist" }
 			return exist
@@ -129,13 +128,13 @@ class PhotoUploadService(
 			fileDt = params.millis.toLdt(),
 			regDt = LocalDateTime.now(),
 		)
-		photoOwnerRepository.save(photoOwner)
+		photoOwnerMapper.insert(photoOwner)
 
 		return photoOwner
 	}
 
 	private fun getOrCreateAlbumPhoto(userId: String, photo: Photo, albumId: String): AlbumPhoto {
-		val exist = albumPhotoRepository.findByIdOrNull(AlbumPhotoId(albumId, photo.id))
+		val exist = albumPhotoMapper.selectOne(albumId = albumId, photoId = photo.id)
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist album photo: $exist" }
 			return exist
@@ -146,11 +145,11 @@ class PhotoUploadService(
 			photoId = photo.id,
 			userId = userId,
 		)
-		albumPhotoRepository.save(albumPhoto)
+		albumPhotoMapper.insert(albumPhoto)
 
-		val album = albumRepository.findByIdOrNull(albumId)
+		val album = albumMapper.selectOne(albumId)
 		if (album != null && album.thumbnailPhotoId == null) {
-			albumRepository.save(album.copy(thumbnailPhotoId = photo.id))
+			albumMapper.insert(album.copy(thumbnailPhotoId = photo.id))
 		}
 
 		return albumPhoto
@@ -163,7 +162,7 @@ class PhotoUploadService(
 		}
 
 		val nameWithoutExt = Path(photoOwner.name).nameWithoutExtension
-		val candidates = photoOwnerRepository.selectMyPhotoByName(userId, nameWithoutExt)
+		val candidates = photoOwnerMapper.select(PhotoOwnerCondition(userId = userId, name = nameWithoutExt))
 
 		val candidates2 = when {
 			isVideo(photoOwner.name) -> candidates.filter { isImage(it.name) }
@@ -179,7 +178,7 @@ class PhotoUploadService(
 			return
 		}
 
-		val pairPhoto = photoRepository.findByIdOrNull(candidates2.first().photoId) ?: return
+		val pairPhoto = photoMapper.selectOne(candidates2.first().photoId) ?: return
 		if (abs(photo.millis - pairPhoto.millis) > 3000) {
 			log.debug { "[PhotoUpload Pairing] Different date of pair photo: ${photo.date}, ${pairPhoto.date}" }
 			return
@@ -191,7 +190,7 @@ class PhotoUploadService(
 		}
 
 		log.debug { "[PhotoUpload Pairing] Successfully pairing photo: ${photo.id} - ${pairPhoto.id}" }
-		photoRepository.save(photo.copy(pairPhotoId = pairPhoto.id))
-		photoRepository.save(pairPhoto.copy(pairPhotoId = photo.id))
+		photoMapper.insert(photo.copy(pairPhotoId = pairPhoto.id))
+		photoMapper.insert(pairPhoto.copy(pairPhotoId = photo.id))
 	}
 }

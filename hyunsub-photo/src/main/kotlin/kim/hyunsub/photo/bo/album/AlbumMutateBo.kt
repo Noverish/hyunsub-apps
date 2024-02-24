@@ -3,29 +3,27 @@ package kim.hyunsub.photo.bo.album
 import jakarta.transaction.Transactional
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.photo.mapper.AlbumMapper
 import kim.hyunsub.photo.model.api.ApiAlbum
 import kim.hyunsub.photo.model.dto.AlbumCreateParams
 import kim.hyunsub.photo.model.dto.AlbumThumbnailParams
-import kim.hyunsub.photo.repository.AlbumOwnerRepository
-import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumRepository
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
-import kim.hyunsub.photo.repository.generateId
+import kim.hyunsub.photo.repository.mapper.AlbumMapper
+import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
+import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
+import kim.hyunsub.photo.repository.mapper.generateId
 import org.springframework.stereotype.Service
 
 @Service
 class AlbumMutateBo(
-	private val albumRepository: AlbumRepository,
-	private val albumOwnerRepository: AlbumOwnerRepository,
-	private val albumPhotoRepository: AlbumPhotoRepository,
+	private val albumOwnerMapper: AlbumOwnerMapper,
 	private val albumDetailBo: AlbumDetailBo,
 	private val albumMapper: AlbumMapper,
+	private val albumPhotoMapper: AlbumPhotoMapper,
 ) {
 	fun create(userId: String, params: AlbumCreateParams): ApiAlbum {
 		val album = Album(
-			id = albumRepository.generateId(),
+			id = albumMapper.generateId(),
 			name = params.name,
 		)
 
@@ -35,8 +33,8 @@ class AlbumMutateBo(
 			owner = true,
 		)
 
-		albumRepository.save(album)
-		albumOwnerRepository.save(albumOwner)
+		albumMapper.insert(album)
+		albumOwnerMapper.insert(albumOwner)
 
 		return albumDetailBo.toApiAlbum(album)
 	}
@@ -46,11 +44,11 @@ class AlbumMutateBo(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 
 		val photoId = params.photoId
-		albumPhotoRepository.findByAlbumIdAndPhotoId(albumId, photoId).firstOrNull()
+		albumPhotoMapper.selectOne(albumId = albumId, photoId = photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
 		val newAlbum = album.copy(thumbnailPhotoId = photoId)
-		albumRepository.save(newAlbum)
+		albumMapper.insert(newAlbum)
 
 		return albumDetailBo.toApiAlbum(newAlbum)
 	}
@@ -61,9 +59,9 @@ class AlbumMutateBo(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 		val result = albumDetailBo.toApiAlbum(album)
 
-		albumOwnerRepository.deleteByAlbumId(albumId)
-		albumPhotoRepository.deleteByAlbumId(albumId)
-		albumRepository.deleteById(albumId)
+		albumOwnerMapper.deleteByAlbumId(albumId)
+		albumPhotoMapper.deleteByAlbumId(albumId)
+		albumMapper.deleteById(albumId)
 
 		return result
 	}

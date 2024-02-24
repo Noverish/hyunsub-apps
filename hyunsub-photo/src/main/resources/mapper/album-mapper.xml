@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="kim.hyunsub.photo.mapper.AlbumMapper">
-    <select id="selectList" resultType="Album">
-        SELECT b.*
-        FROM album_owner a
-        INNER JOIN album b ON b.id = a.album_id
-        WHERE a.user_id = #{userId}
-        <if test="owner != null">
-            AND a.owner = #{owner}
-        </if>
+<mapper namespace="kim.hyunsub.photo.repository.mapper.AlbumMapper">
+    <select id="countById">
+        SELECT COUNT(*)
+        FROM album
+        WHERE id = #{id}
+    </select>
+
+    <select id="select" resultType="Album">
+        SELECT a.*
+        FROM album a
+        INNER JOIN album_owner b ON b.album_id = a.id
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="thumbnailPhotoId != null">AND a.thumbnail_photo_id = #{thumbnailPhotoId}</if>
+            <if test="userId != null">AND b.user_id = #{userId}</if>
+            <if test="owner != null">AND b.owner = #{owner}</if>
+        </trim>
         ORDER BY b.reg_dt DESC
         <if test="page != null">
             LIMIT #{page.pageSize} OFFSET #{page.offset}
@@ -17,12 +24,37 @@
     </select>
 
     <select id="selectOne" resultType="Album">
-        SELECT b.*
-        FROM album_owner a
-        INNER JOIN album b ON b.id = a.album_id
-        WHERE a.user_id = #{userId} AND a.album_id = #{albumId}
-        <if test="owner != null">
-            AND a.owner = #{owner}
-        </if>
+        SELECT a.*
+        FROM album a
+        INNER JOIN album_owner b ON b.album_id = a.id
+        WHERE a.id = #{id}
+        <if test="userId != null">AND b.user_id = #{userId}</if>
+        <if test="owner != null">AND b.owner = #{owner}</if>
     </select>
+
+    <insert id="insert">
+        INSERT INTO album
+        (id, name, thumbnail_photo_id, reg_dt)
+        VALUES
+        (#{id}, #{name}, #{thumbnailPhotoId}, #{regDt})
+    </insert>
+
+    <insert id="insertAll">
+        INSERT INTO album
+        (id, name, thumbnail_photo_id, reg_dt)
+        VALUES
+        <foreach collection="entities" item="v" separator=",">
+            (#{v.id}, #{v.name}, #{v.thumbnailPhotoId}, #{v.regDt})
+        </foreach>
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM album
+        WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        DELETE FROM album
+        WHERE id IN <foreach collection="ids" item="v" separator="," open="(" close=")">#{v}</foreach>
+    </delete>
 </mapper>

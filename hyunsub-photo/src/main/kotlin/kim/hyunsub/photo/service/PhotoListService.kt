@@ -4,23 +4,41 @@ import kim.hyunsub.common.model.ApiPagination
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.model.api.toApiPreview
-import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.condition.PhotoCondition
+import kim.hyunsub.photo.repository.condition.PhotoOwnerCondition
+import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
 @Service
 class PhotoListService(
-	private val photoRepository: PhotoRepository,
-	private val photoOwnerRepository: PhotoOwnerRepository,
+	private val photoOwnerMapper: PhotoOwnerMapper,
+	private val photoMapper: PhotoMapper,
 ) {
 	fun listPhotoWithPhotoId(userId: String, photoId: String): ApiPagination<ApiPhotoPreview> {
-		val total = photoOwnerRepository.countByUserId(userId)
+		val total = photoOwnerMapper.count(PhotoOwnerCondition(userId = userId))
 		val pageRequest = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
 
-		val before = photoRepository.selectMyPhotosWithPrev(userId, photoId, pageRequest)
-		val photo = photoRepository.selectMyPhotosWithPhotoId(userId, photoId)
-		val after = photoRepository.selectMyPhotosWithNext(userId, photoId, pageRequest)
+		val before = photoMapper.select(
+			PhotoCondition(
+				userId = userId,
+				idGreaterThan = photoId,
+				page = pageRequest,
+				asc = true,
+			)
+		)
+
+		val photo = photoMapper.selectOne(id = photoId, userId = userId)
+
+		val after = photoMapper.select(
+			PhotoCondition(
+				userId = userId,
+				idLessThan = photoId,
+				page = pageRequest,
+				asc = false,
+			)
+		)
 
 		val prev = if (before.size == pageRequest.pageSize) before.lastOrNull()?.id else null
 		val next = if (after.size == pageRequest.pageSize) after.lastOrNull()?.id else null
@@ -43,13 +61,32 @@ class PhotoListService(
 	}
 
 	fun list(userId: String, next: String? = null, prev: String? = null): ApiPagination<ApiPhotoPreview> {
-		val total = photoOwnerRepository.countByUserId(userId)
+		val total = photoOwnerMapper.count(PhotoOwnerCondition(userId = userId))
 		val pageRequest = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
 
 		val data = when {
-			prev != null -> photoRepository.selectMyPhotosWithPrev(userId, prev, pageRequest)
-			next != null -> photoRepository.selectMyPhotosWithNext(userId, next, pageRequest)
-			else -> photoRepository.selectMyPhotos(userId, pageRequest)
+			prev != null -> photoMapper.select(
+				PhotoCondition(
+					userId = userId,
+					idGreaterThan = prev,
+					page = pageRequest,
+					asc = true,
+				)
+			)
+			next != null -> photoMapper.select(
+				PhotoCondition(
+					userId = userId,
+					idLessThan = next,
+					page = pageRequest,
+					asc = false,
+				)
+			)
+			else -> photoMapper.select(
+				PhotoCondition(
+					userId = userId,
+					page = pageRequest,
+				)
+			)
 		}
 			.sortedByDescending { it.id.lowercase() }
 			.map { it.toApiPreview() }

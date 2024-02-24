@@ -1,8 +1,7 @@
-package kim.hyunsub.photo.model.api
+package kim.hyunsub.photo.repository.entity
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import kim.hyunsub.photo.model.PhotoDateType
-import kim.hyunsub.photo.repository.entity.Photo
 import java.time.LocalDateTime
 import java.time.OffsetDateTime
 

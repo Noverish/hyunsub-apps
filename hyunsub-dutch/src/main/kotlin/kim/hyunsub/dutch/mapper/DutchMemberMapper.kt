@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface DutchMemberMapper : MapperBase {
-	override fun count(id: String): Int
+	override fun countById(id: String): Int
 
 	fun select(memberId: String, tripId: String? = null): DutchMember?
 	fun selectByTripId(tripId: String): List<DutchMember>

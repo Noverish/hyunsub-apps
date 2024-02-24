@@ -7,13 +7,11 @@ import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.album.AlbumPhotoBo
 import kim.hyunsub.photo.bo.photo.PhotoDetailBo
 import kim.hyunsub.photo.model.api.ApiPhoto
-import kim.hyunsub.photo.model.api.ApiPhotoMetadata
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
-import kim.hyunsub.photo.repository.AlbumOwnerRepository
-import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.entity.AlbumOwnerId
+import kim.hyunsub.photo.repository.entity.ApiPhotoMetadata
+import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
 import mu.KotlinLogging
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -24,9 +22,9 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/v1/albums/{albumId}/photos")
 class AlbumPhotoController(
 	private val photoDetailBo: PhotoDetailBo,
-	private val albumOwnerRepository: AlbumOwnerRepository,
-	private val albumPhotoRepository: AlbumPhotoRepository,
+	private val albumOwnerMapper: AlbumOwnerMapper,
 	private val albumPhotoBo: AlbumPhotoBo,
+	private val photoMetadataMapper: PhotoMetadataMapper,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -57,9 +55,9 @@ class AlbumPhotoController(
 		val userId = userAuth.idNo
 		log.debug { "[List Album Photos Metadata] userId=$userId, albumId=$albumId" }
 
-		albumOwnerRepository.findByIdOrNull(AlbumOwnerId(albumId, userId))
+		albumOwnerMapper.selectOne(albumId = albumId, userId = userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		return albumPhotoRepository.findPhotoDetailByAlbumId(albumId)
+		return photoMetadataMapper.selectDetailByAlbumId(albumId)
 	}
 }

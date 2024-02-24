@@ -8,27 +8,27 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.PhotoDateType
 import kim.hyunsub.photo.model.api.ApiRescanDateResult
-import kim.hyunsub.photo.repository.AlbumPhotoRepository
-import kim.hyunsub.photo.repository.AlbumRepository
-import kim.hyunsub.photo.repository.PhotoMetadataRepository
-import kim.hyunsub.photo.repository.PhotoOwnerRepository
-import kim.hyunsub.photo.repository.PhotoRepository
+import kim.hyunsub.photo.repository.condition.AlbumCondition
 import kim.hyunsub.photo.repository.entity.Photo
-import kim.hyunsub.photo.repository.generateId
+import kim.hyunsub.photo.repository.mapper.AlbumMapper
+import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
+import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
+import kim.hyunsub.photo.repository.mapper.generateId
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathConverter
 import mu.KotlinLogging
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 
 @Service
 class PhotoUpdateService(
 	private val fsClient: FsClient,
-	private val photoRepository: PhotoRepository,
-	private val photoOwnerRepository: PhotoOwnerRepository,
-	private val albumPhotoRepository: AlbumPhotoRepository,
-	private val albumRepository: AlbumRepository,
-	private val photoMetadataRepository: PhotoMetadataRepository,
+	private val photoOwnerMapper: PhotoOwnerMapper,
+	private val albumMapper: AlbumMapper,
+	private val photoMetadataMapper: PhotoMetadataMapper,
+	private val photoMapper: PhotoMapper,
+	private val albumPhotoMapper: AlbumPhotoMapper,
 ) {
 	private val log = KotlinLogging.logger { }
 	private val mapper = jacksonObjectMapper()
@@ -52,16 +52,16 @@ class PhotoUpdateService(
 			fsClient.rename(oldVideoPath, newVideoPath)
 		}
 
-		val albums = albumRepository.findByThumbnailPhotoId(oldId)
+		val albums = albumMapper.select(AlbumCondition(thumbnailPhotoId = oldId))
 		for (album in albums) {
 			val newAlbum = album.copy(thumbnailPhotoId = newId)
-			albumRepository.save(newAlbum)
+			albumMapper.insert(newAlbum)
 		}
 
-		val photoResult = photoRepository.updateId(oldId, newId)
-		val photoOwner = photoOwnerRepository.updatePhotoId(oldId, newId)
-		val albumPhoto = albumPhotoRepository.updatePhotoId(oldId, newId)
-		val photoMetadata = photoMetadataRepository.updatePhotoId(oldId, newId)
+		val photoResult = photoMapper.updateId(from = oldId, to = newId)
+		val photoOwner = photoOwnerMapper.updatePhotoId(oldId, newId)
+		val albumPhoto = albumPhotoMapper.updatePhotoId(oldId, newId)
+		val photoMetadata = photoMetadataMapper.updatePhotoId(oldId, newId)
 
 		log.debug { "[Update Photo Id] albums=${albums.size} photo=$photoResult, photoOwner=$photoOwner, albumPhoto=$albumPhoto, photoMetadata=$photoMetadata" }
 
@@ -70,10 +70,10 @@ class PhotoUpdateService(
 
 	@Transactional
 	fun rescanPhotoDate(photoId: String): ApiRescanDateResult? {
-		val photo = photoRepository.findByIdOrNull(photoId)
+		val photo = photoMapper.selectOne(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val metadata = photoMetadataRepository.findByIdOrNull(photo.id)
+		val metadata = photoMetadataMapper.selectOne(photo.id)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
 		val exif = mapper.readTree(metadata.raw)
@@ -87,7 +87,7 @@ class PhotoUpdateService(
 			return null
 		}
 
-		val newId = photoRepository.generateId(result.date, photo.hash)
+		val newId = photoMapper.generateId(result.date, photo.hash)
 		log.debug { "[Rescan Photo Date] ${photo.id} -> $newId : ${photo.date} -> ${result.date}" }
 		updateId(photo, newId)
 
@@ -96,7 +96,7 @@ class PhotoUpdateService(
 			dateType = PhotoDateType.EXIF,
 			offset = result.date.offset.totalSeconds,
 		)
-		photoRepository.save(newPhoto)
+		photoMapper.insert(newPhoto)
 
 		return ApiRescanDateResult(
 			oldId = photoId,
