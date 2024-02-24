@@ -19,13 +19,13 @@
 
     <insert id="upsert">
         INSERT INTO photo_metadata
-        (photo_id, sub_sec_date_time_original, date_time_original, gpsdate_time, time_stamp, modify_date, creation_date, offset_time, offset_time_original, offset_time_digitized, raw, date)
+        (photo_id, sub_sec_date_time_original, date_time_original, gps_date_time, time_stamp, modify_date, creation_date, offset_time, offset_time_original, offset_time_digitized, raw, date)
         VALUES
-        (#{photoId}, #{subSecDateTimeOriginal}, #{dateTimeOriginal}, #{gpsdateTime}, #{timeStamp}, #{modifyDate}, #{creationDate}, #{offsetTime}, #{offsetTimeOriginal}, #{offsetTimeDigitized}, #{raw}, #{date})
+        (#{photoId}, #{subSecDateTimeOriginal}, #{dateTimeOriginal}, #{gpsDateTime}, #{timeStamp}, #{modifyDate}, #{creationDate}, #{offsetTime}, #{offsetTimeOriginal}, #{offsetTimeDigitized}, #{raw}, #{date})
         ON DUPLICATE KEY UPDATE
         sub_sec_date_time_original = #{subSecDateTimeOriginal},
         date_time_original = #{dateTimeOriginal},
-        gpsdate_time = #{gpsdateTime},
+        gps_date_time = #{gpsDateTime},
         time_stamp = #{timeStamp},
         modify_date = #{modifyDate},
         creation_date = #{creationDate},
