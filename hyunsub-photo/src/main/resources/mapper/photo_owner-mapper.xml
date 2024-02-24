@@ -53,6 +53,15 @@
         </foreach>
     </insert>
 
+    <update id="update">
+        UPDATE photo_owner
+        SET name = #{name},
+            file_dt = #{fileDt},
+            date = #{date},
+            offset = #{offset}
+        WHERE user_id = #{userId} AND photo_id = #{photoId}
+    </update>
+
     <update id="updatePhotoId">
         UPDATE photo_owner
         SET photo_id = #{to}

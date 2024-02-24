@@ -45,6 +45,7 @@
         INNER JOIN photo_owner b ON b.photo_id = a.id
         WHERE a.id = #{id}
         <if test="userId != null">AND b.user_id = #{userId}</if>
+        LIMIT 1
     </select>
 
     <select id="countById">

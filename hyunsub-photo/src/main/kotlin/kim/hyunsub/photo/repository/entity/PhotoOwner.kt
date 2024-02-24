@@ -8,4 +8,6 @@ data class PhotoOwner(
 	val name: String,
 	val fileDt: LocalDateTime,
 	val regDt: LocalDateTime,
+	val date: LocalDateTime,
+	val offset: Int,
 )

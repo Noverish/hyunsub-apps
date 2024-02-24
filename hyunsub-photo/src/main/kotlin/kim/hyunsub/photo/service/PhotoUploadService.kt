@@ -8,6 +8,7 @@ import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
 import kim.hyunsub.common.util.toLdt
+import kim.hyunsub.common.util.toUtcLdt
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
 import kim.hyunsub.photo.repository.condition.PhotoCondition
 import kim.hyunsub.photo.repository.condition.PhotoOwnerCondition
@@ -127,6 +128,8 @@ class PhotoUploadService(
 			name = params.name,
 			fileDt = params.millis.toLdt(),
 			regDt = LocalDateTime.now(),
+			date = photo.date.toUtcLdt(),
+			offset = photo.offset,
 		)
 		photoOwnerMapper.insert(photoOwner)
 

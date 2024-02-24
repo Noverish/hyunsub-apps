@@ -15,6 +15,7 @@ interface PhotoOwnerMapper {
 
 	fun insert(entity: PhotoOwner): Int
 	fun insertAll(entities: List<PhotoOwner>): Int
+	fun update(entity: PhotoOwner): Int
 	fun updatePhotoId(from: String, to: String): Int
 	fun delete(entity: PhotoOwner): Int
 	fun deleteAll(entities: List<PhotoOwner>): Int
