@@ -9,7 +9,7 @@
     </select>
 
     <select id="select" resultType="Album">
-        SELECT a.*
+        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
         INNER JOIN album_owner b ON b.album_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -24,7 +24,7 @@
     </select>
 
     <select id="selectOne" resultType="Album">
-        SELECT a.*
+        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
         INNER JOIN album_owner b ON b.album_id = a.id
         WHERE a.id = #{id}

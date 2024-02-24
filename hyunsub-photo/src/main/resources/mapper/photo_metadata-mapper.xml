@@ -3,7 +3,7 @@
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper">
     <select id="selectOne" resultType="ApiPhotoMetadata">
-        SELECT *
+        SELECT photo_id, sub_sec_date_time_original, date_time_original, gps_date_time, time_stamp, modify_date, creation_date, offset_time, offset_time_original, offset_time_digitized, raw, date
         FROM photo_metadata
         WHERE photo_id = #{photoId}
     </select>

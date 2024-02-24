@@ -3,7 +3,7 @@
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMapper">
     <select id="select" resultType="Photo">
-        SELECT a.*
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -21,7 +21,7 @@
     </select>
 
     <select id="count">
-        SELECT count(a.*)
+        SELECT count(*)
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -32,7 +32,7 @@
     </select>
 
     <select id="selectByAlbumId">
-        SELECT a.*
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id
         FROM photo a
         INNER JOIN album_photo b ON b.photo_id = a.id
         WHERE b.album_id = #{albumId}
@@ -40,7 +40,7 @@
     </select>
 
     <select id="selectOne" resultType="Photo">
-        SELECT a.*
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         WHERE a.id = #{id}

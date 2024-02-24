@@ -3,7 +3,7 @@
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper">
     <select id="select" resultType="AlbumPhoto">
-        SELECT *
+        SELECT album_id, photo_id, user_id, reg_dt
         FROM album_photo
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="albumId != null">AND album_id = #{albumId}</if>
@@ -26,7 +26,7 @@
     </select>
 
     <select id="selectOne" resultType="AlbumPhoto">
-        SELECT *
+        SELECT album_id, photo_id, user_id, reg_dt
         FROM album_photo
         WHERE album_id = #{albumId} AND photo_id = #{photoId}
     </select>
