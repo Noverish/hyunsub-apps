@@ -20,8 +20,8 @@ class ThumbnailService(
 	private val fsImageClient: FsImageClient,
 ) {
 	fun generateThumbnail(photo: Photo) {
-		val original = PhotoPathConverter.originalNew(photo)
-		val thumbnail = PhotoPathConverter.thumbnailNew(photo)
+		val original = PhotoPathConverter.original(photo)
+		val thumbnail = PhotoPathConverter.thumbnail(photo)
 
 		if (isVideo(photo.fileName)) {
 			val tmp = "$thumbnail.jpg"

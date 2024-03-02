@@ -19,7 +19,6 @@ data class PhotoPreview(
 	val userId: String,
 	val name: String,
 	val dateType: PhotoDateType,
-	val idNew: String,
 ) {
 	val odt: OffsetDateTime
 		get() = date.toOdt(ZoneOffset.ofTotalSeconds(offset))
@@ -42,6 +41,5 @@ data class PhotoPreview(
 		userId = owner.userId,
 		name = owner.name,
 		dateType = owner.dateType,
-		idNew = photo.idNew
 	)
 }

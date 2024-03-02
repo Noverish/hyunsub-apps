@@ -7,8 +7,9 @@ import kim.hyunsub.photo.util.PhotoPathConverter
 
 fun PhotoPreview.toApi() = ApiPhotoPreview(
 	id = id,
-	thumbnail = FsPathConverter.convertToUrl(PhotoPathConverter.thumbnailNew(this)),
+	thumbnail = FsPathConverter.convertToUrl(PhotoPathConverter.thumbnail(this)),
 	date = odt,
 	type = if (isVideo) PhotoType.VIDEO else PhotoType.PHOTO,
 	ext = ext,
+	userId = userId,
 )

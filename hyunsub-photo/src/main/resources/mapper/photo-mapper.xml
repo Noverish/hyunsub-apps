@@ -9,7 +9,7 @@
     </select>
 
     <select id="select" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id, a.id_new, a.pair_photo_id_new
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id, a.pair_photo_id_new
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -37,8 +37,7 @@
             b.offset,
             b.user_id,
             b.name,
-            b.date_type,
-            a.id_new
+            b.date_type
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -48,8 +47,8 @@
             <if test="idLessThan != null">AND a.id &lt; #{idLessThan}</if>
             <if test="idGreaterThan != null">AND a.id &gt; #{idGreaterThan}</if>
         </trim>
-        <if test="asc">ORDER BY a.id</if>
-        <if test="!asc">ORDER BY a.id DESC</if>
+        <if test="asc">ORDER BY b.date</if>
+        <if test="!asc">ORDER BY b.date DESC</if>
         <if test="page != null">
             LIMIT #{page.pageSize} OFFSET #{page.offset}
         </if>
@@ -67,7 +66,7 @@
     </select>
 
     <select id="selectByAlbumId">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id, a.id_new, a.pair_photo_id_new
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id, a.pair_photo_id_new
         FROM photo a
         INNER JOIN album_photo b ON b.photo_id = a.id
         WHERE b.album_id = #{albumId}
@@ -85,17 +84,17 @@
                c.offset,
                c.user_id,
                c.name,
-               c.date_type,
-               a.id_new
+               c.date_type
         FROM photo a
         INNER JOIN album_photo b ON b.photo_id = a.id
         INNER JOIN photo_owner c ON c.photo_id = a.id
         WHERE b.album_id = #{albumId}
+        ORDER BY c.date
         LIMIT #{page.pageSize} OFFSET #{page.offset}
     </select>
 
     <select id="selectOne" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id, a.id_new, a.pair_photo_id_new
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id, a.pair_photo_id_new
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         WHERE a.id = #{id}
@@ -114,8 +113,7 @@
             b.offset,
             b.user_id,
             b.name,
-            b.date_type,
-            a.id_new
+            b.date_type
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         WHERE a.id = #{id}
@@ -125,17 +123,17 @@
 
     <insert id="insert">
         INSERT INTO photo
-        (id, hash, width, height, size, offset, ext, date_type, pair_photo_id, id_new, pair_photo_id_new)
+        (id, hash, width, height, size, ext, pair_photo_id, pair_photo_id_new)
         VALUES
-        (#{id}, #{hash}, #{width}, #{height}, #{size}, #{offset}, #{ext}, #{dateType}, #{pairPhotoId}, #{idNew}, #{pairPhotoIdNew})
+        (#{id}, #{hash}, #{width}, #{height}, #{size}, #{ext}, #{pairPhotoId}, #{pairPhotoIdNew})
     </insert>
 
     <insert id="insertAll">
         INSERT INTO photo
-        (id, hash, width, height, size, offset, ext, date_type, pair_photo_id, id_new, pair_photo_id_new)
+        (id, hash, width, height, size, ext, pair_photo_id, pair_photo_id_new)
         VALUES
         <foreach collection="entities" item="v" separator=",">
-            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.offset}, #{v.ext}, #{v.dateType}, #{v.pairPhotoId}, #{v.idNew}, #{v.pairPhotoIdNew})
+            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.ext}, #{v.pairPhotoId}, #{v.pairPhotoIdNew})
         </foreach>
     </insert>
 

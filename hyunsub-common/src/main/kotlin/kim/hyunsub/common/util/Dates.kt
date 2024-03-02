@@ -22,4 +22,4 @@ fun Long.toOdt(zoneId: ZoneId = ZoneId.systemDefault()): OffsetDateTime =
 	Instant.ofEpochMilli(this).atZone(zoneId).toOffsetDateTime()
 
 fun LocalDateTime.toOdt(zoneId: ZoneId = ZoneId.systemDefault()): OffsetDateTime =
-	this.atZone(zoneId).toOffsetDateTime()
+	this.atZone(ZoneOffset.UTC).withZoneSameInstant(zoneId).toOffsetDateTime()

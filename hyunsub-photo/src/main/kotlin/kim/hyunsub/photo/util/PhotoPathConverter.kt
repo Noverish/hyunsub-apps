@@ -5,11 +5,11 @@ import kim.hyunsub.photo.repository.entity.PhotoPreview
 import kotlin.io.path.Path
 
 object PhotoPathConverter {
-	fun originalNew(photo: Photo) = path("original2", photo.idNew, photo.ext)
-	fun thumbnailNew(photoIdNew: String) = path("thumbnail2", photoIdNew, "jpg")
-	fun thumbnailNew(photo: Photo) = path("thumbnail2", photo.idNew, "jpg")
-	fun thumbnailNew(photo: PhotoPreview) = path("thumbnail2", photo.idNew, "jpg")
-	fun videoNew(photo: Photo) = path("video2", photo.idNew, "mp4")
+	fun original(photo: Photo) = path("original2", photo.id, photo.ext)
+	fun thumbnail(photoIdNew: String) = path("thumbnail2", photoIdNew, "jpg")
+	fun thumbnail(photo: Photo) = path("thumbnail2", photo.id, "jpg")
+	fun thumbnail(photo: PhotoPreview) = path("thumbnail2", photo.id, "jpg")
+	fun video(photo: Photo) = path("video2", photo.id, "mp4")
 
 	private fun path(type: String, photoIdNew: String, ext: String) = Path(
 		"/hyunsub/photo/$type",

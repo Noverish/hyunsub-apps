@@ -60,14 +60,14 @@ class PhotoDeleteBo(
 
 	private fun deleteFile(photo: Photo) {
 		val photoId = photo.id
-		val originalPath = PhotoPathConverter.originalNew(photo)
-		val thumbnailPath = PhotoPathConverter.thumbnailNew(photo)
+		val originalPath = PhotoPathConverter.original(photo)
+		val thumbnailPath = PhotoPathConverter.thumbnail(photo)
 
 		fsClient.remove(originalPath)
 		fsClient.remove(thumbnailPath)
 
 		if (isVideo(photo.fileName)) {
-			val videoPath = PhotoPathConverter.videoNew(photo)
+			val videoPath = PhotoPathConverter.video(photo)
 			fsClient.remove(videoPath)
 		}
 

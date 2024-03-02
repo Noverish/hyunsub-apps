@@ -31,17 +31,17 @@ class PhotoUpdateService(
 		val oldId = photo.id
 		val newPhoto = photo.copy(id = newId)
 
-		val oldOriginalPath = PhotoPathConverter.originalNew(photo)
-		val newOriginalPath = PhotoPathConverter.originalNew(newPhoto)
+		val oldOriginalPath = PhotoPathConverter.original(photo)
+		val newOriginalPath = PhotoPathConverter.original(newPhoto)
 		fsClient.rename(oldOriginalPath, newOriginalPath)
 
-		val oldThumbnailPath = PhotoPathConverter.thumbnailNew(photo)
-		val newThumbnailPath = PhotoPathConverter.thumbnailNew(newPhoto)
+		val oldThumbnailPath = PhotoPathConverter.thumbnail(photo)
+		val newThumbnailPath = PhotoPathConverter.thumbnail(newPhoto)
 		fsClient.rename(oldThumbnailPath, newThumbnailPath)
 
 		if (isVideo(photo.fileName)) {
-			val oldVideoPath = PhotoPathConverter.videoNew(photo)
-			val newVideoPath = PhotoPathConverter.videoNew(newPhoto)
+			val oldVideoPath = PhotoPathConverter.video(photo)
+			val newVideoPath = PhotoPathConverter.video(newPhoto)
 			fsClient.rename(oldVideoPath, newVideoPath)
 		}
 

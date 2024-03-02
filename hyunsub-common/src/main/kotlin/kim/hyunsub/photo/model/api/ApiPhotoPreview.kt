@@ -9,4 +9,5 @@ data class ApiPhotoPreview(
 	val date: OffsetDateTime,
 	val type: PhotoType,
 	val ext: String,
+	val userId: String,
 )

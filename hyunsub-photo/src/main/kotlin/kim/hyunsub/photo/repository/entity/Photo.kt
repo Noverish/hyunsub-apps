@@ -2,7 +2,6 @@ package kim.hyunsub.photo.repository.entity
 
 import kim.hyunsub.common.util.toByteArray
 import kim.hyunsub.common.util.toHex
-import kim.hyunsub.photo.model.PhotoDateType
 
 data class Photo(
 	val id: String,
@@ -10,11 +9,8 @@ data class Photo(
 	val width: Int,
 	val height: Int,
 	val size: Int,
-	val offset: Int,
 	val ext: String,
-	val dateType: PhotoDateType,
 	val pairPhotoId: String? = null,
-	val idNew: String,
 	val pairPhotoIdNew: String? = null,
 ) {
 	companion object {

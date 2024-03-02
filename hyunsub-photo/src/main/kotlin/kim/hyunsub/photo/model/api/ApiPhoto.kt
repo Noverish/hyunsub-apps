@@ -28,5 +28,5 @@ fun Photo.toApi(owner: PhotoOwner) = ApiPhoto(
 	regDt = owner.regDt,
 	fileName = owner.name,
 	dateType = owner.dateType,
-	original = FsPathConverter.convertToUrl(PhotoPathConverter.originalNew(this))
+	original = FsPathConverter.convertToUrl(PhotoPathConverter.original(this))
 )

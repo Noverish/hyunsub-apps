@@ -49,7 +49,6 @@ class PhotoListService(
 			addAll(after)
 		}
 			.filterNotNull()
-			.sortedByDescending { it.id }
 			.map { it.toApi() }
 
 		return ApiPagination(
@@ -88,7 +87,6 @@ class PhotoListService(
 				)
 			)
 		}
-			.sortedByDescending { it.id.lowercase() }
 			.map { it.toApi() }
 
 		val full = data.size == pageRequest.pageSize

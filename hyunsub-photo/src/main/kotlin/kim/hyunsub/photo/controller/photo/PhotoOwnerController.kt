@@ -21,4 +21,12 @@ class PhotoOwnerController(
 	): SimpleResponse {
 		return photoOwnerBo.updateOffsetSameLocal(userAuth.idNo, params)
 	}
+
+	@PostMapping("/update-offset-same-instant")
+	fun updateOffsetSameInstant(
+		userAuth: UserAuth,
+		@RequestBody params: ApiUpdatePhotoOffsetParams,
+	): SimpleResponse {
+		return photoOwnerBo.updateOffsetSameInstant(userAuth.idNo, params)
+	}
 }

@@ -9,7 +9,7 @@
     </select>
 
     <select id="select" resultType="Album">
-        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt, a.thumbnail_photo_id_new
+        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
         INNER JOIN album_owner b ON b.album_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -24,7 +24,7 @@
     </select>
 
     <select id="selectOne" resultType="Album">
-        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt, a.thumbnail_photo_id_new
+        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
         INNER JOIN album_owner b ON b.album_id = a.id
         WHERE a.id = #{id}
@@ -34,17 +34,17 @@
 
     <insert id="insert">
         INSERT INTO album
-        (id, name, thumbnail_photo_id, reg_dt, thumbnail_photo_id_new)
+        (id, name, thumbnail_photo_id, reg_dt)
         VALUES
-        (#{id}, #{name}, #{thumbnailPhotoId}, #{regDt}, #{thumbnailPhotoIdNew})
+        (#{id}, #{name}, #{thumbnailPhotoId}, #{regDt})
     </insert>
 
     <insert id="insertAll">
         INSERT INTO album
-        (id, name, thumbnail_photo_id, reg_dt, thumbnail_photo_id_new)
+        (id, name, thumbnail_photo_id, reg_dt)
         VALUES
         <foreach collection="entities" item="v" separator=",">
-            (#{v.id}, #{v.name}, #{v.thumbnailPhotoId}, #{v.regDt}, #{thumbnailPhotoIdNew})
+            (#{v.id}, #{v.name}, #{v.thumbnailPhotoId}, #{v.regDt})
         </foreach>
     </insert>
 

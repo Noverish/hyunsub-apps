@@ -22,7 +22,6 @@ import kim.hyunsub.photo.repository.mapper.PhotoMapper
 import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
 import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
 import kim.hyunsub.photo.repository.mapper.generateId
-import kim.hyunsub.photo.repository.mapper.generateIdOld
 import kim.hyunsub.photo.util.PhotoDateParser
 import kim.hyunsub.photo.util.PhotoPathConverter
 import kim.hyunsub.photo.util.isVideo
@@ -74,35 +73,28 @@ class PhotoUploadService(
 		}
 
 		val exif = fsImageClient.exif(tmpPath)[0]
-		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
-		val date = parseResult.date
-		val dateType = parseResult.type
-		val id = photoMapper.generateIdOld(date, hash)
 
 		val photo = Photo(
-			id = id,
+			id = photoMapper.generateId(),
 			hash = hash,
 			width = exif["ImageWidth"].asInt(),
 			height = exif["ImageHeight"].asInt(),
 			size = exif["FileSize"].asInt(),
-			offset = date.offset.totalSeconds,
 			ext = Path(params.name).extension,
-			dateType = dateType,
-			idNew = photoMapper.generateId(),
 		)
 
 		// move photo to original folder
-		val originalPath = PhotoPathConverter.originalNew(photo)
+		val originalPath = PhotoPathConverter.original(photo)
 		fsClient.rename(tmpPath, originalPath, true)
 
 		// generate thumbnail
 		thumbnailService.generateThumbnail(photo)
 		if (isVideo(photo.fileName)) {
-			val videoPath = PhotoPathConverter.videoNew(photo)
+			val videoPath = PhotoPathConverter.video(photo)
 			encodeApiCaller.encode(
 				input = originalPath,
 				output = videoPath,
-				photoId = id,
+				photoId = photo.id,
 			)
 		}
 
@@ -110,7 +102,7 @@ class PhotoUploadService(
 		photoMapper.insert(photo)
 
 		// save metadata
-		photoMetadataMapper.upsert(PhotoMetadata.from(id, exif, photo.idNew))
+		photoMetadataMapper.upsert(PhotoMetadata.from(photo.id, exif))
 
 		return photo
 	}
@@ -131,7 +123,6 @@ class PhotoUploadService(
 			date = parseResult.date.toUtcLdt(),
 			offset = parseResult.date.offset.totalSeconds,
 			dateType = parseResult.type,
-			photoIdNew = photo.idNew,
 		)
 		photoOwnerMapper.insert(photoOwner)
 

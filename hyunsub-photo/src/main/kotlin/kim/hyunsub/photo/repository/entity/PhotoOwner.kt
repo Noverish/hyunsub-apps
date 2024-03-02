@@ -16,7 +16,6 @@ data class PhotoOwner(
 	val date: LocalDateTime,
 	val offset: Int,
 	val dateType: PhotoDateType,
-	val photoIdNew: String,
 ) {
 	val odt: OffsetDateTime
 		get() = date.toOdt(ZoneOffset.ofTotalSeconds(offset))

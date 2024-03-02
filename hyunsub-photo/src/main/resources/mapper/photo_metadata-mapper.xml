@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper">
-    <select id="selectOne" resultType="ApiPhotoMetadata">
+    <select id="selectOne" resultType="PhotoMetadata">
         SELECT photo_id,
                sub_sec_date_time_original,
                date_time_original,
@@ -14,8 +14,7 @@
                offset_time_original,
                offset_time_digitized,
                raw,
-               date,
-               photo_id_new
+               date
         FROM photo_metadata
         WHERE photo_id = #{photoId}
     </select>
