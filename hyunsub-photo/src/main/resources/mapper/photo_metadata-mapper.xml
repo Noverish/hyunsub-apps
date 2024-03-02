@@ -3,17 +3,43 @@
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper">
     <select id="selectOne" resultType="ApiPhotoMetadata">
-        SELECT photo_id, sub_sec_date_time_original, date_time_original, gps_date_time, time_stamp, modify_date, creation_date, offset_time, offset_time_original, offset_time_digitized, raw, date
+        SELECT photo_id,
+               sub_sec_date_time_original,
+               date_time_original,
+               gps_date_time,
+               time_stamp,
+               modify_date,
+               creation_date,
+               offset_time,
+               offset_time_original,
+               offset_time_digitized,
+               raw,
+               date,
+               photo_id_new
         FROM photo_metadata
         WHERE photo_id = #{photoId}
     </select>
 
     <select id="selectDetailByAlbumId" resultType="ApiPhotoMetadata">
-        SELECT a.photo_id, d.offset, d.date_type, a.user_id, b.name, b.file_dt, c.sub_sec_date_time_original, c.date_time_original, c.gpsdate_time, c.time_stamp, c.modify_date, c.creation_date, c.offset_time, c.offset_time_original, c.offset_time_digitized
+        SELECT a.photo_id,
+               a.user_id,
+               b.name,
+               b.file_dt,
+               b.date,
+               b.offset,
+               b.date_type,
+               c.sub_sec_date_time_original,
+               c.date_time_original,
+               c.gps_date_time,
+               c.time_stamp,
+               c.modify_date,
+               c.creation_date,
+               c.offset_time,
+               c.offset_time_original,
+               c.offset_time_digitized
         FROM album_photo a
         INNER JOIN photo_owner b ON b.photo_id = a.photo_id AND b.user_id = a.user_id
         INNER JOIN photo_metadata c ON c.photo_id = a.photo_id
-        INNER JOIN photo d ON d.id = a.photo_id
         WHERE a.album_id = #{albumId}
     </select>
 

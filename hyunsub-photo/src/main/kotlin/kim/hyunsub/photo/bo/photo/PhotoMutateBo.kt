@@ -7,7 +7,7 @@ import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.PhotoDateUpdateParams
 import kim.hyunsub.photo.repository.mapper.PhotoMapper
 import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
-import kim.hyunsub.photo.repository.mapper.generateId
+import kim.hyunsub.photo.repository.mapper.generateIdOld
 import kim.hyunsub.photo.service.PhotoUpdateService
 import org.springframework.stereotype.Service
 
@@ -24,7 +24,7 @@ class PhotoMutateBo(
 		val photo = photoMapper.selectOne(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
-		val newId = photoMapper.generateId(params.date, photo.hash)
+		val newId = photoMapper.generateIdOld(params.date, photo.hash)
 
 		val newPhoto = photoUpdateService.updateId(photo, newId)
 

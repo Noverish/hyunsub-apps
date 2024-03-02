@@ -15,6 +15,7 @@ import kim.hyunsub.photo.repository.mapper.PhotoMapper
 import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
 import kim.hyunsub.photo.service.AlbumThumbnailService
 import kim.hyunsub.photo.util.PhotoPathConverter
+import kim.hyunsub.photo.util.isVideo
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
@@ -59,14 +60,14 @@ class PhotoDeleteBo(
 
 	private fun deleteFile(photo: Photo) {
 		val photoId = photo.id
-		val originalPath = PhotoPathConverter.original(photo)
-		val thumbnailPath = PhotoPathConverter.thumbnail(photoId)
+		val originalPath = PhotoPathConverter.originalNew(photo)
+		val thumbnailPath = PhotoPathConverter.thumbnailNew(photo)
 
 		fsClient.remove(originalPath)
 		fsClient.remove(thumbnailPath)
 
-		if (photo.isVideo) {
-			val videoPath = PhotoPathConverter.video(photoId)
+		if (isVideo(photo.fileName)) {
+			val videoPath = PhotoPathConverter.videoNew(photo)
 			fsClient.remove(videoPath)
 		}
 

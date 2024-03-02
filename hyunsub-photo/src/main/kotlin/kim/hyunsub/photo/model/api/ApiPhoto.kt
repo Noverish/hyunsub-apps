@@ -24,9 +24,9 @@ fun Photo.toApi(owner: PhotoOwner) = ApiPhoto(
 	id = id,
 	imageSize = "$width x $height",
 	fileSize = getHumanReadableSize(size.toLong()),
-	date = date,
+	date = owner.odt,
 	regDt = owner.regDt,
 	fileName = owner.name,
-	dateType = dateType,
-	original = FsPathConverter.convertToUrl(PhotoPathConverter.original(this))
+	dateType = owner.dateType,
+	original = FsPathConverter.convertToUrl(PhotoPathConverter.originalNew(this))
 )

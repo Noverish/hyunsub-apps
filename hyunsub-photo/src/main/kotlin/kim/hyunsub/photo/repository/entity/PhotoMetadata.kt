@@ -17,11 +17,12 @@ data class PhotoMetadata(
 	val offsetTimeDigitized: String?,
 	val raw: String,
 	val date: LocalDateTime,
+	val photoIdNew: String,
 ) {
 	companion object {
 		private val mapper = jacksonObjectMapper()
 
-		fun from(photoId: String, node: JsonNode): PhotoMetadata {
+		fun from(photoId: String, node: JsonNode, photoIdNew: String): PhotoMetadata {
 			return PhotoMetadata(
 				photoId = photoId,
 				subSecDateTimeOriginal = node["SubSecDateTimeOriginal"]?.textValue(),
@@ -35,6 +36,7 @@ data class PhotoMetadata(
 				offsetTimeDigitized = node["OffsetTimeDigitized"]?.textValue(),
 				raw = mapper.writeValueAsString(node),
 				date = LocalDateTime.now(),
+				photoIdNew = photoIdNew,
 			)
 		}
 	}

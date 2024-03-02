@@ -5,7 +5,7 @@ import kim.hyunsub.common.model.StringRange
 import kim.hyunsub.common.util.toMillis
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
-import kim.hyunsub.photo.model.api.toApiPreview
+import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.PhotoSearchParams
 import kim.hyunsub.photo.repository.condition.PhotoCondition
 import kim.hyunsub.photo.repository.entity.Photo
@@ -38,13 +38,13 @@ class PhotoSearchBo(
 		)
 
 		val total = photoMapper.count(condition)
-		val result = photoMapper.select(condition)
+		val result = photoMapper.select2(condition)
 
 		return ApiPageResult(
 			total = total,
 			page = page.pageNumber,
 			pageSize = page.pageSize,
-			data = result.map { it.toApiPreview() }
+			data = result.map { it.toApi() }
 		)
 	}
 }

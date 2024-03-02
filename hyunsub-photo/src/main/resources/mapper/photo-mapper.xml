@@ -2,8 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMapper">
+    <select id="countById">
+        SELECT COUNT(*)
+        FROM photo
+        WHERE id = #{id}
+    </select>
+
     <select id="select" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id, a.id_new, a.pair_photo_id_new
+        FROM photo a
+        INNER JOIN photo_owner b ON b.photo_id = a.id
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="userId != null">AND b.user_id = #{userId}</if>
+            <if test="idRange != null">AND a.id BETWEEN #{idRange.start} AND #{idRange.endInclusive}</if>
+            <if test="hash != null">AND a.hash = #{hash}</if>
+            <if test="idLessThan != null">AND a.id &lt; #{idLessThan}</if>
+            <if test="idGreaterThan != null">AND a.id &gt; #{idGreaterThan}</if>
+        </trim>
+        <if test="asc">ORDER BY a.id</if>
+        <if test="!asc">ORDER BY a.id DESC</if>
+        <if test="page != null">
+            LIMIT #{page.pageSize} OFFSET #{page.offset}
+        </if>
+    </select>
+
+    <select id="select2" resultType="PhotoPreview">
+        SELECT a.id,
+            a.width,
+            a.height,
+            a.size,
+            a.ext,
+            a.pair_photo_id,
+            b.date,
+            b.offset,
+            b.user_id,
+            b.name,
+            b.date_type,
+            a.id_new
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -32,15 +67,35 @@
     </select>
 
     <select id="selectByAlbumId">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id, a.id_new, a.pair_photo_id_new
         FROM photo a
         INNER JOIN album_photo b ON b.photo_id = a.id
         WHERE b.album_id = #{albumId}
         LIMIT #{page.pageSize} OFFSET #{page.offset}
     </select>
 
+    <select id="selectByAlbumId2" resultType="PhotoPreview">
+        SELECT a.id,
+               a.width,
+               a.height,
+               a.size,
+               a.ext,
+               a.pair_photo_id,
+               c.date,
+               c.offset,
+               c.user_id,
+               c.name,
+               c.date_type,
+               a.id_new
+        FROM photo a
+        INNER JOIN album_photo b ON b.photo_id = a.id
+        INNER JOIN photo_owner c ON c.photo_id = a.id
+        WHERE b.album_id = #{albumId}
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
+    </select>
+
     <select id="selectOne" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.offset, a.ext, a.date_type, a.pair_photo_id, a.id_new, a.pair_photo_id_new
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         WHERE a.id = #{id}
@@ -48,25 +103,39 @@
         LIMIT 1
     </select>
 
-    <select id="countById">
-        SELECT COUNT(*)
-        FROM photo
-        WHERE id = #{id}
+    <select id="selectOne2" resultType="PhotoPreview">
+        SELECT a.id,
+            a.width,
+            a.height,
+            a.size,
+            a.ext,
+            a.pair_photo_id,
+            b.date,
+            b.offset,
+            b.user_id,
+            b.name,
+            b.date_type,
+            a.id_new
+        FROM photo a
+        INNER JOIN photo_owner b ON b.photo_id = a.id
+        WHERE a.id = #{id}
+        <if test="userId != null">AND b.user_id = #{userId}</if>
+        LIMIT 1
     </select>
 
     <insert id="insert">
         INSERT INTO photo
-        (id, hash, width, height, size, offset, ext, date_type, pair_photo_id)
+        (id, hash, width, height, size, offset, ext, date_type, pair_photo_id, id_new, pair_photo_id_new)
         VALUES
-        (#{id}, #{hash}, #{width}, #{height}, #{size}, #{offset}, #{ext}, #{dateType}, #{pairPhotoId})
+        (#{id}, #{hash}, #{width}, #{height}, #{size}, #{offset}, #{ext}, #{dateType}, #{pairPhotoId}, #{idNew}, #{pairPhotoIdNew})
     </insert>
 
     <insert id="insertAll">
         INSERT INTO photo
-        (id, hash, width, height, size, offset, ext, date_type, pair_photo_id)
+        (id, hash, width, height, size, offset, ext, date_type, pair_photo_id, id_new, pair_photo_id_new)
         VALUES
         <foreach collection="entities" item="v" separator=",">
-            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.offset}, #{v.ext}, #{v.dateType}, #{v.pairPhotoId})
+            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.offset}, #{v.ext}, #{v.dateType}, #{v.pairPhotoId}, #{v.idNew}, #{v.pairPhotoIdNew})
         </foreach>
     </insert>
 

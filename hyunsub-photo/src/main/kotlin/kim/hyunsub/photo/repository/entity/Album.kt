@@ -10,10 +10,11 @@ data class Album(
 	val name: String,
 	val thumbnailPhotoId: String? = null,
 	val regDt: LocalDateTime = LocalDateTime.now(),
+	val thumbnailPhotoIdNew: String? = null,
 ) {
 	fun toPreview() = ApiAlbumPreview(
 		id = id,
 		name = name,
-		thumbnail = FsPathConverter.thumbnailUrl(thumbnailPhotoId?.let { PhotoPathConverter.thumbnail(it) }),
+		thumbnail = FsPathConverter.thumbnailUrl(thumbnailPhotoIdNew?.let { PhotoPathConverter.thumbnailNew(it) }),
 	)
 }

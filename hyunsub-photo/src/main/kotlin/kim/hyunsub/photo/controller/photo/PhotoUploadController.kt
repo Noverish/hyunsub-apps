@@ -4,7 +4,7 @@ import kim.hyunsub.common.web.config.userAuth
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
 import kim.hyunsub.photo.model.api.ApiPhotoUploadResult
-import kim.hyunsub.photo.model.api.toApiPreview
+import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.service.PhotoUploadService
 import mu.KotlinLogging
 import org.springframework.messaging.handler.annotation.DestinationVariable
@@ -30,7 +30,7 @@ class PhotoUploadController(
 	): ApiPhotoUploadResult {
 		val userId = userAuth.idNo
 		log.debug { "[PhotoUpload] userId=$userId, params=$params" }
-		val preview = photoUploadService.upload(userId, params).toApiPreview()
+		val preview = photoUploadService.upload(userId, params).toApi()
 		return ApiPhotoUploadResult.success(params.nonce, preview)
 	}
 
@@ -44,7 +44,7 @@ class PhotoUploadController(
 		return try {
 			val userId = accessor.userAuth.idNo
 			log.debug { "[PhotoUpload] nonce=$nonce, userId=$userId, params=$params" }
-			val preview = photoUploadService.upload(userId, params).toApiPreview()
+			val preview = photoUploadService.upload(userId, params).toApi()
 			ApiPhotoUploadResult.success(params.nonce, preview)
 		} catch (ex: Exception) {
 			ex.printStackTrace()

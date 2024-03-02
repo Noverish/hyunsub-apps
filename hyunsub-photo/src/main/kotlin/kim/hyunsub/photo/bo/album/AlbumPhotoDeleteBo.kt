@@ -3,7 +3,7 @@ package kim.hyunsub.photo.bo.album
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
-import kim.hyunsub.photo.model.api.toApiPreview
+import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.AlbumPhotoDeleteBulkParams
 import kim.hyunsub.photo.repository.mapper.AlbumMapper
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
@@ -29,13 +29,13 @@ class AlbumPhotoDeleteBo(
 		val albumPhoto = albumPhotoMapper.selectOne(albumId = albumId, photoId = photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album photo")
 
-		val photo = photoMapper.selectOne(photoId)
+		val photo = photoMapper.selectOne2(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
 		albumPhotoMapper.delete(albumPhoto)
 
 		albumThumbnailService.delete(photoId)
 
-		return photo.toApiPreview()
+		return photo.toApi()
 	}
 }

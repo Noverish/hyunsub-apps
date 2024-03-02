@@ -5,7 +5,7 @@ import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
-import kim.hyunsub.photo.model.api.toApiPreview
+import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.repository.condition.AlbumPhotoCondition
 import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
@@ -31,7 +31,7 @@ class AlbumPhotoBo(
 		}
 
 		val pageRequest = PageRequest.of(page, PhotoConstants.PAGE_SIZE)
-		val data = photoMapper.selectByAlbumId(albumId, pageRequest).map { it.toApiPreview() }
+		val data = photoMapper.selectByAlbumId2(albumId, pageRequest).map { it.toApi() }
 
 		return ApiPageResult(
 			total = total,
