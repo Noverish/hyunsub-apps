@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.repository.entity
 
+import kim.hyunsub.common.util.toLdt
 import kim.hyunsub.photo.model.PhotoDateType
 import java.time.LocalDateTime
 
@@ -8,7 +9,7 @@ data class ApiPhotoMetadata(
 	val userId: String,
 
 	val name: String,
-	val fileDt: LocalDateTime,
+	val fileEpoch: Int,
 	val date: LocalDateTime,
 	val offset: Int,
 	val dateType: PhotoDateType,
@@ -22,4 +23,7 @@ data class ApiPhotoMetadata(
 	val offsetTime: String?,
 	val offsetTimeOriginal: String?,
 	val offsetTimeDigitized: String?,
-)
+) {
+	val fileDt: LocalDateTime
+		get() = (fileEpoch * 1000).toLong().toLdt()
+}

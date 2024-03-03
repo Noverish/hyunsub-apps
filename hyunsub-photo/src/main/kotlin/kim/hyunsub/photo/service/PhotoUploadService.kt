@@ -77,6 +77,7 @@ class PhotoUploadService(
 			size = exif["FileSize"].asInt(),
 			ext = Path(params.name).extension,
 		)
+		log.debug { "[PhotoUpload] Generated ID: ${photo.id}" }
 
 		// move photo to original folder
 		val originalPath = PhotoPathConverter.original(photo)
@@ -134,7 +135,7 @@ class PhotoUploadService(
 			return exist
 		}
 
-		val album = albumMapper.selectOne(albumId)
+		val album = albumMapper.selectWithUserId(albumId = albumId, userId = userId)
 		if (album == null) {
 			log.warn { "[PhotoUpdate] No such album: albumId=$albumId" }
 			return null
@@ -149,7 +150,7 @@ class PhotoUploadService(
 		albumPhotoMapper.insert(albumPhoto)
 
 		if (album.thumbnailPhotoId == null) {
-			albumMapper.insert(album.copy(thumbnailPhotoId = photoId))
+			albumMapper.update(album.copy(thumbnailPhotoId = photoId))
 		}
 
 		return albumPhoto

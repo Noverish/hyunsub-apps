@@ -40,7 +40,7 @@ class AlbumMutateBo(
 	}
 
 	fun updateThumbnail(userId: String, albumId: String, params: AlbumThumbnailParams): ApiAlbum {
-		val album = albumMapper.selectOne(userId, albumId, owner = true)
+		val album = albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 
 		val photoId = params.photoId
@@ -55,7 +55,7 @@ class AlbumMutateBo(
 
 	@Transactional
 	fun delete(userId: String, albumId: String): ApiAlbum {
-		val album = albumMapper.selectOne(userId, albumId, owner = true)
+		val album = albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 		val result = albumDetailBo.toApiAlbum(album)
 

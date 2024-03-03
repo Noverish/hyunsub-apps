@@ -11,7 +11,8 @@ interface AlbumMapper : MapperBase {
 	override fun countById(id: String): Int
 
 	fun select(condition: AlbumCondition): List<Album>
-	fun selectOne(id: String, userId: String? = null, owner: Boolean? = null): Album?
+	fun selectOne(id: String): Album?
+	fun selectWithUserId(albumId: String, userId: String, owner: Boolean? = null): Album?
 
 	fun insert(entity: Album): Int
 	fun insertAll(entities: List<Album>): Int

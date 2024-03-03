@@ -16,7 +16,7 @@ class AlbumOwnerBo(
 	private val albumMapper: AlbumMapper,
 ) {
 	fun create(userId: String, albumId: String, params: AlbumOwnerParams): ApiAlbum {
-		val album = albumMapper.selectOne(userId, albumId, owner = true)
+		val album = albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 
 		val albumOwner = AlbumOwner(albumId, params.userId, false)
@@ -26,7 +26,7 @@ class AlbumOwnerBo(
 	}
 
 	fun delete(userId: String, albumId: String, params: AlbumOwnerParams): ApiAlbum {
-		val album = albumMapper.selectOne(userId, albumId, owner = true)
+		val album = albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 
 		val albumOwner = albumOwnerMapper.selectOne(albumId = albumId, userId = params.userId)

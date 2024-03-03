@@ -5,9 +5,9 @@ import kotlin.random.Random
 private const val CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_"
 private const val NUMBERS = "0123456789"
 
-fun generateRandomString(size: Int, seed: Long = System.nanoTime()) = generateRandom(CHARS, size, seed)
+fun generateRandomString(size: Int, seed: Long = Random.nextLong()) = generateRandom(CHARS, size, seed)
 
-fun generateRandomNumber(size: Int, seed: Long = System.nanoTime()) = generateRandom(NUMBERS, size, seed)
+fun generateRandomNumber(size: Int, seed: Long = Random.nextLong()) = generateRandom(NUMBERS, size, seed)
 
 fun generateRandom(base: String, size: Int, seed: Long = System.nanoTime()): String {
 	val random = Random(seed)

@@ -23,7 +23,7 @@
         SELECT a.photo_id,
                a.user_id,
                b.name,
-               b.file_dt,
+               b.file_epoch,
                b.date,
                b.offset,
                b.date_type,

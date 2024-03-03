@@ -23,7 +23,7 @@ class AlbumPhotoDeleteBo(
 	}
 
 	fun delete(userId: String, albumId: String, photoId: String): ApiPhotoPreview {
-		albumMapper.selectOne(userId, albumId, owner = true)
+		albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 
 		val albumPhoto = albumPhotoMapper.selectOne(albumId = albumId, photoId = photoId)

@@ -17,7 +17,7 @@ class AlbumDetailBo(
 	private val albumOwnerMapper: AlbumOwnerMapper,
 ) {
 	fun detail(userId: String, albumId: String): ApiAlbum? {
-		val album = albumMapper.selectOne(id = albumId, userId = userId)
+		val album = albumMapper.selectWithUserId(albumId = albumId, userId = userId)
 			?: return null
 
 		return toApiAlbum(album)

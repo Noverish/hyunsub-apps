@@ -68,7 +68,7 @@
         DELETE FROM album_photo
         WHERE
         <foreach collection="entities" item="v" separator="OR">
-            (album_id = #{v.albumId} AND photo_id = #{photoId})
+            (album_id = #{v.albumId} AND photo_id = #{v.photoId})
         </foreach>
     </delete>
 

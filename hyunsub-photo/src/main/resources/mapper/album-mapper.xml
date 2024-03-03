@@ -26,10 +26,18 @@
     <select id="selectOne" resultType="Album">
         SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
-        INNER JOIN album_owner b ON b.album_id = a.id
         WHERE a.id = #{id}
-        <if test="userId != null">AND b.user_id = #{userId}</if>
-        <if test="owner != null">AND b.owner = #{owner}</if>
+    </select>
+
+    <select id="selectWithUserId" resultType="Album">
+        SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
+        FROM album_owner ao
+        INNER JOIN album a ON a.id = ao.album_id
+        <where>
+            AND ao.album_id = #{albumId}
+            AND ao.user_id = #{userId}
+            <if test="owner != null">AND ao.owner = #{owner}</if>
+        </where>
     </select>
 
     <update id="update">
