@@ -4,10 +4,10 @@ import kim.hyunsub.common.database.MapperBase
 import kim.hyunsub.common.database.generateId
 import kim.hyunsub.common.util.toMillis
 import kim.hyunsub.photo.repository.condition.PhotoCondition
+import kim.hyunsub.photo.repository.condition.PhotoCondition2
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoPreview
 import org.apache.ibatis.annotations.Mapper
-import org.springframework.data.domain.Pageable
 import java.time.OffsetDateTime
 
 @Mapper
@@ -19,8 +19,8 @@ interface PhotoMapper : MapperBase {
 	fun select2(condition: PhotoCondition): List<PhotoPreview>
 	fun selectOne(id: String, userId: String? = null): Photo?
 	fun selectOne2(id: String, userId: String? = null): PhotoPreview?
-	fun selectByAlbumId(albumId: String, page: Pageable = Pageable.unpaged()): List<Photo>
-	fun selectByAlbumId2(albumId: String, page: Pageable = Pageable.unpaged()): List<PhotoPreview>
+	fun selectAlbumPhoto(condition: PhotoCondition2): List<PhotoPreview>
+	fun countAlbumPhoto(condition: PhotoCondition2): Int
 
 	fun insert(entity: Photo): Int
 	fun insertAll(entities: List<Photo>): Int

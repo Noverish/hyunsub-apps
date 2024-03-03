@@ -65,32 +65,42 @@
         </trim>
     </select>
 
-    <select id="selectByAlbumId">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id, a.pair_photo_id_new
-        FROM photo a
-        INNER JOIN album_photo b ON b.photo_id = a.id
-        WHERE b.album_id = #{albumId}
+    <select id="selectAlbumPhoto" resultType="PhotoPreview">
+        SELECT p.id,
+               p.width,
+               p.height,
+               p.size,
+               p.ext,
+               p.pair_photo_id,
+               po.date,
+               po.offset,
+               po.user_id,
+               po.name,
+               po.date_type
+        FROM album_photo ap
+        INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
+        INNER JOIN photo p ON p.id = ap.photo_id
+        <where>
+            AND ap.album_id = #{albumId}
+            <if test="userIds != null and !userIds.isEmpty()">
+                AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+        </where>
+        ORDER BY po.date
         LIMIT #{page.pageSize} OFFSET #{page.offset}
     </select>
 
-    <select id="selectByAlbumId2" resultType="PhotoPreview">
-        SELECT a.id,
-               a.width,
-               a.height,
-               a.size,
-               a.ext,
-               a.pair_photo_id,
-               c.date,
-               c.offset,
-               c.user_id,
-               c.name,
-               c.date_type
-        FROM photo a
-        INNER JOIN album_photo b ON b.photo_id = a.id
-        INNER JOIN photo_owner c ON c.photo_id = a.id
-        WHERE b.album_id = #{albumId}
-        ORDER BY c.date
-        LIMIT #{page.pageSize} OFFSET #{page.offset}
+    <select id="countAlbumPhoto">
+        SELECT COUNT(*)
+        FROM album_photo ap
+        INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
+        INNER JOIN photo p ON p.id = ap.photo_id
+        <where>
+            AND ap.album_id = #{albumId}
+            <if test="userIds != null and !userIds.isEmpty()">
+                AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+        </where>
     </select>
 
     <select id="selectOne" resultType="Photo">

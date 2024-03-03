@@ -8,18 +8,18 @@ import kim.hyunsub.photo.bo.album.AlbumPhotoBo
 import kim.hyunsub.photo.bo.photo.PhotoDetailBo
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
+import kim.hyunsub.photo.model.dto.AlbumPhotoSearchParams
 import kim.hyunsub.photo.repository.entity.ApiPhotoMetadata
 import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
 import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
 import mu.KotlinLogging
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/albums/{albumId}/photos")
 class AlbumPhotoController(
 	private val photoDetailBo: PhotoDetailBo,
 	private val albumOwnerMapper: AlbumOwnerMapper,
@@ -28,17 +28,16 @@ class AlbumPhotoController(
 ) {
 	private val log = KotlinLogging.logger { }
 
-	@GetMapping("")
-	fun list(
+	@PostMapping("/api/v1/search/albums/{albumId}/photos")
+	fun search(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-		@RequestParam photoId: String?,
-		@RequestParam p: Int?,
+		@RequestBody params: AlbumPhotoSearchParams,
 	): ApiPageResult<ApiPhotoPreview> {
-		return albumPhotoBo.list(userAuth.idNo, albumId, p, photoId)
+		return albumPhotoBo.list(userAuth.idNo, albumId, params)
 	}
 
-	@GetMapping("/{photoId}")
+	@GetMapping("/api/v1/albums/{albumId}/photos/{photoId}")
 	fun detail(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
@@ -47,7 +46,7 @@ class AlbumPhotoController(
 		return photoDetailBo.detail(userAuth.idNo, photoId, albumId)
 	}
 
-	@GetMapping("/metadata")
+	@GetMapping("/api/v1/albums/{albumId}/photos/metadata")
 	fun metadataList(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,

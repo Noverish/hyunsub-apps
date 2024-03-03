@@ -6,6 +6,17 @@
         SELECT album_id, user_id, owner, reg_dt
         FROM album_owner
         <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="albumId != null">AND album_id = #{albumId}</if>
+            <if test="userId != null">AND user_id = #{userId}</if>
+        </trim>
+    </select>
+
+    <select id="select2" resultType="AlbumOwnerWithName">
+        SELECT a.album_id, a.user_id, a.owner, b.username
+        FROM album_owner a
+        INNER JOIN user b ON b.id_no = a.user_id
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="albumId != null">AND album_id = #{albumId}</if>
             <if test="userId != null">AND user_id = #{userId}</if>
         </trim>
     </select>
@@ -14,6 +25,7 @@
         SELECT COUNT(*)
         FROM album_owner
         <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="albumId != null">AND album_id = #{albumId}</if>
             <if test="userId != null">AND user_id = #{userId}</if>
         </trim>
     </select>
@@ -26,17 +38,17 @@
 
     <insert id="insert">
         INSERT INTO album_owner
-        (album_id, user_id, owner)
+        (album_id, user_id, owner, reg_dt)
         VALUES
-        (#{albumId}, #{userId}, #{owner})
+        (#{albumId}, #{userId}, #{owner}, #{regDt})
     </insert>
 
     <insert id="insertAll">
         INSERT INTO album_owner
-        (album_id, user_id, owner)
+        (album_id, user_id, owner, reg_dt)
         VALUES
         <foreach collection="entities" item="v" separator=",">
-            (#{v.albumId}, #{v.userId}, #{v.owner})
+            (#{v.albumId}, #{v.userId}, #{v.owner}, #{v.regDt})
         </foreach>
     </insert>
 

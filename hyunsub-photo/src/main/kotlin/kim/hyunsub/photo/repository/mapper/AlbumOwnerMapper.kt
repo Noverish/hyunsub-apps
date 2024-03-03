@@ -2,11 +2,13 @@ package kim.hyunsub.photo.repository.mapper
 
 import kim.hyunsub.photo.repository.condition.AlbumOwnerCondition
 import kim.hyunsub.photo.repository.entity.AlbumOwner
+import kim.hyunsub.photo.repository.entity.AlbumOwnerWithName
 import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface AlbumOwnerMapper {
 	fun select(condition: AlbumOwnerCondition): List<AlbumOwner>
+	fun select2(condition: AlbumOwnerCondition): List<AlbumOwnerWithName>
 	fun count(condition: AlbumOwnerCondition): Int
 	fun selectOne(albumId: String, userId: String): AlbumOwner?
 

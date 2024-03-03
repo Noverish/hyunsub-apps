@@ -6,7 +6,8 @@ import kim.hyunsub.common.web.error.ErrorCodeException
 import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.model.api.toApi
-import kim.hyunsub.photo.repository.condition.AlbumPhotoCondition
+import kim.hyunsub.photo.model.dto.AlbumPhotoSearchParams
+import kim.hyunsub.photo.repository.condition.PhotoCondition2
 import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
 import kim.hyunsub.photo.repository.mapper.PhotoMapper
@@ -19,19 +20,24 @@ class AlbumPhotoBo(
 	private val albumPhotoMapper: AlbumPhotoMapper,
 	private val photoMapper: PhotoMapper,
 ) {
-	fun list(userId: String, albumId: String, p: Int?, photoId: String?): ApiPageResult<ApiPhotoPreview> {
+	fun list(userId: String, albumId: String, params: AlbumPhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
 		albumOwnerMapper.selectOne(albumId = albumId, userId = userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
 
-		val total = albumPhotoMapper.count(AlbumPhotoCondition(albumId = albumId))
-
+		val photoId = params.photoId
 		val page = when {
 			photoId != null -> albumPhotoMapper.indexOfPhoto(albumId, photoId) / PhotoConstants.PAGE_SIZE
-			else -> p ?: 0
+			else -> params.page
 		}
 
 		val pageRequest = PageRequest.of(page, PhotoConstants.PAGE_SIZE)
-		val data = photoMapper.selectByAlbumId2(albumId, pageRequest).map { it.toApi() }
+		val condition = PhotoCondition2(
+			albumId = albumId,
+			userIds = params.userIds,
+			page = pageRequest,
+		)
+		val total = photoMapper.countAlbumPhoto(condition)
+		val data = photoMapper.selectAlbumPhoto(condition).map { it.toApi() }
 
 		return ApiPageResult(
 			total = total,
