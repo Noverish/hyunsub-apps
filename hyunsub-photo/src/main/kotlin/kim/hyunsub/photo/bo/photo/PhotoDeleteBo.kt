@@ -12,6 +12,7 @@ import kim.hyunsub.photo.repository.condition.PhotoOwnerCondition
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
 import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
 import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
 import kim.hyunsub.photo.service.AlbumThumbnailService
 import kim.hyunsub.photo.util.PhotoPathConverter
@@ -26,6 +27,7 @@ class PhotoDeleteBo(
 	private val photoOwnerMapper: PhotoOwnerMapper,
 	private val albumThumbnailService: AlbumThumbnailService,
 	private val albumPhotoMapper: AlbumPhotoMapper,
+	private val photoMetadataMapper: PhotoMetadataMapper,
 ) {
 	private val log = KotlinLogging.logger { }
 
@@ -44,10 +46,11 @@ class PhotoDeleteBo(
 		photoOwnerMapper.delete(photoOwner)
 
 		val albumPhotos = albumPhotoMapper.select(AlbumPhotoCondition(userId = userId, photoId = photoId))
-		log.debug { "[Delete Photo] Delete album photos: $albumPhotos" }
-		albumPhotoMapper.deleteAll(albumPhotos)
-
-		albumThumbnailService.delete(photoId)
+		if (albumPhotos.isNotEmpty()) {
+			log.debug { "[Delete Photo] Delete album photos: $albumPhotos" }
+			albumPhotoMapper.deleteAll(albumPhotos)
+			albumThumbnailService.delete(photoId)
+		}
 
 		val numberOfOwner = photoOwnerMapper.count(PhotoOwnerCondition(photoId = photoId))
 		if (numberOfOwner == 0) {
@@ -72,5 +75,6 @@ class PhotoDeleteBo(
 		}
 
 		photoMapper.deleteById(photoId)
+		photoMetadataMapper.deleteByPhotoId(photoId)
 	}
 }

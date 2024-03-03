@@ -11,7 +11,7 @@ data class PhotoOwner(
 	val userId: String,
 	val photoId: String,
 	val name: String,
-	val fileDt: LocalDateTime,
+	val fileEpoch: Int,
 	val regDt: LocalDateTime,
 	val date: LocalDateTime,
 	val offset: Int,

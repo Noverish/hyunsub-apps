@@ -21,12 +21,13 @@ class FsClientLogger(clazz: Class<*>) : Logger() {
 		val method = request.httpMethod()
 		val url = request.url()
 		val reqBody = String(request.body() ?: byteArrayOf())
+			.let { if (it.isNotEmpty()) " $it" else "" }
 
 		val status = response.status()
 		val resBody = response.body()
 			?.let { Util.toByteArray(it.asInputStream()) }
 			?: ByteArray(0)
-		log.debug { "[FS] $method $url body=$reqBody --> ${elapsedTime}ms $status ${String(resBody)}" }
+		log.debug { "[FS] $method $url$reqBody --> ${elapsedTime}ms $status ${String(resBody)}" }
 		return response.toBuilder().body(resBody).build()
 	}
 }

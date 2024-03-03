@@ -11,7 +11,6 @@ data class Photo(
 	val size: Int,
 	val ext: String,
 	val pairPhotoId: String? = null,
-	val pairPhotoIdNew: String? = null,
 ) {
 	companion object {
 		fun generateId(millis: Long, hash: String, i: Int = 0): String {

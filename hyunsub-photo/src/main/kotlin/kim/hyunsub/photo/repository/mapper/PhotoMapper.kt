@@ -21,6 +21,7 @@ interface PhotoMapper : MapperBase {
 	fun selectOne2(id: String, userId: String? = null): PhotoPreview?
 	fun selectAlbumPhoto(condition: PhotoCondition2): List<PhotoPreview>
 	fun countAlbumPhoto(condition: PhotoCondition2): Int
+	fun selectByHash(hash: String): Photo?
 
 	fun insert(entity: Photo): Int
 	fun insertAll(entities: List<Photo>): Int

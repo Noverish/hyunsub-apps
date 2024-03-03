@@ -12,11 +12,11 @@
         SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
         INNER JOIN album_owner b ON b.album_id = a.id
-        <trim prefix="WHERE" prefixOverrides="AND">
+        <where>
             <if test="thumbnailPhotoId != null">AND a.thumbnail_photo_id = #{thumbnailPhotoId}</if>
             <if test="userId != null">AND b.user_id = #{userId}</if>
             <if test="owner != null">AND b.owner = #{owner}</if>
-        </trim>
+        </where>
         ORDER BY b.reg_dt DESC
         <if test="page != null">
             LIMIT #{page.pageSize} OFFSET #{page.offset}
@@ -31,6 +31,13 @@
         <if test="userId != null">AND b.user_id = #{userId}</if>
         <if test="owner != null">AND b.owner = #{owner}</if>
     </select>
+
+    <update id="update">
+        UPDATE album
+        SET name = #{name},
+            thumbnail_photo_id = #{thumbnailPhotoId}
+        WHERE id = #{id}
+    </update>
 
     <insert id="insert">
         INSERT INTO album

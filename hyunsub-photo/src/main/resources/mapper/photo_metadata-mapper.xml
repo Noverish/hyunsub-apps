@@ -43,22 +43,44 @@
     </select>
 
     <insert id="upsert">
-        INSERT INTO photo_metadata
-        (photo_id, sub_sec_date_time_original, date_time_original, gps_date_time, time_stamp, modify_date, creation_date, offset_time, offset_time_original, offset_time_digitized, raw, date)
-        VALUES
-        (#{photoId}, #{subSecDateTimeOriginal}, #{dateTimeOriginal}, #{gpsDateTime}, #{timeStamp}, #{modifyDate}, #{creationDate}, #{offsetTime}, #{offsetTimeOriginal}, #{offsetTimeDigitized}, #{raw}, #{date})
-        ON DUPLICATE KEY UPDATE
-        sub_sec_date_time_original = #{subSecDateTimeOriginal},
-        date_time_original = #{dateTimeOriginal},
-        gps_date_time = #{gpsDateTime},
-        time_stamp = #{timeStamp},
-        modify_date = #{modifyDate},
-        creation_date = #{creationDate},
-        offset_time = #{offsetTime},
-        offset_time_original = #{offsetTimeOriginal},
-        offset_time_digitized = #{offsetTimeDigitized},
-        raw = #{raw},
-        date = #{date}
+        INSERT INTO photo_metadata (
+             photo_id,
+             sub_sec_date_time_original,
+             date_time_original,
+             gps_date_time,
+             time_stamp,
+             modify_date,
+             creation_date,
+             offset_time,
+             offset_time_original,
+             offset_time_digitized,
+             raw,
+             date
+        ) VALUES (
+             #{photoId},
+             #{subSecDateTimeOriginal},
+             #{dateTimeOriginal},
+             #{gpsDateTime},
+             #{timeStamp},
+             #{modifyDate},
+             #{creationDate},
+             #{offsetTime},
+             #{offsetTimeOriginal},
+             #{offsetTimeDigitized},
+             #{raw},
+             #{date}
+        ) ON DUPLICATE KEY UPDATE
+             sub_sec_date_time_original = #{subSecDateTimeOriginal},
+             date_time_original = #{dateTimeOriginal},
+             gps_date_time = #{gpsDateTime},
+             time_stamp = #{timeStamp},
+             modify_date = #{modifyDate},
+             creation_date = #{creationDate},
+             offset_time = #{offsetTime},
+             offset_time_original = #{offsetTimeOriginal},
+             offset_time_digitized = #{offsetTimeDigitized},
+             raw = #{raw},
+             date = #{date}
     </insert>
 
     <update id="updatePhotoId">
@@ -66,4 +88,9 @@
         SET photo_id = #{from}
         WHERE photo_id = #{to}
     </update>
+
+    <delete id="deleteByPhotoId">
+        DELETE FROM photo_metadata
+        WHERE photo_id = #{photoId}
+    </delete>
 </mapper>

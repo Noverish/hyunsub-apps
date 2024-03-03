@@ -18,10 +18,13 @@ class AlbumThumbnailService(
 	fun delete(photoId: String) {
 		val albums = albumMapper.select(AlbumCondition(thumbnailPhotoId = photoId))
 		for (album in albums) {
-			val nextThumbnail = photoMapper.selectAlbumPhoto(PhotoCondition2(albumId = album.id, page = PageRequest.of(0, 1))).firstOrNull()?.id
+			val condition = PhotoCondition2(albumId = album.id, page = PageRequest.of(0, 10))
+			val nextThumbnail = photoMapper.selectAlbumPhoto(condition)
+				.firstOrNull { it.id != photoId }
+				?.id
 			val newAlbum = album.copy(thumbnailPhotoId = nextThumbnail)
 			log.debug { "[Album Thumbnail] New album thumbnail: $newAlbum" }
-			albumMapper.insert(newAlbum)
+			albumMapper.update(newAlbum)
 		}
 	}
 }

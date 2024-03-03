@@ -5,14 +5,14 @@
     <select id="select" resultType="AlbumPhoto">
         SELECT album_id, photo_id, user_id, reg_dt
         FROM album_photo
-        <trim prefix="WHERE" prefixOverrides="AND">
+        <where>
             <if test="albumId != null">AND album_id = #{albumId}</if>
+            <if test="albumIds != null and !albumIds.isEmpty()">
+                AND album_id IN (<foreach collection="albumIds" item="v" separator=",">#{v}</foreach>)
+            </if>
             <if test="photoId != null">AND photo_id = #{photoId}</if>
             <if test="userId != null">AND user_id = #{userId}</if>
-            <if test="albumIds != null">
-                AND album_id IN <foreach collection="albumIds" item="v" separator="," open="(" close=")">#{v}</foreach>
-            </if>
-        </trim>
+        </where>
     </select>
 
     <select id="count">
@@ -39,17 +39,17 @@
 
     <insert id="insert">
         INSERT INTO album_photo
-        (album_id, photo_id, user_id)
+        (album_id, photo_id, user_id, reg_dt)
         VALUES
-        (#{albumId}, #{photoId}, #{userId})
+        (#{albumId}, #{photoId}, #{userId}, #{regDt})
     </insert>
 
     <insert id="insertAll">
         INSERT INTO album_photo
-        (album_id, photo_id, user_id)
+        (album_id, photo_id, user_id, reg_dt)
         VALUES
         <foreach collection="entities" item="v" separator=",">
-            (#{v.albumId}, #{v.photoId}, #{v.userId})
+            (#{v.albumId}, #{v.photoId}, #{v.userId}, #{v.regDt})
         </foreach>
     </insert>
 

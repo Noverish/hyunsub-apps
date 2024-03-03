@@ -8,8 +8,14 @@
         WHERE id = #{id}
     </select>
 
+    <select id="selectByHash">
+        SELECT p.id, p.hash, p.width, p.height, p.size, p.ext, p.pair_photo_id
+        FROM photo p
+        WHERE p.hash = #{hash}
+    </select>
+
     <select id="select" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id, a.pair_photo_id_new
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         <trim prefix="WHERE" prefixOverrides="AND">
@@ -104,7 +110,7 @@
     </select>
 
     <select id="selectOne" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id, a.pair_photo_id_new
+        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id
         FROM photo a
         INNER JOIN photo_owner b ON b.photo_id = a.id
         WHERE a.id = #{id}
@@ -133,17 +139,17 @@
 
     <insert id="insert">
         INSERT INTO photo
-        (id, hash, width, height, size, ext, pair_photo_id, pair_photo_id_new)
+        (id, hash, width, height, size, ext)
         VALUES
-        (#{id}, #{hash}, #{width}, #{height}, #{size}, #{ext}, #{pairPhotoId}, #{pairPhotoIdNew})
+        (#{id}, #{hash}, #{width}, #{height}, #{size}, #{ext})
     </insert>
 
     <insert id="insertAll">
         INSERT INTO photo
-        (id, hash, width, height, size, ext, pair_photo_id, pair_photo_id_new)
+        (id, hash, width, height, size, ext, pair_photo_id)
         VALUES
         <foreach collection="entities" item="v" separator=",">
-            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.ext}, #{v.pairPhotoId}, #{v.pairPhotoIdNew})
+            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.ext}, #{v.pairPhotoId})
         </foreach>
     </insert>
 

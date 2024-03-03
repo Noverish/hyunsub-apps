@@ -90,7 +90,7 @@ class PhotoServerController(
 			albumMapper.insertAll(newAlbums)
 			albumOwnerMapper.insertAll(newAlbumOwners)
 			albumPhotoMapper.insertAll(newAlbumPhotos)
-			photoOwnerMapper.insertAll(newPhotoOwners)
+			photoOwnerMapper.upsertBulk(newPhotoOwners)
 		}
 
 		return SimpleResponse()

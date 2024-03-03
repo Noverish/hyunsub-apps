@@ -6,18 +6,18 @@ import java.nio.charset.StandardCharsets
 import kotlin.io.path.Path
 
 object FsPathConverter {
-	private const val host = "https://file.hyunsub.kim"
-	private const val nonceBase: String = "/hyunsub/file/upload"
+	private const val HOST = "https://file.hyunsub.kim"
+	private const val NONCE_BASE: String = "/hyunsub/file/upload"
 
 	fun noncePath(nonce: String): String =
-		Path(nonceBase, nonce).toString()
+		Path(NONCE_BASE, nonce).toString()
 
 	fun convertToUrl(path: String): String {
 		val encodedPath = URLEncoder.encode(path, StandardCharsets.UTF_8)
 			.replace("%2F", "/")
 			.replace("+", "%20")
 
-		return UriComponentsBuilder.fromHttpUrl(host)
+		return UriComponentsBuilder.fromHttpUrl(HOST)
 			.path(encodedPath)
 			.build(false)
 			.toUriString()

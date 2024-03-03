@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.service
 
+import com.fasterxml.jackson.databind.JsonNode
 import kim.hyunsub.common.fs.FsPathConverter
 import kim.hyunsub.common.fs.client.FsClient
 import kim.hyunsub.common.fs.client.FsImageClient
@@ -7,10 +8,8 @@ import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.fs.client.rename
 import kim.hyunsub.common.util.decodeHex
 import kim.hyunsub.common.util.toBase64
-import kim.hyunsub.common.util.toLdt
 import kim.hyunsub.common.util.toUtcLdt
 import kim.hyunsub.photo.model.api.ApiPhotoUploadParams
-import kim.hyunsub.photo.repository.condition.PhotoCondition
 import kim.hyunsub.photo.repository.entity.AlbumPhoto
 import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.entity.PhotoMetadata
@@ -46,33 +45,29 @@ class PhotoUploadService(
 	private val log = KotlinLogging.logger { }
 
 	fun upload(userId: String, params: ApiPhotoUploadParams): PhotoPreview {
-		val photo = getOrCreatePhoto(params)
+		val noncePath = FsPathConverter.noncePath(params.nonce)
+		val exif = fsImageClient.exif(noncePath)[0]
 
-		val tmpPath = FsPathConverter.noncePath(params.nonce)
-		val exif = fsImageClient.exif(tmpPath)[0]
-		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
-		val photoOwner = getOrCreatePhotoOwner(userId, photo, params, parseResult)
+		val photo = getOrCreatePhoto(params, noncePath, exif)
+
+		val photoOwner = getOrCreatePhotoOwner(userId, photo.id, params, exif)
 
 		params.albumId?.let {
-			getOrCreateAlbumPhoto(userId, photo, it)
+			getOrCreateAlbumPhoto(userId, photo.id, it)
 		}
 
 		return PhotoPreview(photo, photoOwner)
 	}
 
-	private fun getOrCreatePhoto(params: ApiPhotoUploadParams): Photo {
-		val tmpPath = FsPathConverter.noncePath(params.nonce)
+	private fun getOrCreatePhoto(params: ApiPhotoUploadParams, noncePath: String, exif: JsonNode): Photo {
+		val hash = fsClient.hash(noncePath).result.decodeHex().toBase64()
 
-		val hash = fsClient.hash(tmpPath).result.decodeHex().toBase64()
-
-		val exist = photoMapper.select(PhotoCondition(hash = hash)).firstOrNull()
+		val exist = photoMapper.selectByHash(hash)
 		if (exist != null) {
-			log.debug { "[PhotoUpload] Already exist photo: $exist" }
-			fsClient.remove(tmpPath)
+			log.debug { "[PhotoUpload] Already exist photo: hash=$hash" }
+			fsClient.remove(noncePath)
 			return exist
 		}
-
-		val exif = fsImageClient.exif(tmpPath)[0]
 
 		val photo = Photo(
 			id = photoMapper.generateId(),
@@ -85,7 +80,7 @@ class PhotoUploadService(
 
 		// move photo to original folder
 		val originalPath = PhotoPathConverter.original(photo)
-		fsClient.rename(tmpPath, originalPath, true)
+		fsClient.rename(noncePath, originalPath, true)
 
 		// generate thumbnail
 		thumbnailService.generateThumbnail(photo)
@@ -107,45 +102,54 @@ class PhotoUploadService(
 		return photo
 	}
 
-	private fun getOrCreatePhotoOwner(userId: String, photo: Photo, params: ApiPhotoUploadParams, parseResult: PhotoDateParser.Result): PhotoOwner {
-		val exist = photoOwnerMapper.selectOne(userId = userId, photoId = photo.id)
+	private fun getOrCreatePhotoOwner(userId: String, photoId: String, params: ApiPhotoUploadParams, exif: JsonNode): PhotoOwner {
+		val exist = photoOwnerMapper.selectOne(userId = userId, photoId = photoId)
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist photo owner: $exist" }
 			return exist
 		}
 
+		val parseResult = PhotoDateParser.parse(exif, params.name, params.millis)
+
 		val photoOwner = PhotoOwner(
 			userId = userId,
-			photoId = photo.id,
+			photoId = photoId,
 			name = params.name,
-			fileDt = params.millis.toLdt(),
+			fileEpoch = (params.millis / 1000).toInt(),
 			regDt = LocalDateTime.now(),
 			date = parseResult.date.toUtcLdt(),
 			offset = parseResult.date.offset.totalSeconds,
 			dateType = parseResult.type,
 		)
+
 		photoOwnerMapper.insert(photoOwner)
 
 		return photoOwner
 	}
 
-	private fun getOrCreateAlbumPhoto(userId: String, photo: Photo, albumId: String): AlbumPhoto {
-		val exist = albumPhotoMapper.selectOne(albumId = albumId, photoId = photo.id)
+	private fun getOrCreateAlbumPhoto(userId: String, photoId: String, albumId: String): AlbumPhoto? {
+		val exist = albumPhotoMapper.selectOne(albumId = albumId, photoId = photoId)
 		if (exist != null) {
 			log.debug { "[PhotoUpload] Already exist album photo: $exist" }
 			return exist
 		}
 
+		val album = albumMapper.selectOne(albumId)
+		if (album == null) {
+			log.warn { "[PhotoUpdate] No such album: albumId=$albumId" }
+			return null
+		}
+
 		val albumPhoto = AlbumPhoto(
 			albumId = albumId,
-			photoId = photo.id,
+			photoId = photoId,
 			userId = userId,
 		)
+
 		albumPhotoMapper.insert(albumPhoto)
 
-		val album = albumMapper.selectOne(albumId)
-		if (album != null && album.thumbnailPhotoId == null) {
-			albumMapper.insert(album.copy(thumbnailPhotoId = photo.id))
+		if (album.thumbnailPhotoId == null) {
+			albumMapper.insert(album.copy(thumbnailPhotoId = photoId))
 		}
 
 		return albumPhoto

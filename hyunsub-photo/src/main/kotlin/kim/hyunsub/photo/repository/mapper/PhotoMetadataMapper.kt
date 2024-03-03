@@ -14,4 +14,6 @@ interface PhotoMetadataMapper {
 
 	fun upsert(entity: PhotoMetadata)
 	fun updatePhotoId(from: String, to: String): Int
+
+	fun deleteByPhotoId(photoId: String): Int
 }

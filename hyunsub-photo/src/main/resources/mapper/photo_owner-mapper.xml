@@ -3,16 +3,17 @@
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper">
     <select id="select" resultType="PhotoOwner">
-        SELECT user_id, photo_id, name, file_dt, reg_dt, date, offset, date_type
+        SELECT user_id, photo_id, name, file_epoch, reg_dt, date, offset, date_type
         FROM photo_owner
-        <trim prefix="WHERE" prefixOverrides="AND">
+        <where>
             <if test="userId != null">AND user_id = #{userId}</if>
             <if test="photoId != null">AND photo_id = #{photoId}</if>
             <if test="name != null">
                 <bind name="namePattern" value="'%' + name + '%'" />
                 AND name LIKE #{namePattern}
             </if>
-        </trim>
+        </where>
+        ORDER BY `date` DESC
         <if test="page != null">
             LIMIT #{page.pageSize} OFFSET #{page.offset}
         </if>
@@ -21,46 +22,71 @@
     <select id="count">
         SELECT COUNT(*)
         FROM photo_owner
-        <trim prefix="WHERE" prefixOverrides="AND">
+        <where>
             <if test="userId != null">AND user_id = #{userId}</if>
             <if test="photoId != null">AND photo_id = #{photoId}</if>
             <if test="name != null">
                 <bind name="namePattern" value="'%' + name + '%'" />
                 AND name LIKE #{namePattern}
             </if>
-        </trim>
+        </where>
     </select>
 
     <select id="selectOne" resultType="PhotoOwner">
-        SELECT user_id, photo_id, name, file_dt, reg_dt, date, offset, date_type
+        SELECT user_id, photo_id, name, file_epoch, reg_dt, date, offset, date_type
         FROM photo_owner
         WHERE photo_id = #{photoId} AND user_id = #{userId}
     </select>
 
     <insert id="insert">
         INSERT INTO photo_owner
-        (user_id, photo_id, name, file_dt, reg_dt, date, offset, date_type)
+        (user_id, photo_id, name, file_epoch, reg_dt, date, offset, date_type)
         VALUES
-        (#{userId}, #{photoId}, #{name}, #{fileDt}, #{regDt}, #{date}, #{offset}, #{dateType})
-    </insert>
-
-    <insert id="insertAll">
-        INSERT INTO photo_owner
-            (user_id, photo_id, name, file_dt, reg_dt, date, offset, date_type)
-        VALUES
-        <foreach collection="entities" item="v" separator=",">
-            (#{v.userId}, #{v.photoId}, #{v.name}, #{v.fileDt}, #{v.regDt}, #{v.date}, #{v.offset}, #{v.dateType})
-        </foreach>
+        (#{userId}, #{photoId}, #{name}, #{fileEpoch}, #{regDt}, #{date}, #{offset}, #{dateType})
     </insert>
 
     <update id="update">
         UPDATE photo_owner
         SET name = #{name},
-            file_dt = #{fileDt},
+            file_epoch = #{fileEpoch},
             date = #{date},
             offset = #{offset},
             date_type = #{dateType}
         WHERE user_id = #{userId} AND photo_id = #{photoId}
+    </update>
+
+    <update id="upsertBulk">
+        INSERT INTO photo_owner
+        (
+            user_id,
+            photo_id,
+            name,
+            file_epoch,
+            reg_dt,
+            date,
+            offset,
+            date_type
+        )
+        VALUES
+        <foreach collection="entities" item="v" separator=",">
+        (
+            #{v.userId},
+            #{v.photoId},
+            #{v.name},
+            #{v.fileEpoch},
+            #{v.regDt},
+            #{v.date},
+            #{v.offset},
+            #{v.dateType}
+        )
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            name = VALUES(name),
+            file_epoch = VALUES(file_epoch),
+            reg_dt = VALUES(reg_dt),
+            date = VALUES(date),
+            offset = VALUES(offset),
+            date_type = VALUES(date_type)
     </update>
 
     <update id="updatePhotoId">

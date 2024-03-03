@@ -15,6 +15,7 @@ interface AlbumMapper : MapperBase {
 
 	fun insert(entity: Album): Int
 	fun insertAll(entities: List<Album>): Int
+	fun update(entity: Album): Int
 	fun deleteById(id: String): Int
 	fun deleteByIds(ids: List<String>): Int
 }
