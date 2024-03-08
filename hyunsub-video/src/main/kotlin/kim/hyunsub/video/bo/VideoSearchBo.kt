@@ -16,7 +16,7 @@ class VideoSearchBo(
 ) {
 	fun search(user: UserAuth, query: String): VideoSearchResult {
 		val categories = videoCategoryService.getAvailableCategories(user).map { it.name }
-		if (query.length < 2) {
+		if (query.isEmpty()) {
 			throw ErrorCodeException(ErrorCode.SHORT_SEARCH_QUERY)
 		}
 
