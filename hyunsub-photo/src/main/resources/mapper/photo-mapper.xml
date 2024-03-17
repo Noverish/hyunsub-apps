@@ -35,6 +35,7 @@
         <where>
             AND po.user_id = #{userId}
             <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+            <if test="photoId != null">AND po.date &gt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
         </where>
         ORDER BY po.date DESC
         LIMIT #{page.pageSize} OFFSET #{page.offset}
@@ -47,6 +48,7 @@
         <where>
             AND po.user_id = #{userId}
             <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+            <if test="photoId != null">AND po.date &gt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
         </where>
     </select>
 

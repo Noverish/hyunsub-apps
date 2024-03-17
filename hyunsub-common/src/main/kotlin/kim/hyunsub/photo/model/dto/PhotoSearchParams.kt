@@ -9,4 +9,5 @@ data class PhotoSearchParams(
 	val myPhotoOnly: Boolean? = null,
 	val page: Int? = null,
 	val pageSize: Int? = null,
+	val photoId: String? = null,
 )

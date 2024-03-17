@@ -7,4 +7,5 @@ data class PhotoCondition(
 	val userId: String,
 	val dateRange: LocalDateRange? = null,
 	val page: Pageable,
+	val photoId: String? = null,
 )

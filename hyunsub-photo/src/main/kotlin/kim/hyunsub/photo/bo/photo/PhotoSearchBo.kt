@@ -15,11 +15,35 @@ class PhotoSearchBo(
 	private val photoMapper: PhotoMapper,
 ) {
 	fun search(userId: String, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
-		val page = PageRequest.of(params.page ?: 0, params.pageSize ?: PhotoConstants.PAGE_SIZE)
+		val photoId = params.photoId
+		if (photoId != null) {
+			return searchWithPhotoId(userId, photoId, params)
+		}
+
+		return searchWithPage(userId, params.page ?: 0, params)
+	}
+
+	private fun searchWithPhotoId(userId: String, photoId: String, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
+		val pageReq = PageRequest.of(0, params.pageSize ?: PhotoConstants.PAGE_SIZE)
 		val condition = PhotoCondition(
 			userId = userId,
 			dateRange = params.dateRange,
-			page = page,
+			page = pageReq,
+			photoId = photoId,
+		)
+
+		val count = photoMapper.count(condition)
+		val page = count / pageReq.pageSize
+
+		return searchWithPage(userId, page, params)
+	}
+
+	private fun searchWithPage(userId: String, page: Int, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
+		val pageReq = PageRequest.of(page, params.pageSize ?: PhotoConstants.PAGE_SIZE)
+		val condition = PhotoCondition(
+			userId = userId,
+			dateRange = params.dateRange,
+			page = pageReq,
 		)
 
 		val total = photoMapper.count(condition)
@@ -27,8 +51,8 @@ class PhotoSearchBo(
 
 		return ApiPageResult(
 			total = total,
-			page = page.pageNumber,
-			pageSize = page.pageSize,
+			page = pageReq.pageNumber,
+			pageSize = pageReq.pageSize,
 			data = result.map { it.toApi() }
 		)
 	}
