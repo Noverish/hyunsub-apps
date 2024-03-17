@@ -7,15 +7,12 @@ import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.PhotoDateUpdateParams
 import kim.hyunsub.photo.repository.mapper.PhotoMapper
 import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
-import kim.hyunsub.photo.repository.mapper.generateIdOld
-import kim.hyunsub.photo.service.PhotoUpdateService
 import org.springframework.stereotype.Service
 
 @Service
 class PhotoMutateBo(
 	private val photoOwnerMapper: PhotoOwnerMapper,
 	private val photoMapper: PhotoMapper,
-	private val photoUpdateService: PhotoUpdateService,
 ) {
 	fun updatePhotoDate(userId: String, photoId: String, params: PhotoDateUpdateParams): ApiPhoto {
 		val photoOwner = photoOwnerMapper.selectOne(userId = userId, photoId = photoId)
@@ -24,10 +21,13 @@ class PhotoMutateBo(
 		val photo = photoMapper.selectOne(photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
-		val newId = photoMapper.generateIdOld(params.date, photo.hash)
+		val newPhotoOwner = photoOwner.copy(
+			date = params.date.toLocalDateTime(),
+			offset = params.date.offset.totalSeconds,
+		)
 
-		val newPhoto = photoUpdateService.updateId(photo, newId)
+		photoOwnerMapper.update(newPhotoOwner)
 
-		return newPhoto.toApi(photoOwner)
+		return photo.toApi(newPhotoOwner)
 	}
 }

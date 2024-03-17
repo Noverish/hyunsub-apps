@@ -2,6 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMapper">
+    <sql id="PhotoPreviewColumns">
+        p.id,
+        p.width,
+        p.height,
+        p.size,
+        p.ext,
+        p.pair_photo_id,
+        po.date,
+        po.offset,
+        po.user_id,
+        po.name,
+        po.date_type
+    </sql>
+
     <select id="countById">
         SELECT COUNT(*)
         FROM photo
@@ -14,75 +28,30 @@
         WHERE p.hash = #{hash}
     </select>
 
-    <select id="select" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id
-        FROM photo a
-        INNER JOIN photo_owner b ON b.photo_id = a.id
-        <trim prefix="WHERE" prefixOverrides="AND">
-            <if test="userId != null">AND b.user_id = #{userId}</if>
-            <if test="idRange != null">AND a.id BETWEEN #{idRange.start} AND #{idRange.endInclusive}</if>
-            <if test="hash != null">AND a.hash = #{hash}</if>
-            <if test="idLessThan != null">AND a.id &lt; #{idLessThan}</if>
-            <if test="idGreaterThan != null">AND a.id &gt; #{idGreaterThan}</if>
-        </trim>
-        <if test="asc">ORDER BY a.id</if>
-        <if test="!asc">ORDER BY a.id DESC</if>
-        <if test="page != null">
-            LIMIT #{page.pageSize} OFFSET #{page.offset}
-        </if>
-    </select>
-
-    <select id="select2" resultType="PhotoPreview">
-        SELECT a.id,
-            a.width,
-            a.height,
-            a.size,
-            a.ext,
-            a.pair_photo_id,
-            b.date,
-            b.offset,
-            b.user_id,
-            b.name,
-            b.date_type
-        FROM photo a
-        INNER JOIN photo_owner b ON b.photo_id = a.id
-        <trim prefix="WHERE" prefixOverrides="AND">
-            <if test="userId != null">AND b.user_id = #{userId}</if>
-            <if test="idRange != null">AND a.id BETWEEN #{idRange.start} AND #{idRange.endInclusive}</if>
-            <if test="hash != null">AND a.hash = #{hash}</if>
-            <if test="idLessThan != null">AND a.id &lt; #{idLessThan}</if>
-            <if test="idGreaterThan != null">AND a.id &gt; #{idGreaterThan}</if>
-        </trim>
-        <if test="asc">ORDER BY b.date</if>
-        <if test="!asc">ORDER BY b.date DESC</if>
-        <if test="page != null">
-            LIMIT #{page.pageSize} OFFSET #{page.offset}
-        </if>
+    <select id="select" resultType="PhotoPreview">
+        SELECT <include refid="PhotoPreviewColumns" />
+        FROM photo_owner po
+        INNER JOIN photo p ON p.id = po.photo_id
+        <where>
+            AND po.user_id = #{userId}
+            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+        </where>
+        ORDER BY po.date DESC
+        LIMIT #{page.pageSize} OFFSET #{page.offset}
     </select>
 
     <select id="count">
         SELECT count(*)
-        FROM photo a
-        INNER JOIN photo_owner b ON b.photo_id = a.id
-        <trim prefix="WHERE" prefixOverrides="AND">
-            <if test="userId != null">AND b.user_id = #{userId}</if>
-            <if test="idRange != null">AND a.id BETWEEN #{idRange.start} AND #{idRange.endInclusive}</if>
-            <if test="hash != null">AND a.hash = #{hash}</if>
-        </trim>
+        FROM photo_owner po
+        INNER JOIN photo p ON p.id = po.photo_id
+        <where>
+            AND po.user_id = #{userId}
+            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+        </where>
     </select>
 
     <select id="selectAlbumPhoto" resultType="PhotoPreview">
-        SELECT p.id,
-               p.width,
-               p.height,
-               p.size,
-               p.ext,
-               p.pair_photo_id,
-               po.date,
-               po.offset,
-               po.user_id,
-               po.name,
-               po.date_type
+        SELECT <include refid="PhotoPreviewColumns" />
         FROM album_photo ap
         INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
         INNER JOIN photo p ON p.id = ap.photo_id

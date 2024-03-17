@@ -2,6 +2,7 @@ package kim.hyunsub.diary.service
 
 import kim.hyunsub.common.fs.client.FriendServiceClient
 import kim.hyunsub.common.fs.client.PhotoServiceClient
+import kim.hyunsub.common.model.LocalDateRange
 import kim.hyunsub.diary.model.api.ApiDiary
 import kim.hyunsub.diary.repository.entity.Diary
 import kim.hyunsub.friend.model.api.ApiFriendPreview
@@ -18,7 +19,11 @@ class ApiDiaryService(
 
 		val friends2 = friends ?: friendServiceClient.selectMeetFriends(token, date)
 
-		val photoParams = PhotoSearchParams(date, true, 0, 12)
+		val dateRange = LocalDateRange(
+			start = date,
+			end = date,
+		)
+		val photoParams = PhotoSearchParams(dateRange = dateRange)
 		val photoResult = photoServiceClient.searchPhoto(token, photoParams)
 
 		return ApiDiary(

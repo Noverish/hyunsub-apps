@@ -2,6 +2,7 @@ package kim.hyunsub.diary.bo
 
 import kim.hyunsub.common.fs.client.PhotoServiceClient
 import kim.hyunsub.common.model.ApiPageResult
+import kim.hyunsub.common.model.LocalDateRange
 import kim.hyunsub.diary.model.api.ApiDiary
 import kim.hyunsub.diary.repository.DiaryRepository
 import kim.hyunsub.diary.repository.findByIdOrNull
@@ -25,7 +26,11 @@ class DiaryDetailBo(
 	}
 
 	fun photos(token: String, date: LocalDate, page: Int?): ApiPageResult<ApiPhotoPreview> {
-		val params = PhotoSearchParams(date, false, page, null)
+		val dateRange = LocalDateRange(
+			start = date,
+			end = date
+		)
+		val params = PhotoSearchParams(dateRange = dateRange)
 		return photoServiceClient.searchPhoto(token, params)
 	}
 }
