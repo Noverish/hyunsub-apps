@@ -1,6 +1,7 @@
 package kim.hyunsub.photo.model.api
 
 import kim.hyunsub.common.fs.FsPathConverter
+import kim.hyunsub.common.util.getHumanReadableSize
 import kim.hyunsub.photo.model.PhotoType
 import kim.hyunsub.photo.repository.entity.PhotoPreview
 import kim.hyunsub.photo.util.PhotoPathConverter
@@ -12,4 +13,8 @@ fun PhotoPreview.toApi() = ApiPhotoPreview(
 	type = if (isVideo) PhotoType.VIDEO else PhotoType.PHOTO,
 	ext = ext,
 	userId = userId,
+	fileName = name,
+	imageSize = "$width x $height",
+	fileSize = getHumanReadableSize(size.toLong()),
+	dateType = dateType,
 )
