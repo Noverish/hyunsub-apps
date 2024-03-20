@@ -27,7 +27,7 @@ class PhotoSearchBo(
 		val pageReq = PageRequest.of(0, params.pageSize ?: PhotoConstants.PAGE_SIZE)
 		val condition = PhotoCondition(
 			userId = userId,
-			dateRange = params.dateRange,
+			dateRange = params.dateRange?.toLdtRange(),
 			page = pageReq,
 			photoId = photoId,
 		)
@@ -42,7 +42,7 @@ class PhotoSearchBo(
 		val pageReq = PageRequest.of(page, params.pageSize ?: PhotoConstants.PAGE_SIZE)
 		val condition = PhotoCondition(
 			userId = userId,
-			dateRange = params.dateRange,
+			dateRange = params.dateRange?.toLdtRange(),
 			page = pageReq,
 		)
 

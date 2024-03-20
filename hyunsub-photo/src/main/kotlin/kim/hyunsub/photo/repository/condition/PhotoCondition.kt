@@ -1,11 +1,11 @@
 package kim.hyunsub.photo.repository.condition
 
-import kim.hyunsub.common.model.LocalDateRange
+import kim.hyunsub.common.model.LocalDateTimeRange
 import org.springframework.data.domain.Pageable
 
 data class PhotoCondition(
 	val userId: String,
-	val dateRange: LocalDateRange? = null,
+	val dateRange: LocalDateTimeRange? = null,
 	val page: Pageable,
 	val photoId: String? = null,
 )
