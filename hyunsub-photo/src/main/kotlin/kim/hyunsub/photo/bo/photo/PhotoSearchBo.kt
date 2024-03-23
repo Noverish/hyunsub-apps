@@ -15,46 +15,40 @@ class PhotoSearchBo(
 	private val photoPreviewMapper: PhotoPreviewMapper,
 ) {
 	fun search(userId: String, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
-		val photoId = params.photoId
-		if (photoId != null) {
-			return searchWithPhotoId(userId, photoId, params)
-		}
+		val page = decidePage(userId, params)
 
-		return searchWithPage(userId, params.page ?: 0, params)
-	}
-
-	private fun searchWithPhotoId(userId: String, photoId: String, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
-		val pageReq = PageRequest.of(0, params.pageSize ?: PhotoConstants.PAGE_SIZE)
+		val pageReq = PageRequest.of(page, PhotoConstants.PAGE_SIZE)
 		val condition = PhotoPreviewCondition(
 			userId = userId,
 			dateRange = params.dateRange?.toLdtRange(),
-			page = pageReq,
-			photoId = photoId,
-		)
-
-		val count = photoPreviewMapper.count(condition)
-		val page = count / pageReq.pageSize
-
-		return searchWithPage(userId, page, params)
-	}
-
-	private fun searchWithPage(userId: String, page: Int, params: PhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
-		val pageReq = PageRequest.of(page, params.pageSize ?: PhotoConstants.PAGE_SIZE)
-		val condition = PhotoPreviewCondition(
-			userId = userId,
-			dateRange = params.dateRange?.toLdtRange(),
-			page = pageReq,
 			orphan = params.orphan,
+			page = pageReq,
 		)
 
 		val total = photoPreviewMapper.count(condition)
-		val result = photoPreviewMapper.select(condition)
+		val data = photoPreviewMapper.select(condition)
 
 		return ApiPageResult(
 			total = total,
 			page = pageReq.pageNumber,
 			pageSize = pageReq.pageSize,
-			data = result.map { it.toApi() }
+			data = data.map { it.toApi() }
 		)
+	}
+
+	private fun decidePage(userId: String, params: PhotoSearchParams): Int {
+		val photoId = params.photoId ?: return params.page
+
+		val pageReq = PageRequest.of(0, PhotoConstants.PAGE_SIZE)
+		val condition = PhotoPreviewCondition(
+			userId = userId,
+			dateRange = params.dateRange?.toLdtRange(),
+			orphan = params.orphan,
+			page = pageReq,
+			photoId = photoId,
+		)
+
+		val count = photoPreviewMapper.count(condition)
+		return count / pageReq.pageSize
 	}
 }

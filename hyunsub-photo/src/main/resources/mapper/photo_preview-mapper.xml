@@ -53,6 +53,8 @@
         INNER JOIN photo p ON p.id = ap.photo_id
         <where>
             AND ap.album_id = #{albumId}
+            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+            <if test="photoId != null">AND po.date &lt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
             <if test="userIds != null and !userIds.isEmpty()">
                 AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
             </if>
@@ -70,6 +72,8 @@
         INNER JOIN photo p ON p.id = ap.photo_id
         <where>
             AND ap.album_id = #{albumId}
+            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+            <if test="photoId != null">AND po.date &lt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
             <if test="userIds != null and !userIds.isEmpty()">
                 AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
             </if>

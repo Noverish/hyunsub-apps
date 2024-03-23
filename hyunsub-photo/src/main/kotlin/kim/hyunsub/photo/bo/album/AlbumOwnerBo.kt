@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service
 @Service
 class AlbumOwnerBo(
 	private val albumOwnerMapper: AlbumOwnerMapper,
-	private val albumDetailBo: AlbumDetailBo,
+	private val albumQueryBo: AlbumQueryBo,
 	private val albumMapper: AlbumMapper,
 ) {
 	fun create(userId: String, albumId: String, params: AlbumOwnerParams): ApiAlbum {
@@ -22,7 +22,7 @@ class AlbumOwnerBo(
 		val albumOwner = AlbumOwner(albumId, params.userId, false)
 		albumOwnerMapper.insert(albumOwner)
 
-		return albumDetailBo.toApiAlbum(album)
+		return albumQueryBo.toApiAlbum(album)
 	}
 
 	fun delete(userId: String, albumId: String, params: AlbumOwnerParams): ApiAlbum {
@@ -33,6 +33,6 @@ class AlbumOwnerBo(
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album owner")
 		albumOwnerMapper.delete(albumOwner)
 
-		return albumDetailBo.toApiAlbum(album)
+		return albumQueryBo.toApiAlbum(album)
 	}
 }
