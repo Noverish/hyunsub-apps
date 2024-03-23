@@ -2,18 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoMapper">
-    <sql id="PhotoPreviewColumns">
+    <sql id="PhotoColumns">
         p.id,
+        p.hash,
         p.width,
         p.height,
         p.size,
         p.ext,
-        p.pair_photo_id,
-        po.date,
-        po.offset,
-        po.user_id,
-        po.name,
-        po.date_type
+        p.pair_photo_id
     </sql>
 
     <select id="countById">
@@ -22,94 +18,22 @@
         WHERE id = #{id}
     </select>
 
-    <select id="selectByHash">
-        SELECT p.id, p.hash, p.width, p.height, p.size, p.ext, p.pair_photo_id
+    <select id="selectByIds">
+        SELECT <include refid="PhotoColumns" />
         FROM photo p
-        WHERE p.hash = #{hash}
-    </select>
-
-    <select id="select" resultType="PhotoPreview">
-        SELECT <include refid="PhotoPreviewColumns" />
-        FROM photo_owner po
-        INNER JOIN photo p ON p.id = po.photo_id
-        <if test="orphan == true">LEFT JOIN album_photo ap ON ap.photo_id = po.photo_id</if>
-        <where>
-            AND po.user_id = #{userId}
-            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
-            <if test="photoId != null">AND po.date &gt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
-            <if test="orphan == true">AND ap.album_id IS NULL</if>
-        </where>
-        ORDER BY po.date DESC
-        LIMIT #{page.pageSize} OFFSET #{page.offset}
-    </select>
-
-    <select id="count">
-        SELECT count(*)
-        FROM photo_owner po
-        INNER JOIN photo p ON p.id = po.photo_id
-        <if test="orphan == true">LEFT JOIN album_photo ap ON ap.photo_id = po.photo_id</if>
-        <where>
-            AND po.user_id = #{userId}
-            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
-            <if test="photoId != null">AND po.date &gt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
-            <if test="orphan == true">AND ap.album_id IS NULL</if>
-        </where>
-    </select>
-
-    <select id="selectAlbumPhoto" resultType="PhotoPreview">
-        SELECT <include refid="PhotoPreviewColumns" />
-        FROM album_photo ap
-        INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
-        INNER JOIN photo p ON p.id = ap.photo_id
-        <where>
-            AND ap.album_id = #{albumId}
-            <if test="userIds != null and !userIds.isEmpty()">
-                AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
-            </if>
-        </where>
-        ORDER BY po.date
-        LIMIT #{page.pageSize} OFFSET #{page.offset}
-    </select>
-
-    <select id="countAlbumPhoto">
-        SELECT COUNT(*)
-        FROM album_photo ap
-        INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
-        INNER JOIN photo p ON p.id = ap.photo_id
-        <where>
-            AND ap.album_id = #{albumId}
-            <if test="userIds != null and !userIds.isEmpty()">
-                AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
-            </if>
-        </where>
+        WHERE p.id IN (<foreach collection="ids" item="v" separator=",">#{v}</foreach>)
     </select>
 
     <select id="selectOne" resultType="Photo">
-        SELECT a.id, a.hash, a.width, a.height, a.size, a.ext, a.pair_photo_id
-        FROM photo a
-        INNER JOIN photo_owner b ON b.photo_id = a.id
-        WHERE a.id = #{id}
-        <if test="userId != null">AND b.user_id = #{userId}</if>
-        LIMIT 1
+        SELECT <include refid="PhotoColumns" />
+        FROM photo p
+        WHERE p.id = #{id}
     </select>
 
-    <select id="selectOne2" resultType="PhotoPreview">
-        SELECT a.id,
-            a.width,
-            a.height,
-            a.size,
-            a.ext,
-            a.pair_photo_id,
-            b.date,
-            b.offset,
-            b.user_id,
-            b.name,
-            b.date_type
-        FROM photo a
-        INNER JOIN photo_owner b ON b.photo_id = a.id
-        WHERE a.id = #{id}
-        <if test="userId != null">AND b.user_id = #{userId}</if>
-        LIMIT 1
+    <select id="selectByHash" resultType="Photo">
+        SELECT <include refid="PhotoColumns" />
+        FROM photo p
+        WHERE p.hash = #{hash}
     </select>
 
     <insert id="insert">
@@ -119,21 +43,13 @@
         (#{id}, #{hash}, #{width}, #{height}, #{size}, #{ext})
     </insert>
 
-    <insert id="insertAll">
-        INSERT INTO photo
-        (id, hash, width, height, size, ext, pair_photo_id)
-        VALUES
-        <foreach collection="entities" item="v" separator=",">
-            (#{v.id}, #{v.hash}, #{v.width}, #{v.height}, #{v.size}, #{v.ext}, #{v.pairPhotoId})
-        </foreach>
-    </insert>
-
-    <update id="updateId">
-        UPDATE photo SET id = #{to} WHERE id = #{from}
-    </update>
-
     <delete id="deleteById">
         DELETE FROM photo
         WHERE id = #{id}
+    </delete>
+
+    <delete id="deleteByIds">
+        DELETE FROM photo
+        WHERE id IN (<foreach collection="ids" item="v" separator=",">#{v}</foreach>)
     </delete>
 </mapper>

@@ -1,8 +1,8 @@
 package kim.hyunsub.photo.controller.photo
 
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.photo.PhotoDeleteBo
-import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.dto.PhotoDeleteBulkParams
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -18,7 +18,7 @@ class PhotoDeleteController(
 	fun delete(
 		userAuth: UserAuth,
 		@PathVariable photoId: String,
-	): ApiPhoto {
+	): SimpleResponse {
 		return photoDeleteBo.delete(userAuth.idNo, photoId)
 	}
 
@@ -26,7 +26,7 @@ class PhotoDeleteController(
 	fun deleteBulk(
 		userAuth: UserAuth,
 		@RequestBody params: PhotoDeleteBulkParams,
-	): List<ApiPhoto> {
+	): SimpleResponse {
 		return photoDeleteBo.deleteBulk(userAuth.idNo, params)
 	}
 }

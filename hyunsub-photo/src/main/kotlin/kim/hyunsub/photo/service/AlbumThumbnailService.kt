@@ -1,29 +1,43 @@
 package kim.hyunsub.photo.service
 
 import kim.hyunsub.photo.repository.condition.AlbumCondition
-import kim.hyunsub.photo.repository.condition.PhotoCondition2
+import kim.hyunsub.photo.repository.condition.AlbumPhotoCondition
 import kim.hyunsub.photo.repository.mapper.AlbumMapper
-import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
 import mu.KotlinLogging
 import org.springframework.data.domain.PageRequest
+import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 
 @Service
 class AlbumThumbnailService(
 	private val albumMapper: AlbumMapper,
-	private val photoMapper: PhotoMapper,
+	private val albumPhotoMapper: AlbumPhotoMapper,
 ) {
 	private val log = KotlinLogging.logger { }
 
-	fun delete(photoId: String) {
-		val albums = albumMapper.select(AlbumCondition(thumbnailPhotoId = photoId))
+	@Async
+	fun deleteAsync(photoId: String) {
+		deleteBulkInner(listOf(photoId))
+	}
+
+	@Async
+	fun deleteBulkAsync(photoIds: List<String>) {
+		deleteBulkInner(photoIds)
+	}
+
+	private fun deleteBulkInner(photoIds: List<String>) {
+		val albums = albumMapper.select(AlbumCondition(thumbnailPhotoIds = photoIds))
+
 		for (album in albums) {
-			val condition = PhotoCondition2(albumId = album.id, page = PageRequest.of(0, 10))
-			val nextThumbnail = photoMapper.selectAlbumPhoto(condition)
-				.firstOrNull { it.id != photoId }
-				?.id
-			val newAlbum = album.copy(thumbnailPhotoId = nextThumbnail)
-			log.debug { "[Album Thumbnail] New album thumbnail: $newAlbum" }
+			val page = PageRequest.of(0, 1)
+			val condition = AlbumPhotoCondition(albumId = album.id, excludePhotoIds = photoIds, page = page)
+			val candidates = albumPhotoMapper.select(condition)
+
+			val newThumbnailId = candidates.firstOrNull()?.photoId
+			val newAlbum = album.copy(thumbnailPhotoId = newThumbnailId)
+
+			log.debug { "[Album Thumbnail] New album thumbnail: albumId=${album.id}, ${album.thumbnailPhotoId} => $newThumbnailId" }
 			albumMapper.update(newAlbum)
 		}
 	}

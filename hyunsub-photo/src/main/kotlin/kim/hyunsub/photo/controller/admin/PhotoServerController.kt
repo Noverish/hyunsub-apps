@@ -104,19 +104,15 @@ class PhotoServerController(
 
 		val albums = albumMapper.select(AlbumCondition(userId = userId))
 		val albumOwners = albumOwnerMapper.select(AlbumOwnerCondition(userId = userId))
-		val albumPhotos = albumPhotoMapper.select(AlbumPhotoCondition(albumIds = albums.map { it.id }))
-		val photoOwners = photoOwnerMapper.select(PhotoOwnerCondition(userId = userId))
 
 		log.debug { "[User Delete] albums=$albums" }
 		log.debug { "[User Delete] albumOwners=$albumOwners" }
-		log.debug { "[User Delete] albumPhotos=$albumPhotos" }
-		log.debug { "[User Delete] photoOwners=$photoOwners" }
 
 		if (!params.dryRun) {
 			albumMapper.deleteByIds(albums.map { it.id })
 			albumOwnerMapper.deleteAll(albumOwners)
-			albumPhotoMapper.deleteAll(albumPhotos)
-			photoOwnerMapper.deleteAll(photoOwners)
+			albumPhotoMapper.deleteByUserId(userId)
+			photoOwnerMapper.deleteByUserId(userId)
 		}
 
 		return SimpleResponse()

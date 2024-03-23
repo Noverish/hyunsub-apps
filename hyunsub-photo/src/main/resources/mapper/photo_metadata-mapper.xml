@@ -93,4 +93,9 @@
         DELETE FROM photo_metadata
         WHERE photo_id = #{photoId}
     </delete>
+
+    <delete id="deleteByPhotoIds">
+        DELETE FROM photo_metadata
+        WHERE photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+    </delete>
 </mapper>

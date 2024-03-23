@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kim.hyunsub.photo.repository.mapper.PhotoPreviewMapper">
+    <sql id="PhotoPreviewColumns">
+        p.id,
+        p.width,
+        p.height,
+        p.size,
+        p.ext,
+        p.pair_photo_id,
+        po.date,
+        po.offset,
+        po.user_id,
+        po.name,
+        po.date_type
+    </sql>
+
+    <select id="select" resultType="PhotoPreview">
+        SELECT <include refid="PhotoPreviewColumns" />
+        FROM photo_owner po
+        INNER JOIN photo p ON p.id = po.photo_id
+        <if test="orphan == true">LEFT JOIN album_photo ap ON ap.photo_id = po.photo_id</if>
+        <where>
+            AND po.user_id = #{userId}
+            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+            <if test="photoId != null">AND po.date &gt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
+            <if test="orphan == true">AND ap.album_id IS NULL</if>
+        </where>
+        ORDER BY po.date DESC
+        <if test="page != null">
+            LIMIT #{page.pageSize} OFFSET #{page.offset}
+        </if>
+    </select>
+
+    <select id="count">
+        SELECT count(*)
+        FROM photo_owner po
+        INNER JOIN photo p ON p.id = po.photo_id
+        <if test="orphan == true">LEFT JOIN album_photo ap ON ap.photo_id = po.photo_id</if>
+        <where>
+            AND po.user_id = #{userId}
+            <if test="dateRange != null">AND po.date BETWEEN #{dateRange.start} AND #{dateRange.end}</if>
+            <if test="photoId != null">AND po.date &gt; (SELECT tmp.date FROM photo_owner tmp WHERE tmp.photo_id = #{photoId})</if>
+            <if test="orphan == true">AND ap.album_id IS NULL</if>
+        </where>
+    </select>
+
+    <select id="selectAlbumPhoto" resultType="PhotoPreview">
+        SELECT <include refid="PhotoPreviewColumns" />
+        FROM album_photo ap
+        INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
+        INNER JOIN photo p ON p.id = ap.photo_id
+        <where>
+            AND ap.album_id = #{albumId}
+            <if test="userIds != null and !userIds.isEmpty()">
+                AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+        </where>
+        ORDER BY po.date
+        <if test="page != null">
+            LIMIT #{page.pageSize} OFFSET #{page.offset}
+        </if>
+    </select>
+
+    <select id="countAlbumPhoto">
+        SELECT COUNT(*)
+        FROM album_photo ap
+        INNER JOIN photo_owner po ON po.user_id = ap.user_id AND po.photo_id = ap.photo_id
+        INNER JOIN photo p ON p.id = ap.photo_id
+        <where>
+            AND ap.album_id = #{albumId}
+            <if test="userIds != null and !userIds.isEmpty()">
+                AND ap.user_id IN (<foreach collection="userIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOne" resultType="PhotoPreview">
+        SELECT <include refid="PhotoPreviewColumns" />
+        FROM photo p
+        INNER JOIN photo_owner po ON po.photo_id = p.id
+        WHERE p.id = #{id}
+          AND po.user_id = #{userId}
+        LIMIT 1
+    </select>
+</mapper>

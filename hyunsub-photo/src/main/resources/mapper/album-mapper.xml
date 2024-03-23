@@ -11,13 +11,15 @@
     <select id="select" resultType="Album">
         SELECT a.id, a.name, a.thumbnail_photo_id, a.reg_dt
         FROM album a
-        INNER JOIN album_owner b ON b.album_id = a.id
+        INNER JOIN album_owner ao ON ao.album_id = a.id
         <where>
-            <if test="thumbnailPhotoId != null">AND a.thumbnail_photo_id = #{thumbnailPhotoId}</if>
-            <if test="userId != null">AND b.user_id = #{userId}</if>
-            <if test="owner != null">AND b.owner = #{owner}</if>
+            <if test="userId != null">AND ao.user_id = #{userId}</if>
+            <if test="owner != null">AND ao.owner = #{owner}</if>
+            <if test="thumbnailPhotoIds != null and !thumbnailPhotoIds.isEmpty()">
+                AND a.thumbnail_photo_id IN (<foreach collection="thumbnailPhotoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
         </where>
-        ORDER BY b.reg_dt DESC
+        ORDER BY a.reg_dt DESC
         <if test="page != null">
             LIMIT #{page.pageSize} OFFSET #{page.offset}
         </if>

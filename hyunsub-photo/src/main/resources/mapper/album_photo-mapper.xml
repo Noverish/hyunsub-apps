@@ -10,19 +10,27 @@
             <if test="albumIds != null and !albumIds.isEmpty()">
                 AND album_id IN (<foreach collection="albumIds" item="v" separator=",">#{v}</foreach>)
             </if>
-            <if test="photoId != null">AND photo_id = #{photoId}</if>
-            <if test="userId != null">AND user_id = #{userId}</if>
+            <if test="excludePhotoIds != null and !excludePhotoIds.isEmpty()">
+                AND photo_id NOT IN (<foreach collection="excludePhotoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
         </where>
+        <if test="page != null">
+            LIMIT #{page.pageSize} OFFSET #{page.offset}
+        </if>
     </select>
 
     <select id="count">
         SELECT COUNT(*)
         FROM album_photo
-        <trim prefix="WHERE" prefixOverrides="AND">
+        <where>
             <if test="albumId != null">AND album_id = #{albumId}</if>
-            <if test="photoId != null">AND photo_id = #{photoId}</if>
-            <if test="userId != null">AND user_id = #{userId}</if>
-        </trim>
+            <if test="albumIds != null and !albumIds.isEmpty()">
+                AND album_id IN (<foreach collection="albumIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+            <if test="excludePhotoIds != null and !excludePhotoIds.isEmpty()">
+                AND photo_id NOT IN (<foreach collection="excludePhotoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+        </where>
     </select>
 
     <select id="selectOne" resultType="AlbumPhoto">
@@ -53,12 +61,6 @@
         </foreach>
     </insert>
 
-    <update id="updatePhotoId">
-        UPDATE album_photo
-        SET photo_id = #{to}
-        WHERE photo_id = #{from}
-    </update>
-
     <delete id="delete">
         DELETE FROM album_photo
         WHERE album_id = #{albumId} AND photo_id = #{photoId}
@@ -72,8 +74,19 @@
         </foreach>
     </delete>
 
+    <delete id="deletePhotosOfOneUser">
+        DELETE FROM album_photo
+        WHERE photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+          AND user_id = #{userId}
+    </delete>
+
     <delete id="deleteByAlbumId">
         DELETE FROM album_photo
         WHERE album_id = #{albumId}
+    </delete>
+
+    <delete id="deleteByUserId">
+        DELETE FROM album_photo
+        WHERE user_id = #{userId}
     </delete>
 </mapper>

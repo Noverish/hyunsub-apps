@@ -3,7 +3,7 @@ package kim.hyunsub.photo.repository.condition
 import kim.hyunsub.common.model.LocalDateTimeRange
 import org.springframework.data.domain.Pageable
 
-data class PhotoCondition(
+data class PhotoPreviewCondition(
 	val userId: String,
 	val dateRange: LocalDateTimeRange? = null,
 	val page: Pageable,

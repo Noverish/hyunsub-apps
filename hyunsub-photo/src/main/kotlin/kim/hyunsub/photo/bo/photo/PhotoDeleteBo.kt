@@ -1,80 +1,42 @@
 package kim.hyunsub.photo.bo.photo
 
-import kim.hyunsub.common.fs.client.FsClient
-import kim.hyunsub.common.fs.client.remove
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
-import kim.hyunsub.photo.model.api.ApiPhoto
-import kim.hyunsub.photo.model.api.toApi
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.photo.model.dto.PhotoDeleteBulkParams
-import kim.hyunsub.photo.repository.condition.AlbumPhotoCondition
 import kim.hyunsub.photo.repository.condition.PhotoOwnerCondition
-import kim.hyunsub.photo.repository.entity.Photo
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
-import kim.hyunsub.photo.repository.mapper.PhotoMapper
-import kim.hyunsub.photo.repository.mapper.PhotoMetadataMapper
 import kim.hyunsub.photo.repository.mapper.PhotoOwnerMapper
 import kim.hyunsub.photo.service.AlbumThumbnailService
-import kim.hyunsub.photo.util.PhotoPathConverter
-import kim.hyunsub.photo.util.isVideo
-import mu.KotlinLogging
+import kim.hyunsub.photo.service.PhotoDeleteService
 import org.springframework.stereotype.Service
 
 @Service
 class PhotoDeleteBo(
-	private val fsClient: FsClient,
-	private val photoMapper: PhotoMapper,
 	private val photoOwnerMapper: PhotoOwnerMapper,
-	private val albumThumbnailService: AlbumThumbnailService,
 	private val albumPhotoMapper: AlbumPhotoMapper,
-	private val photoMetadataMapper: PhotoMetadataMapper,
+	private val photoDeleteService: PhotoDeleteService,
+	private val albumThumbnailService: AlbumThumbnailService,
 ) {
-	private val log = KotlinLogging.logger { }
-
-	fun deleteBulk(userId: String, params: PhotoDeleteBulkParams): List<ApiPhoto> {
-		return params.photoIds.map { delete(userId, it) }
+	fun delete(userId: String, photoId: String): SimpleResponse {
+		return deleteBulk(userId, PhotoDeleteBulkParams(listOf(photoId)))
 	}
 
-	fun delete(userId: String, photoId: String): ApiPhoto {
-		val photoOwner = photoOwnerMapper.selectOne(userId, photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo owner")
+	fun deleteBulk(userId: String, params: PhotoDeleteBulkParams): SimpleResponse {
+		val photoIds = params.photoIds
 
-		val photo = photoMapper.selectOne(photoId)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
-
-		log.debug { "[Delete Photo] Delete photo owner: $photoOwner" }
-		photoOwnerMapper.delete(photoOwner)
-
-		val albumPhotos = albumPhotoMapper.select(AlbumPhotoCondition(userId = userId, photoId = photoId))
-		if (albumPhotos.isNotEmpty()) {
-			log.debug { "[Delete Photo] Delete album photos: $albumPhotos" }
-			albumPhotoMapper.deleteAll(albumPhotos)
-			albumThumbnailService.delete(photoId)
+		val photoOwnerCondition = PhotoOwnerCondition(userId = userId, photoIds = photoIds)
+		val photoOwnerCnt = photoOwnerMapper.count(photoOwnerCondition)
+		if (photoOwnerCnt != photoIds.size) {
+			throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "Unauthorized photos")
 		}
 
-		val numberOfOwner = photoOwnerMapper.count(PhotoOwnerCondition(photoId = photoId))
-		if (numberOfOwner == 0) {
-			log.debug { "[Delete Photo] Delete photo file: $photo" }
-			deleteFile(photo)
-		}
+		photoOwnerMapper.deletePhotosOfOneUser(userId, photoIds)
+		albumPhotoMapper.deletePhotosOfOneUser(userId, photoIds)
 
-		return photo.toApi(photoOwner)
-	}
+		albumThumbnailService.deleteBulkAsync(photoIds)
+		photoDeleteService.checkAndDeleteAsync(photoIds)
 
-	private fun deleteFile(photo: Photo) {
-		val photoId = photo.id
-		val originalPath = PhotoPathConverter.original(photo)
-		val thumbnailPath = PhotoPathConverter.thumbnail(photo)
-
-		fsClient.remove(originalPath)
-		fsClient.remove(thumbnailPath)
-
-		if (isVideo(photo.fileName)) {
-			val videoPath = PhotoPathConverter.video(photo)
-			fsClient.remove(videoPath)
-		}
-
-		photoMapper.deleteById(photoId)
-		photoMetadataMapper.deleteByPhotoId(photoId)
+		return SimpleResponse()
 	}
 }

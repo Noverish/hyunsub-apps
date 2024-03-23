@@ -6,6 +6,7 @@ import kotlin.io.path.Path
 
 object PhotoPathConverter {
 	fun original(photo: Photo) = generatePath("original2", photo.id, photo.ext)
+	fun original(photo: PhotoPreview) = generatePath("original2", photo.id, photo.ext)
 	fun thumbnail(photoId: String) = generatePath("thumbnail2", photoId, "jpg")
 	fun thumbnail(photo: Photo) = generatePath("thumbnail2", photo.id, "jpg")
 	fun thumbnail(photo: PhotoPreview) = generatePath("thumbnail2", photo.id, "jpg")

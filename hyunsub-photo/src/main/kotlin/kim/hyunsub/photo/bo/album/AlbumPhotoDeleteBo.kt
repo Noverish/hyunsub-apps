@@ -7,7 +7,7 @@ import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.AlbumPhotoDeleteBulkParams
 import kim.hyunsub.photo.repository.mapper.AlbumMapper
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
-import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoPreviewMapper
 import kim.hyunsub.photo.service.AlbumThumbnailService
 import org.springframework.stereotype.Service
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service
 class AlbumPhotoDeleteBo(
 	private val albumMapper: AlbumMapper,
 	private val albumThumbnailService: AlbumThumbnailService,
-	private val photoMapper: PhotoMapper,
+	private val photoPreviewMapper: PhotoPreviewMapper,
 	private val albumPhotoMapper: AlbumPhotoMapper,
 ) {
 	fun deleteBulk(userId: String, params: AlbumPhotoDeleteBulkParams): List<ApiPhotoPreview> {
@@ -29,12 +29,12 @@ class AlbumPhotoDeleteBo(
 		val albumPhoto = albumPhotoMapper.selectOne(albumId = albumId, photoId = photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album photo")
 
-		val photo = photoMapper.selectOne2(photoId)
+		val photo = photoPreviewMapper.selectOne(id = photoId, userId = userId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
 		albumPhotoMapper.delete(albumPhoto)
 
-		albumThumbnailService.delete(photoId)
+		albumThumbnailService.deleteAsync(photoId)
 
 		return photo.toApi()
 	}

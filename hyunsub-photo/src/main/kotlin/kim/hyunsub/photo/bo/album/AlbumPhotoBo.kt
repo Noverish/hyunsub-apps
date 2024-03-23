@@ -7,10 +7,10 @@ import kim.hyunsub.photo.config.PhotoConstants
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
 import kim.hyunsub.photo.model.api.toApi
 import kim.hyunsub.photo.model.dto.AlbumPhotoSearchParams
-import kim.hyunsub.photo.repository.condition.PhotoCondition2
+import kim.hyunsub.photo.repository.condition.PhotoOfAlbumCondition
 import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
 import kim.hyunsub.photo.repository.mapper.AlbumPhotoMapper
-import kim.hyunsub.photo.repository.mapper.PhotoMapper
+import kim.hyunsub.photo.repository.mapper.PhotoPreviewMapper
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 
@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service
 class AlbumPhotoBo(
 	private val albumOwnerMapper: AlbumOwnerMapper,
 	private val albumPhotoMapper: AlbumPhotoMapper,
-	private val photoMapper: PhotoMapper,
+	private val photoPreviewMapper: PhotoPreviewMapper,
 ) {
 	fun list(userId: String, albumId: String, params: AlbumPhotoSearchParams): ApiPageResult<ApiPhotoPreview> {
 		albumOwnerMapper.selectOne(albumId = albumId, userId = userId)
@@ -31,13 +31,13 @@ class AlbumPhotoBo(
 		}
 
 		val pageRequest = PageRequest.of(page, PhotoConstants.PAGE_SIZE)
-		val condition = PhotoCondition2(
+		val condition = PhotoOfAlbumCondition(
 			albumId = albumId,
 			userIds = params.userIds,
 			page = pageRequest,
 		)
-		val total = photoMapper.countAlbumPhoto(condition)
-		val data = photoMapper.selectAlbumPhoto(condition).map { it.toApi() }
+		val total = photoPreviewMapper.countAlbumPhoto(condition)
+		val data = photoPreviewMapper.selectAlbumPhoto(condition).map { it.toApi() }
 
 		return ApiPageResult(
 			total = total,

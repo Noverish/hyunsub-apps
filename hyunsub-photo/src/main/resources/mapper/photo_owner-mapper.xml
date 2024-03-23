@@ -8,6 +8,9 @@
         <where>
             <if test="userId != null">AND user_id = #{userId}</if>
             <if test="photoId != null">AND photo_id = #{photoId}</if>
+            <if test="photoIds != null and !photoIds.isEmpty()">
+                AND photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
             <if test="name != null">
                 <bind name="namePattern" value="'%' + name + '%'" />
                 AND name LIKE #{namePattern}
@@ -25,6 +28,9 @@
         <where>
             <if test="userId != null">AND user_id = #{userId}</if>
             <if test="photoId != null">AND photo_id = #{photoId}</if>
+            <if test="photoIds != null and !photoIds.isEmpty()">
+                AND photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
             <if test="name != null">
                 <bind name="namePattern" value="'%' + name + '%'" />
                 AND name LIKE #{namePattern}
@@ -36,6 +42,13 @@
         SELECT user_id, photo_id, name, file_epoch, reg_dt, date, offset, date_type
         FROM photo_owner
         WHERE photo_id = #{photoId} AND user_id = #{userId}
+    </select>
+
+    <select id="countByPhotoIds" resultType="PhotoAndCount">
+        SELECT photo_id, COUNT(photo_id) AS cnt
+        FROM photo_owner
+        WHERE photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+        GROUP BY photo_id
     </select>
 
     <insert id="insert">
@@ -97,15 +110,18 @@
 
     <delete id="delete">
         DELETE FROM photo_owner
-        WHERE
-        photo_id = #{photoId} AND user_id = #{userId}
+        WHERE user_id = #{userId}
+          AND photo_id = #{photoId}
     </delete>
 
-    <delete id="deleteAll">
+    <delete id="deleteByUserId">
         DELETE FROM photo_owner
-        WHERE
-        <foreach collection="entities" item="v" separator="OR">
-            (photo_id = #{v.photoId} AND user_id = #{v.userId})
-        </foreach>
+        WHERE user_id = #{userId}
+    </delete>
+
+    <delete id="deletePhotosOfOneUser">
+        DELETE FROM photo_owner
+        WHERE user_id = #{userId}
+          AND photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
     </delete>
 </mapper>

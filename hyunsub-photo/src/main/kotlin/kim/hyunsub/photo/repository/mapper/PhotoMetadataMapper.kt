@@ -16,4 +16,5 @@ interface PhotoMetadataMapper {
 	fun updatePhotoId(from: String, to: String): Int
 
 	fun deleteByPhotoId(photoId: String): Int
+	fun deleteByPhotoIds(photoIds: List<String>): Int
 }
