@@ -4,7 +4,7 @@ import kim.hyunsub.common.model.LocalDateRange
 
 data class PhotoSearchParams(
 	val dateRange: LocalDateRange? = null,
-	val myPhotoOnly: Boolean? = null,
+	val orphan: Boolean? = null,
 	val page: Int? = null,
 	val pageSize: Int? = null,
 	val photoId: String? = null,

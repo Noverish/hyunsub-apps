@@ -8,4 +8,5 @@ data class PhotoCondition(
 	val dateRange: LocalDateTimeRange? = null,
 	val page: Pageable,
 	val photoId: String? = null,
+	val orphan: Boolean? = null,
 )

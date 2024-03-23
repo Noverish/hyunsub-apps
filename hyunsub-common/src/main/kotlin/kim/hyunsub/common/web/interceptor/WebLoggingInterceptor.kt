@@ -50,6 +50,7 @@ class WebLoggingInterceptor : HandlerInterceptor {
 		val queryString = req.queryString?.let { "?$it" } ?: ""
 		val reqBody = contentToString(req.contentAsByteArray)
 		val resBody = contentToString(res.contentAsByteArray)
+			.let { if (it.length > 1024) "(${it.length} chars)" else it }
 		log.debug { "[CALL] $method $path$queryString $reqBody -> (${ms}ms) $resBody" }
 	}
 

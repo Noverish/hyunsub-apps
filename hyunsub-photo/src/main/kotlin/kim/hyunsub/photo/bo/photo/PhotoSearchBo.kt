@@ -44,6 +44,7 @@ class PhotoSearchBo(
 			userId = userId,
 			dateRange = params.dateRange?.toLdtRange(),
 			page = pageReq,
+			orphan = params.orphan,
 		)
 
 		val total = photoMapper.count(condition)

@@ -12,8 +12,8 @@ import org.apache.ibatis.annotations.Mapper
 interface PhotoMapper : MapperBase {
 	override fun countById(id: String): Int
 
-	fun count(condition: PhotoCondition): Int
 	fun select(condition: PhotoCondition): List<PhotoPreview>
+	fun count(condition: PhotoCondition): Int
 	fun selectOne(id: String, userId: String? = null): Photo?
 	fun selectOne2(id: String, userId: String? = null): PhotoPreview?
 	fun selectAlbumPhoto(condition: PhotoCondition2): List<PhotoPreview>
