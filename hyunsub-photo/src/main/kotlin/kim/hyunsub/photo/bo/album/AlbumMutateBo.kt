@@ -1,11 +1,12 @@
 package kim.hyunsub.photo.bo.album
 
-import jakarta.transaction.Transactional
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.photo.model.api.ApiAlbum
 import kim.hyunsub.photo.model.dto.AlbumCreateParams
 import kim.hyunsub.photo.model.dto.AlbumThumbnailParams
+import kim.hyunsub.photo.repository.condition.AlbumPhotoCondition
 import kim.hyunsub.photo.repository.entity.Album
 import kim.hyunsub.photo.repository.entity.AlbumOwner
 import kim.hyunsub.photo.repository.mapper.AlbumMapper
@@ -39,30 +40,35 @@ class AlbumMutateBo(
 		return albumDetailBo.toApiAlbum(album)
 	}
 
-	fun updateThumbnail(userId: String, albumId: String, params: AlbumThumbnailParams): ApiAlbum {
-		val album = albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
+	fun updateThumbnail(userId: String, albumId: String, params: AlbumThumbnailParams): SimpleResponse {
+		val albumOwner = albumOwnerMapper.selectOne(albumId = albumId, userId = userId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		if (!albumOwner.owner) {
+			throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No authority to this album")
+		}
 
 		val photoId = params.photoId
 		albumPhotoMapper.selectOne(albumId = albumId, photoId = photoId)
 			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such photo")
 
+		val album = albumMapper.selectOne(albumId) ?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
 		val newAlbum = album.copy(thumbnailPhotoId = photoId)
-		albumMapper.insert(newAlbum)
+		albumMapper.update(newAlbum)
 
-		return albumDetailBo.toApiAlbum(newAlbum)
+		return SimpleResponse()
 	}
 
-	@Transactional
-	fun delete(userId: String, albumId: String): ApiAlbum {
-		val album = albumMapper.selectWithUserId(userId = userId, albumId = albumId, owner = true)
-			?: throw ErrorCodeException(ErrorCode.NOT_FOUND, "No such album")
-		val result = albumDetailBo.toApiAlbum(album)
+	fun delete(userId: String, albumId: String): SimpleResponse {
+		val albumOwner = albumOwnerMapper.selectOne(albumId = albumId, userId = userId)
+			?: throw ErrorCodeException(ErrorCode.NOT_FOUND)
+		if (!albumOwner.owner) {
+			throw ErrorCodeException(ErrorCode.INVALID_PARAMETER, "No authority to this album")
+		}
 
 		albumOwnerMapper.deleteByAlbumId(albumId)
-		albumPhotoMapper.deleteByAlbumId(albumId)
+		albumPhotoMapper.delete(AlbumPhotoCondition(albumId = albumId))
 		albumMapper.deleteById(albumId)
 
-		return result
+		return SimpleResponse()
 	}
 }

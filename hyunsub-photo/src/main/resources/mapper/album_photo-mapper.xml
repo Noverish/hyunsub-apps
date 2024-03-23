@@ -10,9 +10,13 @@
             <if test="albumIds != null and !albumIds.isEmpty()">
                 AND album_id IN (<foreach collection="albumIds" item="v" separator=",">#{v}</foreach>)
             </if>
+            <if test="photoIds != null and !photoIds.isEmpty()">
+                AND photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
             <if test="excludePhotoIds != null and !excludePhotoIds.isEmpty()">
                 AND photo_id NOT IN (<foreach collection="excludePhotoIds" item="v" separator=",">#{v}</foreach>)
             </if>
+            <if test="userId != null">AND user_id = #{userId}</if>
         </where>
         <if test="page != null">
             LIMIT #{page.pageSize} OFFSET #{page.offset}
@@ -27,9 +31,13 @@
             <if test="albumIds != null and !albumIds.isEmpty()">
                 AND album_id IN (<foreach collection="albumIds" item="v" separator=",">#{v}</foreach>)
             </if>
+            <if test="photoIds != null and !photoIds.isEmpty()">
+                AND photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
             <if test="excludePhotoIds != null and !excludePhotoIds.isEmpty()">
                 AND photo_id NOT IN (<foreach collection="excludePhotoIds" item="v" separator=",">#{v}</foreach>)
             </if>
+            <if test="userId != null">AND user_id = #{userId}</if>
         </where>
     </select>
 
@@ -63,30 +71,18 @@
 
     <delete id="delete">
         DELETE FROM album_photo
-        WHERE album_id = #{albumId} AND photo_id = #{photoId}
-    </delete>
-
-    <delete id="deleteAll">
-        DELETE FROM album_photo
-        WHERE
-        <foreach collection="entities" item="v" separator="OR">
-            (album_id = #{v.albumId} AND photo_id = #{v.photoId})
-        </foreach>
-    </delete>
-
-    <delete id="deletePhotosOfOneUser">
-        DELETE FROM album_photo
-        WHERE photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
-          AND user_id = #{userId}
-    </delete>
-
-    <delete id="deleteByAlbumId">
-        DELETE FROM album_photo
-        WHERE album_id = #{albumId}
-    </delete>
-
-    <delete id="deleteByUserId">
-        DELETE FROM album_photo
-        WHERE user_id = #{userId}
+        <where>
+            <if test="albumId != null">AND album_id = #{albumId}</if>
+            <if test="albumIds != null and !albumIds.isEmpty()">
+                AND album_id IN (<foreach collection="albumIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+            <if test="photoIds != null and !photoIds.isEmpty()">
+                AND photo_id IN (<foreach collection="photoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+            <if test="excludePhotoIds != null and !excludePhotoIds.isEmpty()">
+                AND photo_id NOT IN (<foreach collection="excludePhotoIds" item="v" separator=",">#{v}</foreach>)
+            </if>
+            <if test="userId != null">AND user_id = #{userId}</if>
+        </where>
     </delete>
 </mapper>

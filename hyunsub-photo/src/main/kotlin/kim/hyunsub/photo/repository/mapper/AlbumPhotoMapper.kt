@@ -13,9 +13,5 @@ interface AlbumPhotoMapper {
 
 	fun insert(entity: AlbumPhoto): Int
 	fun insertAll(entities: List<AlbumPhoto>): Int
-	fun deleteByAlbumId(albumId: String): Int
-	fun deleteAll(entities: List<AlbumPhoto>): Int
-	fun deletePhotosOfOneUser(userId: String, photoIds: List<String>): Int
-	fun delete(entity: AlbumPhoto): Int
-	fun deleteByUserId(userId: String): Int
+	fun delete(condition: AlbumPhotoCondition): Int
 }

@@ -1,5 +1,6 @@
 package kim.hyunsub.photo.controller.album
 
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.album.AlbumMutateBo
 import kim.hyunsub.photo.model.api.ApiAlbum
@@ -29,7 +30,7 @@ class AlbumMutateController(
 	fun delete(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
-	): ApiAlbum {
+	): SimpleResponse {
 		return albumMutateBo.delete(userAuth.idNo, albumId)
 	}
 
@@ -38,7 +39,7 @@ class AlbumMutateController(
 		userAuth: UserAuth,
 		@PathVariable albumId: String,
 		@RequestBody params: AlbumThumbnailParams,
-	): ApiAlbum {
+	): SimpleResponse {
 		return albumMutateBo.updateThumbnail(userAuth.idNo, albumId, params)
 	}
 }

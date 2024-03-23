@@ -1,5 +1,5 @@
 package kim.hyunsub.photo.model.dto
 
-data class PhotoDeleteBulkParams(
+data class AlbumPhotoCreateParams(
 	val photoIds: List<String>,
 )

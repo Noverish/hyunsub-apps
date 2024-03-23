@@ -111,7 +111,7 @@ class PhotoServerController(
 		if (!params.dryRun) {
 			albumMapper.deleteByIds(albums.map { it.id })
 			albumOwnerMapper.deleteAll(albumOwners)
-			albumPhotoMapper.deleteByUserId(userId)
+			albumPhotoMapper.delete(AlbumPhotoCondition(userId = userId))
 			photoOwnerMapper.deleteByUserId(userId)
 		}
 

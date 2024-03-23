@@ -3,11 +3,14 @@ package kim.hyunsub.photo.controller.album
 import kim.hyunsub.common.model.ApiPageResult
 import kim.hyunsub.common.web.error.ErrorCode
 import kim.hyunsub.common.web.error.ErrorCodeException
+import kim.hyunsub.common.web.model.SimpleResponse
 import kim.hyunsub.common.web.model.UserAuth
 import kim.hyunsub.photo.bo.album.AlbumPhotoBo
 import kim.hyunsub.photo.bo.photo.PhotoDetailBo
 import kim.hyunsub.photo.model.api.ApiPhoto
 import kim.hyunsub.photo.model.api.ApiPhotoPreview
+import kim.hyunsub.photo.model.dto.AlbumPhotoCreateParams
+import kim.hyunsub.photo.model.dto.AlbumPhotoDeleteParams
 import kim.hyunsub.photo.model.dto.AlbumPhotoSearchParams
 import kim.hyunsub.photo.repository.entity.ApiPhotoMetadata
 import kim.hyunsub.photo.repository.mapper.AlbumOwnerMapper
@@ -35,6 +38,23 @@ class AlbumPhotoController(
 		@RequestBody params: AlbumPhotoSearchParams,
 	): ApiPageResult<ApiPhotoPreview> {
 		return albumPhotoBo.list(userAuth.idNo, albumId, params)
+	}
+
+	@PostMapping("/api/v1/albums/{albumId}/photos")
+	fun create(
+		userAuth: UserAuth,
+		@PathVariable albumId: String,
+		@RequestBody params: AlbumPhotoCreateParams,
+	): SimpleResponse {
+		return albumPhotoBo.create(userAuth.idNo, albumId, params)
+	}
+
+	@PostMapping("/api/v1/_bulk/albums/photos/delete")
+	fun delete(
+		userAuth: UserAuth,
+		@RequestBody params: AlbumPhotoDeleteParams,
+	): SimpleResponse {
+		return albumPhotoBo.delete(userAuth.idNo, params)
 	}
 
 	@GetMapping("/api/v1/albums/{albumId}/photos/{photoId}")
